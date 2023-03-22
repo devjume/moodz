@@ -1,10 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import CustomButton from "./components/CustomButton"
 
 export default function App() {
   return (
     <View style={styles.container}>
       <Text>MOOOOOOOOOOOOOOOOOOOD</Text>
+      <CustomButton />
       <StatusBar style="auto" />
     </View>
   );
