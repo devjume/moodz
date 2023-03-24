@@ -6,7 +6,12 @@ import CustomButton from "../components/CustomButton"
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
-      <Text>MOOOOOOOOOOOOOOOOOOOD</Text>
+      <Text style={styles.header}>Today</Text>
+      
+      <Text>Daily Progress</Text>
+      <Text>Daily Mood</Text>
+      
+
       <CustomButton />
     </View>
   )
