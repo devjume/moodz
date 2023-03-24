@@ -1,4 +1,5 @@
 import React from 'react'
+import styles from '../style/style';
 import { Text, View, StyleSheet } from "react-native";
 import CustomButton from "../components/CustomButton"
 
@@ -17,11 +18,3 @@ export default function HomeScreen() {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

@@ -1,4 +1,5 @@
 import React from 'react'
+import styles from '../style/style';
 import { Text, View, StyleSheet } from "react-native";
 
 
@@ -10,11 +11,3 @@ export default function BadHabitScreen() {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
