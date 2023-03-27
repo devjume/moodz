@@ -6,7 +6,7 @@ import HomeScreen from './screens/HomeScreen';
 import CalendarScreen from './screens/CalendarScreen';
 import StatisticsScreen from './screens/StatisticsScreen';
 import BadHabitScreen from './screens/BadHabitScreen';
-import TrackerScreen from './screens/BadHabitScreen';
+import TrackerScreen from './screens/TrackerScreen';
 
 export default function App() {
 
