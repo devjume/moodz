@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
+import React from 'react'
+import styles from '../style/style';
 import { Text, View, StyleSheet } from "react-native";
-import SelectDropdown from 'react-native-select-dropdown'
+import SelectDropdown from 'react-native-select-dropdown';
 
 
 export default function TrackerScreen() {
@@ -14,19 +16,11 @@ export default function TrackerScreen() {
       <SelectDropdown
         data={activities}
         defaultValueByIndex={0}
-        onSelect={a => setActivity}
+        onSelect={a => setActivity(a)}
         >
-        <Text>{activity}</Text>
       </SelectDropdown>
+      <Text>{activity}</Text>
     </View>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
