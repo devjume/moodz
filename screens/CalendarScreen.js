@@ -11,11 +11,11 @@ export default function CalendarScreen() {
 
       <Calendar
   // Initially visible month. Default = now
-      initialDate={'2012-03-01'}
+      initialDate={'2023-03-01'}
   // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
-     minDate={'2012-05-10'}
+     minDate={'2023-05-10'}
   // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
-      maxDate={'2012-05-30'}
+      maxDate={'2050-05-30'}
  // Handler which gets executed on day press. Default = undefined
      onDayPress={day => {
      console.log('selected day', day);
