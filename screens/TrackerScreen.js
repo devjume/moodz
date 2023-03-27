@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import React from 'react'
 import styles from '../style/style';
 import { Text, View, StyleSheet } from "react-native";
 import SelectDropdown from 'react-native-select-dropdown';
