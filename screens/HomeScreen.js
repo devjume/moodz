@@ -8,7 +8,7 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Today</Text>
-      
+     
       <Text>Daily Progress</Text>
       <Text>Daily Mood</Text>
       
