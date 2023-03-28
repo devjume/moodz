@@ -40,6 +40,12 @@ export default function CalendarScreen() {
       }}
       enableSwipeMonths={true}
     />
+
+
+<CalendarList
+
+
+/>
     </View>
   )
 }
