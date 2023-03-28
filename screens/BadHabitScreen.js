@@ -10,7 +10,7 @@ export default function BadHabitScreen() {
       <Pressable
         style={({ pressed }) => [styles.row, { backgroundColor: pressed ? "#DCC9B6" : "#FFEDD7" }]}
         onPress={()=>console.log("nappi")}>
-        <Text style={{fontSize: 24}}>Add new habit.                  <AntDesign name="pluscircle" size={24} color="black" /></Text>
+        <Text style={{fontSize: 24}}>Add new habit.                        <AntDesign name="pluscircle" size={24} color="black" /></Text>
       </Pressable>
       <View style={[styles.row, {}]}>
         <View style={styles.card}>
