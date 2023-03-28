@@ -7,8 +7,8 @@ import { fonts } from 'react-native-elements/dist/config';
 export default function BadHabitScreen() {
   return (
     <SafeAreaView style={styles.container}>
-      <Pressable 
-        style={[styles.row, styles.column, {backgroundColor: "#DCC9B6"}]}
+      <Pressable
+        style={({ pressed }) => [styles.row, { backgroundColor: pressed ? "#DCC9B6" : "#FFEDD7" }]}
         onPress={()=>console.log("nappi")}>
         <Text style={{fontSize: 24}}>Add new habit.                  <AntDesign name="pluscircle" size={24} color="black" /></Text>
       </Pressable>
@@ -17,7 +17,6 @@ export default function BadHabitScreen() {
           <Text style={{fontSize: 24}}>Time since bad habits:</Text>
         </View>
       </View>
-      
     </SafeAreaView>
   )
 }
@@ -30,9 +29,6 @@ const styles = StyleSheet.create({
   pressable: {
    backgroundColor: "#FFEDD7"
     
-  },
-  column: {
-    flexDirection: "column"
   },
   row: {
     flexDirection: 'row',
