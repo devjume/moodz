@@ -1,14 +1,35 @@
-import React from 'react'
-import styles from '../style/style';
-import { Text, View, StyleSheet } from "react-native";
-import CustomButton from "../components/CustomButton"
+import { useEffect, useState } from 'react'
+import { supabase } from '../lib/supabase';
+import { Text, View, StyleSheet, FlatList } from "react-native";
 
+import styles from '../style/style';
+import CustomButton from "../components/CustomButton"
 
 export default function HomeScreen() {
 
-  function test() {
-    console.log("test")
+	const [categories, setCategories] = useState([])
+	
+	useEffect(() => {
+		fetchCategories()
+	}, [])
+
+  async function fetchCategories() {
+		
+		let { data: category, error } = await supabase
+		.from('category')
+		.select('*')
+
+		if (error) {
+			console.log("error", error)
+		} else {
+			setCategories(category)
+		}
+
   }
+
+	function buttonClick() {
+		console.log("clicked");
+	}
 
   return (
 		<View style={styles.container}>
@@ -16,8 +37,14 @@ export default function HomeScreen() {
 
 			<Text>Daily Progress</Text>
 			<Text>Daily Mood</Text>
-
-			<CustomButton title="AUTH" onClick={test()} />
+			{
+				categories.map((item) => {
+					return (
+						<Text key={item.id} style={{fontWeight: "bold"}}>{item.name}</Text>
+					)
+				})
+			}
+			<CustomButton title="AUTH" onClick={buttonClick} />
 		</View>
 	);
 }
