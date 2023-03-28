@@ -7,14 +7,14 @@ import { fonts } from 'react-native-elements/dist/config';
 export default function BadHabitScreen() {
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.row}>
-        <Pressable style={styles.pressable}>
-          <Text style={{fontSize: 24, marginLeft: 16}}>Add new habit.                  <AntDesign name="pluscircle" size={24} color="black" /></Text>
-        </Pressable>
-      </View>
-      <View style={[styles.row, {top: 76, backgroundColor: "red"}]}>
-        <View style={styles.pressable}>
-          <Text style={{fontSize: 24, marginLeft: 10}}> Time since bad habits:</Text>
+      <Pressable 
+        style={[styles.row, styles.column, {backgroundColor: "#DCC9B6"}]}
+        onPress={()=>console.log("nappi")}>
+        <Text style={{fontSize: 24}}>Add new habit.                  <AntDesign name="pluscircle" size={24} color="black" /></Text>
+      </Pressable>
+      <View style={[styles.row, {}]}>
+        <View style={styles.card}>
+          <Text style={{fontSize: 24}}>Time since bad habits:</Text>
         </View>
       </View>
       
@@ -25,16 +25,20 @@ export default function BadHabitScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#DCC9B6"
   },
   pressable: {
-    flex: 1,
-    padding: 20
+   backgroundColor: "#FFEDD7"
+    
+  },
+  column: {
+    flexDirection: "column"
   },
   row: {
     flexDirection: 'row',
-    top: 0,
-    position:"absolute",
-    backgroundColor: "aquamarine"
+    padding: 20,
+    borderBottomWidth: 1,
+    backgroundColor: "#FFEDD7"
   },
   textAlign: {
     textAlign: "center",
