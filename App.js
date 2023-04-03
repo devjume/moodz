@@ -7,6 +7,7 @@ import CalendarScreen from './screens/CalendarScreen';
 import StatisticsScreen from './screens/StatisticsScreen';
 import BadHabitScreen from './screens/BadHabitScreen';
 import TrackerScreen from './screens/TrackerScreen';
+import ProfileScreen from './screens/ProfileScreen';
 
 export default function App() {
 
@@ -36,11 +37,12 @@ export default function App() {
           }
         })}
       >
-        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Home" component={ProfileScreen} />
         <Tab.Screen name="Calendar" component={CalendarScreen} />
         <Tab.Screen name="Tracker" component={TrackerScreen} />
         <Tab.Screen name="Statistics" component={StatisticsScreen} />
         <Tab.Screen name="Bad Habit" component={BadHabitScreen} />
+        <Tab.Screen name="Profile" component={ProfileScreen} />
       </Tab.Navigator>
     </NavigationContainer>
     
