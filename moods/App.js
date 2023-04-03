@@ -1,40 +1,46 @@
-import { useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Text, } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import UserProvider, {UserContext} from './lib/UserContext';
-
-import LoginScreen from './screens/Auth/LoginScreen';
-import RegisterScreen from './screens/Auth/RegisterScreen';
-import SetGoalsScreen from './screens/Auth/SetGoalsScreen';
 import HomeScreen from './screens/HomeScreen';
 import CalendarScreen from './screens/CalendarScreen';
 import StatisticsScreen from './screens/StatisticsScreen';
 import BadHabitScreen from './screens/BadHabitScreen';
 import TrackerScreen from './screens/TrackerScreen';
+import LoginScreen from './screens/LoginScreen'
+import RegisterScreen from "./screens/RegisterScreen";
+
+import { supabase } from "./lib/supabase"
+
+
+function getIsSignedIn() {
+	// custom logic here
+	return false;
+};
 
 export default function App() {
-  const Stack = createNativeStackNavigator();
-  const Tab = createBottomTabNavigator();
+	const Tab = createBottomTabNavigator();
+	const Stack = createNativeStackNavigator();
+  const isSignedIn = getIsSignedIn();
 
-  function AuthNavigationStack({setIsLoggedIn}) {
-    return (
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-        ></Stack.Screen>
-        <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="SetGoals" component={SetGoalsScreen} />
-      </Stack.Navigator>
-    )
-  }
+  const [session, setSession] = useState(null);
 
-  function NormalNavigationStack() {
-    return(
-      <Tab.Navigator
+  useEffect(() => {
+		supabase.auth.getSession().then(({ data: { session } }) => {
+			setSession(session);
+		});
+
+		supabase.auth.onAuthStateChange((_event, session) => {
+			setSession(session);
+		});
+	}, []);
+
+	/* Navigation Stack, when user is loggedin */
+	function NormalTabStack() {
+		return (
+			<Tab.Navigator
 				screenOptions={({ route }) => ({
 					tabBarIcon: ({ focused, color, size }) => {
 						let iconName;
@@ -61,30 +67,26 @@ export default function App() {
 				<Tab.Screen name="Statistics" component={StatisticsScreen} />
 				<Tab.Screen name="Bad Habit" component={BadHabitScreen} />
 			</Tab.Navigator>
-    )
-  }
+		);
+	}
+	
+	/* Navigation Stack, when user is not loggedin */
+	function AuthStack() {
+		return (
+			<Stack.Navigator screenOptions={{ headerShown: false }}>
+				<Stack.Screen
+					name="Login"
+					component={LoginScreen}
+					initialParams={{isSignedIn: isSignedIn, hello: "hellox" }}
+				/>
+				<Stack.Screen name="Register" component={RegisterScreen} />
+			</Stack.Navigator>
+		);
+	}
 
-  function NavigatorWrapper() {
-    const { isLoggedIn } = useContext(UserContext)
-
-    return (
-      <Stack.Navigator>
-        {isLoggedIn ? 
-          <Stack.Screen name="App" component={NormalNavigationStack} options={{headerShown: false }}/>
-           :  
-          <Stack.Screen name="Auth" component={AuthNavigationStack} options={{headerShown: false }}/>
-           }
-      </Stack.Navigator>
-    )
-  }
-
-  return (
-    <UserProvider>
-      <NavigationContainer>
-        <NavigatorWrapper />
-      </NavigationContainer>
-    </UserProvider>
-  );
+	return (
+		<NavigationContainer>{session && session.user ? <NormalTabStack /> : <AuthStack />}</NavigationContainer>
+	);
 }
 
 

@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { supabase } from '../lib/supabase';
+import { UserContext } from '../lib/UserContext';
 import { Text, View, StyleSheet, FlatList } from "react-native";
 
 import styles from '../style/style';
 import CustomButton from "../components/CustomButton"
 
 export default function HomeScreen() {
-
+	const { setIsLoggedIn, setSession, username, userID } = useContext(UserContext)
 	const [categories, setCategories] = useState([])
 	
 	useEffect(() => {
@@ -27,8 +28,15 @@ export default function HomeScreen() {
 
   }
 
-	function buttonClick() {
-		console.log("clicked");
+	async function logOut() {
+		const { error } = await supabase.auth.signOut()
+		if (error) {
+			Alert.alert("Sign Out Error:", error.message)
+			console.log("Sign Out Error:", error.message)
+		}
+
+		setSession(null)
+		setIsLoggedIn(false)
 	}
 
   return (
@@ -37,6 +45,8 @@ export default function HomeScreen() {
 
 			<Text>Daily Progress</Text>
 			<Text>Daily Mood</Text>
+			<Text>Username: {username}</Text>
+			<Text>UserID: {userID}</Text>
 			{
 				categories.map((item) => {
 					return (
@@ -44,7 +54,7 @@ export default function HomeScreen() {
 					)
 				})
 			}
-			<CustomButton title="AUTH" onClick={buttonClick} />
+			<CustomButton title={"Log out"} onClick={logOut} />
 		</View>
 	);
 }
