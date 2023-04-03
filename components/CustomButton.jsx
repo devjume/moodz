@@ -2,17 +2,16 @@ import React from 'react'
 import { Text, Pressable, StyleSheet } from "react-native";
 
 
-export default function button() {
-
-	function clicked() {
-		console.log("SLDL")
-	}
+export default function button({title, onClick}) {
 
   return (
-    <Pressable onPress={clicked} style={({ pressed }) => [style.button, {backgroundColor: pressed ? "#facc15" : "yellow"}]}>
-      <Text style={style.text}>Button</Text>
-    </Pressable>
-  )
+		<Pressable
+			onPress={onClick}
+			style={({ pressed }) => [style.button, { backgroundColor: pressed ? "#facc15" : "yellow" }]}
+		>
+			<Text style={style.text}>{title}</Text>
+		</Pressable>
+	);
 }
 
 const style = StyleSheet.create({

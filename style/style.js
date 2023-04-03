@@ -7,6 +7,7 @@ export default StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: '#DCC9B6'
     },
 
     header: {
@@ -44,5 +45,44 @@ export default StyleSheet.create({
         color:"#152d33",
         fontSize: 20
       },
+      // VEETIN CSS
+      selectionHeader:{
+        fontSize: 20,
+        fontWeight: "bold",
+        margin: 10,
+      },
+      row: {
+        marginTop: -200,
+        flex: 1,
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      inputWrap: {
+        borderColor: "#cccccc",
+        marginBottom: 10,
 
+      },
+      inputHours: {
+        borderBottomWidth: 1,
+        borderTopWidth:1,
+        borderLeftWidth:1,
+        fontSize: 20,
+        color: "#6a4595",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign:"center"
+
+      },
+      inputMinutes: {
+        borderBottomWidth: 1,
+        borderTopWidth:1,
+        borderRightWidth:1,
+        fontSize: 20,
+        color: "#6a4595",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign:"center" 
+      },
+      //
 });      
