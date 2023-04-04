@@ -8,8 +8,10 @@ import { fonts } from 'react-native-elements/dist/config';
 
 export default function BadHabitScreen() {
   const [modalVisible, setModalVisible] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const [modalName, setModalName] = useState("");
   const [modalDate, setModalDate] = useState("");
+  
   
   const data = [
     {
@@ -40,62 +42,123 @@ export default function BadHabitScreen() {
       {
 				data.map((item) => {
 					return (
-						<Card key={item.id} name={item.name} date={item.date} modalVisible={modalVisible} setModalVisible={setModalVisible} setModalDate={setModalDate} setModalName={setModalName}/>
+						<Card key={item.id} name={item.name} date={item.date} editMode={editMode} setEditMode={setEditMode} modalVisible={modalVisible} setModalVisible={setModalVisible} setModalDate={setModalDate} setModalName={setModalName}/>
 					)
 				})
 			}
 
-      {modalVisible && <Form setModalVisible={setModalVisible} modalVisible={modalVisible} oldName={modalName} oldDate={modalDate} setModalDate={setModalDate} setModalName={setModalName}/>}
+      {modalVisible && <Form editMode={editMode} setEditMode={setEditMode} setModalVisible={setModalVisible} modalVisible={modalVisible} oldName={modalName} oldDate={modalDate} setModalDate={setModalDate} setModalName={setModalName}/>}
 
     </SafeAreaView>
   )
 }
 
-const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName}) => {
+const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName, editMode, setEditMode}) => {
+
+  const [newName, setNewName] = useState("")
 
   if (oldName == null || oldName == "") {
     oldName = "Name"
   }
 
-  return (
-  <View style={styles.centeredView}>
-      <Modal
-        statusBarTranslucent={false}
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-          setModalName("");
-          setModalDate("");
-        }}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>Add new habit</Text>
-            <TextInput>{oldName}</TextInput>
-            <TextInput>Add new habit</TextInput>
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={() => {
-                setModalVisible(!modalVisible) 
-                setModalName("");
-                setModalDate("");
-              }}>
-              <Text style={styles.textStyle}>Cancel</Text>
-            </Pressable>
-          </View>
+  if (editMode==true) {
+    
+    return (
+      <View style={styles.centeredView}>
+          <Modal
+            statusBarTranslucent={false}
+            animationType="fade"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+              setModalName("");
+              setModalDate("");
+              setNewName("");
+              setEditMode(!editMode)
+            }}>
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>Edit {oldName}</Text>
+                <TextInput placeholder={oldName} onChangeText={t=>setNewName(t)}></TextInput>
+
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => {
+                    //en vielä tiiä miten supabase toimii, kuitenkin, tässä eka tulisi setata Modalname newNameksi, jonka jälkeen se viedään databaseen ja tyhjennetään kentät
+                    console.log({newName})
+                    setModalVisible(!modalVisible) 
+                    setModalName("");
+                    setModalDate("");
+                    setNewName("");
+                    setEditMode(!editMode)
+                  }}>
+                  <Text style={styles.textStyle}>Save</Text>
+                </Pressable>
+
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => {
+                    setModalVisible(!modalVisible) 
+                    setModalName("");
+                    setModalDate("");
+                    setNewName("")
+                    setEditMode(!editMode)
+                  }}>
+                  <Text style={styles.textStyle}>Cancel</Text>
+                </Pressable>
+                
+              </View>
+            </View>
+          </Modal>
         </View>
-      </Modal>
-    </View>
-    )
+        )
+
+  } else {
+
+    return (
+      <View style={styles.centeredView}>
+          <Modal
+            statusBarTranslucent={false}
+            animationType="fade"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+              setModalName("");
+              setModalDate("");
+            }}>
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>Add new habit</Text>
+                <TextInput>{oldName}</TextInput>
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => {
+                    setModalVisible(!modalVisible) 
+                    setModalName("");
+                    setModalDate("");
+                  }}>
+                  <Text style={styles.textStyle}>Cancel</Text>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
+        </View>
+        )
+
+  }
+
+  
 }
 
-const Card = ({name, date, modalVisible, setModalVisible, setModalName, setModalDate}) => {
+const Card = ({name, date, modalVisible, setModalVisible, setModalName, setModalDate, editMode={editMode}, setEditMode={setEditMode}}) => {
 
 return (
   <Pressable
     style={({ pressed }) => [styles.row, { backgroundColor: pressed ? "#DCC9B6" : "#FFEDD7" }]} 
     onPress={()=> {
+      setEditMode(true)
       setModalVisible(!modalVisible)
       setModalName(name)
       setModalDate(date)
