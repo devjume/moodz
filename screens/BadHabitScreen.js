@@ -45,13 +45,13 @@ export default function BadHabitScreen() {
 				})
 			}
 
-      {modalVisible && <Form setModalVisible={setModalVisible} modalVisible={modalVisible} oldName={modalName} oldDate={modalDate}/>}
+      {modalVisible && <Form setModalVisible={setModalVisible} modalVisible={modalVisible} oldName={modalName} oldDate={modalDate} setModalDate={setModalDate} setModalName={setModalName}/>}
 
     </SafeAreaView>
   )
 }
 
-const Form = ({setModalVisible, modalVisible, oldName, oldDate}) => {
+const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName}) => {
 
   if (oldName == null || oldName == "") {
     oldName = "Name"
@@ -65,8 +65,9 @@ const Form = ({setModalVisible, modalVisible, oldName, oldDate}) => {
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
           setModalVisible(!modalVisible);
+          setModalName("");
+          setModalDate("");
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
@@ -75,7 +76,11 @@ const Form = ({setModalVisible, modalVisible, oldName, oldDate}) => {
             <TextInput>Add new habit</TextInput>
             <Pressable
               style={[styles.button, styles.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}>
+              onPress={() => {
+                setModalVisible(!modalVisible) 
+                setModalName("");
+                setModalDate("");
+              }}>
               <Text style={styles.textStyle}>Cancel</Text>
             </Pressable>
           </View>
