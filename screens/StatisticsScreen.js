@@ -22,13 +22,13 @@ export default function StatisticsScreen() {
   };
 
   const sleep = {
-    labels: ["January", "February", "March", "April", "May", "June","July","August","September","October", "November", "December"],
+    labels: ["J", "F", "M", "A", "M", "J","J","A","S","O", "N", "D"],
     datasets: [
       {
 
         //supabasedata tähän->
         data: [25, 43, 18, 32, 24, 32, 34, 23, 23, 23, 23, 24],
-        color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, 
+        color: (opacity = 1) => `rgba(248, 237, 51, ${opacity})`, 
         strokeWidth: 2 
       }
     ],
@@ -36,13 +36,13 @@ export default function StatisticsScreen() {
   };
 
   const exercise = {
-    labels: ["January", "February", "March", "April", "May", "June","July","August","September","October", "November", "December"],
+    labels: ["J", "F", "M", "A", "M", "J","J","A","S","O", "N", "D"],
     datasets: [
       {
 
         //supabasedata tähän->
         data: [25, 43, 18, 32, 24, 32, 34, 23, 23, 23, 23, 24],
-        color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, 
+        color: (opacity = 1) => `rgba(226, 96, 73, ${opacity})`, 
         strokeWidth: 2 
       }
     ],
@@ -50,7 +50,7 @@ export default function StatisticsScreen() {
   };
 
   const relax = {
-    labels: ["January", "February", "March", "April", "May", "June","July","August","September","October", "November", "December"],
+    labels: ["J", "F", "M", "A", "M", "J","J","A","S","O", "N", "D"],
     datasets: [
       {
 
@@ -70,26 +70,26 @@ export default function StatisticsScreen() {
     <View style={styles.container}>
       
       <ScrollView>
-      <Text>Statistics</Text>
+      
 
       <LineChart
         data={sleep}
          width={screenWidth}
-         height={220}
+         height={250}
          chartConfig={chartConfig}
       />
 
       <LineChart
         data={exercise}
          width={screenWidth}
-         height={220}
+         height={250}
          chartConfig={chartConfig}
       />
 
       <LineChart
         data={relax}
          width={screenWidth}
-         height={220}
+         height={250}
          chartConfig={chartConfig}
       />
 
