@@ -2,7 +2,7 @@ import React from 'react'
 import { Text, Pressable, StyleSheet } from "react-native";
 
 
-export default function CustomButton({title, onClick}) {
+export default function button({title, onClick}) {
 
   return (
 		<Pressable
