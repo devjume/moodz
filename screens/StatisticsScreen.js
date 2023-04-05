@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from '../style/style';
-import { Text, View, Dimensions, ScrollView } from "react-native";
+import { View, Dimensions, ScrollView } from "react-native";
 import { LineChart } from 'react-native-chart-kit';
 
 
