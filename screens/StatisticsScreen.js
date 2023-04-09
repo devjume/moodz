@@ -22,45 +22,45 @@ export default function StatisticsScreen() {
   };
 
   const sleep = {
-    labels: ["J", "F", "M", "A", "M", "J","J","A","S","O", "N", "D"],
+    labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday","Sunday"],
     datasets: [
       {
 
         //supabasedata tähän->
-        data: [25, 43, 18, 32, 24, 32, 34, 23, 23, 23, 23, 24],
+        data: [5, 6, 8, 7, 7, 5, 8],
         color: (opacity = 1) => `rgba(248, 237, 51, ${opacity})`, 
         strokeWidth: 2 
       }
     ],
-    legend: ["Sleep"] 
+    legend: ["Sleep(hours)"] 
   };
 
   const exercise = {
-    labels: ["J", "F", "M", "A", "M", "J","J","A","S","O", "N", "D"],
+    labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
     datasets: [
       {
 
         //supabasedata tähän->
-        data: [25, 43, 18, 32, 24, 32, 34, 23, 23, 23, 23, 24],
+        data: [25, 43, 18, 32, 24, 32, 34],
         color: (opacity = 1) => `rgba(226, 96, 73, ${opacity})`, 
         strokeWidth: 2 
       }
     ],
-    legend: ["Exercise"] 
+    legend: ["Exercise(hours)"] 
   };
 
   const relax = {
-    labels: ["J", "F", "M", "A", "M", "J","J","A","S","O", "N", "D"],
+    labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday","Sunday"],
     datasets: [
       {
 
         //supabasedata tähän->
-        data: [25, 43, 18, 32, 24, 32, 34, 23, 23, 23, 23, 24],
+        data: [25, 43, 18, 32, 24, 32, 34],
         color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, 
         strokeWidth: 2 
       }
     ],
-    legend: ["Relax"] 
+    legend: ["Relax(hours)"] 
   };
 
 
@@ -83,6 +83,7 @@ export default function StatisticsScreen() {
         data={exercise}
          width={screenWidth}
          height={250}
+         
          chartConfig={chartConfig}
       />
 
