@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { View } from 'react-native';
+import { View, Text, Pressable, Button } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -16,10 +16,19 @@ import StatisticsScreen from './screens/StatisticsScreen';
 import BadHabitScreen from './screens/BadHabitScreen';
 import TrackerScreen from './screens/TrackerScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import style from './style/style';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
+
+  function CustomTopBar({props}) {
+    return (
+      <View>
+        <Text>Testi</Text>
+      </View>
+    )
+  }
 
   function AuthNavigationStack({setIsLoggedIn}) {
     return (
@@ -37,7 +46,20 @@ export default function App() {
   function NormalNavigationStack() {
     return(
       <Tab.Navigator
-				screenOptions={({ route }) => ({
+				screenOptions={({ route, navigation }) => ({
+          headerStyle: {
+            backgroundColor: "#444554",
+          },
+          headerTitleAlign: "center",
+          headerTitleStyle: {
+            fontWeight: "bold",
+            color: "#DCC9B6",
+          },
+          headerRight: () => (
+            <Pressable onPress={() => navigation.navigate('Profile')} style={{marginRight: 6}}>
+              <Ionicons name={"person-circle-sharp"} size={38} color={"#DCC9B6"} />
+            </Pressable>
+          ),
           tabBarShowLabel: false,
           tabBarStyle: {backgroundColor: "#444554"},
 					tabBarIcon: ({ focused, color, size, tabBarActiveTintColor }) => {
@@ -60,7 +82,6 @@ export default function App() {
               )
 						}
 
-						//return <Text style={{ fontSize: 30 }}>{iconName}</Text>;
             return <Ionicons name={iconName} size={24} color={focused == true ? "#fff" : "#DCC9B6"} />
 					},
 				})}
@@ -70,7 +91,6 @@ export default function App() {
 				<Tab.Screen name="Tracker" component={TrackerScreen} />
 				<Tab.Screen name="Statistics" component={StatisticsScreen} />
 				<Tab.Screen name="Bad Habit" component={BadHabitScreen} />
-        {/* <Tab.Screen name="Profile" component={ProfileScreen} /> */}
 			</Tab.Navigator>
     )
   }
@@ -85,6 +105,17 @@ export default function App() {
            :  
           <Stack.Screen name="Auth" component={AuthNavigationStack} options={{headerShown: false }}/>
            }
+          <Stack.Screen name="Profile" component={ProfileScreen} options={{
+            headerTitleStyle: {
+            fontWeight: "bold",
+            color: "#DCC9B6",
+            },
+            headerStyle: {
+              backgroundColor: "#444554",
+            },
+            headerTintColor: "#DCC9B6",
+          
+          }} />
       </Stack.Navigator>
     )
   }
@@ -93,6 +124,7 @@ export default function App() {
     <UserProvider>
       <NavigationContainer>
         <NavigatorWrapper />
+        <StatusBar style='light' />
       </NavigationContainer>
     </UserProvider>
   );
