@@ -22,14 +22,6 @@ export default function App() {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
 
-  function CustomTopBar({props}) {
-    return (
-      <View>
-        <Text>Testi</Text>
-      </View>
-    )
-  }
-
   function AuthNavigationStack({setIsLoggedIn}) {
     return (
       <Stack.Navigator screenOptions={{headerShown: false}}>
@@ -74,7 +66,6 @@ export default function App() {
 						} else if (route.name === "Bad Habit") {
 							return <Ionicons name={"md-logo-no-smoking"} size={32} color={focused == true ? "#fff" : "#DCC9B6"} />
 						} else if (route.name === "Tracker") {
-							//iconName = "add-circle";
               return (
                 <View style={{backgroundColor: "#498467", width: 75, height: 75, borderRadius: 500, bottom: -10, position: "absolute", display: "flex", justifyContent:"center", alignContent:"center", alignItems:"center", "shadowColor": "#000", shadowOffset: {width: 0, height: 2,}, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5}}>
                   <MaterialIcons name="add" size={64} style={{}} color={focused == true ? "#fff" : "#DCC9B6"} />
