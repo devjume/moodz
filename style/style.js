@@ -60,8 +60,6 @@ export default StyleSheet.create({
       },
       inputWrap: {
         borderColor: "#cccccc",
-        marginBottom: 10,
-
       },
       inputHours: {
         borderBottomWidth: 1,
@@ -71,8 +69,8 @@ export default StyleSheet.create({
         color: "#6a4595",
         justifyContent: "center",
         alignItems: "center",
-        textAlign:"center"
-
+        textAlign:"center",
+        backgroundColor:"#fafafa",
       },
       inputMinutes: {
         borderBottomWidth: 1,
@@ -82,7 +80,15 @@ export default StyleSheet.create({
         color: "#6a4595",
         justifyContent: "center",
         alignItems: "center",
-        textAlign:"center" 
+        textAlign:"center",
+        backgroundColor:"#fafafa",
       },
+      calendar: {
+        padding: 10,
+        backgroundColor: "#fafafa",
+        width: 200,
+        alignItems: "center",
+
+      }
       //
 });      

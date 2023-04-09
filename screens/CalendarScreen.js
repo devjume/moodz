@@ -4,12 +4,25 @@ import { Text, View,} from "react-native";
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 
 
+
 export default function CalendarScreen() {
 
- ///  const sleep = [sleep, setSleep] = useState([]);
- //  const exercise = [exercise, setExercise] = useState([]);
-  // const relax = [relax, setRelax] = useState([]);
+/*      const sleep = [sleep, setSleep] = useState('yellow');
+     const exercise = [exercise, setExercise] = useState('red');
+     const relax = [relax, setRelax] = useState('blue');
 
+
+     const changeColor = () => {
+
+      if (buttonColor='green') {
+          setColor('red')
+      } else if (buttonColor='red') {
+          setColor('green')
+      } else {
+          setColor('blue')
+      }
+  }
+ */
 
   return (
 
@@ -22,6 +35,19 @@ export default function CalendarScreen() {
       
 
    <CalendarList
+
+   /// markedDates={{
+  ///      '2018-03-28': {
+          
+  ///        container: {
+ //         style:{{backgroundColor:buttonColor, padding: 15}}
+  //    },
+  //    text: {
+ //       color: 'black',
+  //      fontWeight: 'bold'
+  //    }
+  //     }
+  //     }}
 
  ///  markingType={'multi-dot'}
  ///  markedDates={{
