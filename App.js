@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Text, } from 'react-native';
+import { View } from 'react-native';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -37,22 +38,30 @@ export default function App() {
     return(
       <Tab.Navigator
 				screenOptions={({ route }) => ({
-					tabBarIcon: ({ focused, color, size }) => {
+          tabBarShowLabel: false,
+          tabBarStyle: {backgroundColor: "#444554"},
+					tabBarIcon: ({ focused, color, size, tabBarActiveTintColor }) => {
 						let iconName;
 
 						if (route.name === "Home") {
-							iconName = "💣";
+							iconName = "md-home";
 						} else if (route.name === "Calendar") {
-							iconName = "🛖";
+							iconName = "calendar";
 						} else if (route.name === "Statistics") {
-							iconName = "📈";
+							iconName = "md-stats-chart-outline";
 						} else if (route.name === "Bad Habit") {
-							iconName = "🚬";
+							return <Ionicons name={"md-logo-no-smoking"} size={32} color={focused == true ? "#fff" : "#DCC9B6"} />
 						} else if (route.name === "Tracker") {
-							iconName = "➕";
+							//iconName = "add-circle";
+              return (
+                <View style={{backgroundColor: "#498467", width: 75, height: 75, borderRadius: 500, bottom: -10, position: "absolute", display: "flex", justifyContent:"center", alignContent:"center", alignItems:"center", "shadowColor": "#000", shadowOffset: {width: 0, height: 2,}, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5}}>
+                  <MaterialIcons name="add" size={64} style={{}} color={focused == true ? "#fff" : "#DCC9B6"} />
+                </View>
+              )
 						}
 
-						return <Text style={{ fontSize: 30 }}>{iconName}</Text>;
+						//return <Text style={{ fontSize: 30 }}>{iconName}</Text>;
+            return <Ionicons name={iconName} size={24} color={focused == true ? "#fff" : "#DCC9B6"} />
 					},
 				})}
 			>
@@ -61,7 +70,7 @@ export default function App() {
 				<Tab.Screen name="Tracker" component={TrackerScreen} />
 				<Tab.Screen name="Statistics" component={StatisticsScreen} />
 				<Tab.Screen name="Bad Habit" component={BadHabitScreen} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
+        {/* <Tab.Screen name="Profile" component={ProfileScreen} /> */}
 			</Tab.Navigator>
     )
   }

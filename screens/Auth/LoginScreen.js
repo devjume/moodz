@@ -15,7 +15,7 @@ export default function HomeScreen({route, navigation}) {
 
   useEffect(() => {
     if (TEST_MODE === true) {
-      setEmail("user@example.com");
+      setEmail("john@example.com");
       setPassword("password")
     }
 
