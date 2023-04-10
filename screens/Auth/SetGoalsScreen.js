@@ -1,10 +1,11 @@
 import { useState, useEffect,useContext }from 'react'
-import { Text, View, StyleSheet, Alert } from "react-native";
+import { Text, View, StyleSheet, Alert, ImageBackground } from "react-native";
 import { supabase } from '../../lib/supabase';
 import { UserContext } from '../../lib/UserContext';
 import styles from '../../style/style';
-import CustomInput from '../../components/CustomInput';
+import AuthInputField from '../../components/AuthInputField';
 import CustomButton from "../../components/CustomButton"
+import AuthButton from '../../components/AuthButton';
 
 
 
@@ -24,7 +25,6 @@ export default function SetGoalsScreen({route, navigation}) {
       setExerciseGoal("60")
       setRelaxGoal("60")
     }
-    console.log(session)
   }, [])
 
   // Prevent user from going back to register screen
@@ -67,13 +67,13 @@ export default function SetGoalsScreen({route, navigation}) {
     
 
   return (
-    <View style={component.container}>
+    <ImageBackground source={require('../../assets/forest.png')} style={component.container}>
       <Text style={component.header}>Set your daily goals</Text>
-      <CustomInput placeholder={"Sleep Goal"} inputMode={"numeric"} value={sleepGoal} onChangeText={setSleepGoal}/>
-      <CustomInput placeholder={"Exercise Goal"} inputMode={"numeric"} value={exerciseGoal} onChangeText={setExerciseGoal}/>
-      <CustomInput placeholder={"Relax Goal"} inputMode={"numeric"} value={relaxGoal} onChangeText={setRelaxGoal}/>
-      <CustomButton title={"Continue"} onClick={saveGoals} />
-    </View>
+      <AuthInputField placeholder={"Sleep Goal (minutes)"} inputMode={"numeric"} value={sleepGoal} onChangeText={setSleepGoal}/>
+      <AuthInputField placeholder={"Exercise Goal (minutes)"} inputMode={"numeric"} value={exerciseGoal} onChangeText={setExerciseGoal}/>
+      <AuthInputField placeholder={"Relax Goal (minutes)"} inputMode={"numeric"} value={relaxGoal} onChangeText={setRelaxGoal}/>
+      <AuthButton title={"Continue"} onClick={saveGoals} />
+    </ImageBackground>
   )
 }
 
@@ -84,9 +84,11 @@ const component = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "green",
     gap: 25,
+    width: "100%",
+    height: "100%",
 	},
 	header: {
-		color: "black",
+		color: "#7C3140",
 		fontWeight: "bold",
 		fontSize: 36,
 		textAlign: "center",

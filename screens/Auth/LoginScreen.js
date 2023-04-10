@@ -1,11 +1,11 @@
 import { useState, useEffect, useContext }from 'react'
-import { Text, View, StyleSheet, Pressable, Alert } from "react-native";
+import { Text, View, StyleSheet, Pressable, Alert, ImageBackground } from "react-native";
 import { supabase } from '../../lib/supabase';
 import { UserContext, saveSessionLocalStorage } from '../../lib/UserContext';
 
 import styles from '../../style/style';
-import CustomInput from '../../components/CustomInput';
-import CustomButton from "../../components/CustomButton"
+import AuthInputField from '../../components/AuthInputField';
+import AuthButton from '../../components/AuthButton';
 
 export default function HomeScreen({route, navigation}) {
   const [email, setEmail] = useState("")
@@ -25,6 +25,11 @@ export default function HomeScreen({route, navigation}) {
   }, [])
 
   async function login() {
+    if ( email === "" || password === "") {
+      Alert.alert("Login error", "Empty email or password")
+      return
+    }
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
@@ -39,29 +44,31 @@ export default function HomeScreen({route, navigation}) {
     setSession(data.session)
   }
 
+
   return (
-    <View style={component.container}>
+    <ImageBackground source={require('../../assets/forest.png')} style={component.container}> 
       <Text style={component.header}>Login</Text>
-      <CustomInput placeholder={"Email"} inputMode={"email"} value={email} onChangeText={setEmail}/>
-      <CustomInput placeholder={"Password"} inputMode={"text"} value={password} onChangeText={setPassword} secureTextEntry={true}/>
-      <CustomButton title={"Login"} onClick={login} />
+      <AuthInputField placeholder={"Email"} inputMode={"email"} value={email} onChangeText={setEmail}/>
+      <AuthInputField placeholder={"Password"} inputMode={"text"} value={password} onChangeText={setPassword} secureTextEntry={true}/>
+      <AuthButton title="Login" onClick={login} />
       <Pressable onPress={() => navigation.navigate("Register")}>
-        <Text style={{fontWeight: "bold"}}>Don't have an account. Register</Text>
+        <Text style={{fontWeight: "bold", color: "#fff"}}>Don't have an account? Register</Text>
       </Pressable>
-    </View>
+    </ImageBackground>
   )
 }
 
 const component = StyleSheet.create({
-	container: {
-		flex: 1,
+  container: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "green",
     gap: 25,
-	},
+    width: "100%",
+    height: "100%",
+  },
 	header: {
-		color: "black",
+		color: "#7C3140",
 		fontWeight: "bold",
 		fontSize: 36,
 		textAlign: "center",
