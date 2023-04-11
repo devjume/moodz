@@ -22,7 +22,7 @@ export default function StatisticsScreen() {
   };
 
   const sleep = {
-    labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday","Sunday"],
+    labels: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
     datasets: [
       {
 
@@ -36,7 +36,7 @@ export default function StatisticsScreen() {
   };
 
   const exercise = {
-    labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+    labels: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
     datasets: [
       {
 
@@ -50,7 +50,7 @@ export default function StatisticsScreen() {
   };
 
   const relax = {
-    labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday","Sunday"],
+    labels: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
     datasets: [
       {
 

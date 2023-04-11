@@ -1,5 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import styles from '../style/style';
+import { supabase } from '../lib/supabase';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Text, View,} from "react-native";
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 
@@ -7,11 +9,13 @@ import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 
 export default function CalendarScreen() {
 
-/*   const sleep = [sleep, setSleep] = useState('yellow');
+  /* 
+     const sleep = [sleep, setSleep] = useState(0);
      const exercise = [exercise, setExercise] = useState('red');
      const relax = [relax, setRelax] = useState('blue');
+     d
 
-
+*/
      const changeColor = () => {
 
       if (buttonColor='green') {
@@ -22,19 +26,34 @@ export default function CalendarScreen() {
           setColor('blue')
       }
   }
- */
+    
 
+  const getDailyData = async () => {
+    let { data: daily_track, error } = await supabase
+        .from('daily_track')
+        .select('some_column,other_column')
+    
+    
+    try {
+        const jsonValue = await AsyncStorage.getItem(sleep)
+        if (jsonValue !== null) {
+            let Data = JSON.parse(jsonValue);
+            setSleep(Data);
+        }
+    }
+    catch (error){
+        console.log(error.message);
+    }
+}
+     
+
+ 
   return (
 
 
    
     <View style={styles.container}> 
     
-      <Text>Calendar</Text>
-
-      
-      
-
 
    <CalendarList
 
@@ -43,13 +62,17 @@ export default function CalendarScreen() {
       // Max amount of months allowed to scroll to the past. Default = 50
         pastScrollRange={12}
     // Max amount of months allowed to scroll to the future. Default = 50
-      futureScrollRange={50}
+      futureScrollRange={20}
     // Enable or disable scrolling of calendar list
       scrollEnabled={true}
-    // Enable or disable vertical scroll indicator. Default = false
+    
       showScrollIndicator={true}
 
-      />
+      /> 
+
+
+
+
 
 {/*    /// markedDates={{
   ///      '2018-03-28': {
