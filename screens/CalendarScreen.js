@@ -11,7 +11,7 @@ export default function CalendarScreen() {
      const exercise = [exercise, setExercise] = useState('red');
      const relax = [relax, setRelax] = useState('blue');
 
-
+*/
      const changeColor = () => {
 
       if (buttonColor='green') {
@@ -22,7 +22,7 @@ export default function CalendarScreen() {
           setColor('blue')
       }
   }
- */
+ 
 
   return (
 
@@ -30,11 +30,6 @@ export default function CalendarScreen() {
    
     <View style={styles.container}> 
     
-      <Text>Calendar</Text>
-
-      
-      
-
 
    <CalendarList
 
@@ -43,10 +38,10 @@ export default function CalendarScreen() {
       // Max amount of months allowed to scroll to the past. Default = 50
         pastScrollRange={12}
     // Max amount of months allowed to scroll to the future. Default = 50
-      futureScrollRange={50}
+      futureScrollRange={20}
     // Enable or disable scrolling of calendar list
       scrollEnabled={true}
-    // Enable or disable vertical scroll indicator. Default = false
+    
       showScrollIndicator={true}
 
       />
