@@ -1,11 +1,12 @@
 import {useState, useEffect, useContext }from 'react'
-import { Text, View, StyleSheet, Pressable, Alert } from "react-native";
+import { Text, View, StyleSheet, Pressable, Alert, ImageBackground } from "react-native";
 import { supabase } from '../../lib/supabase';
 import { UserContext } from '../../lib/UserContext';
 
 import styles from '../../style/style';
-import CustomInput from '../../components/CustomInput';
+import AuthInputField from '../../components/AuthInputField';
 import CustomButton from "../../components/CustomButton"
+import AuthButton from '../../components/AuthButton';
 
 
 export default function RegisterScreen({navigation}) {
@@ -52,17 +53,16 @@ export default function RegisterScreen({navigation}) {
 
 
   return (
-    <View style={component.container}>
-      <Text style={component.header}>Register Screen</Text>
-      <CustomInput placeholder={"Email"} inputMode={"email"} value={email} onChangeText={setEmail}/>
-      <CustomInput placeholder={"Name"} inputMode={"text"} value={username} onChangeText={setUsername} autoCapitalize={"sentences"}/>
-      <CustomInput placeholder={"Password"} inputMode={"text"} value={password} onChangeText={setPassword} secureTextEntry={true}/>
-      <CustomButton title={"Register"} onClick={register} />
-      
+    <ImageBackground source={require('../../assets/forest.png')} style={component.container}>
+      <Text style={component.header}>Register</Text>
+      <AuthInputField placeholder={"Email"} inputMode={"email"} value={email} onChangeText={setEmail}/>
+      <AuthInputField placeholder={"Name"} inputMode={"text"} value={username} onChangeText={setUsername} autoCapitalize={"sentences"}/>
+      <AuthInputField placeholder={"Password"} inputMode={"text"} value={password} onChangeText={setPassword} secureTextEntry={true}/>
+      <AuthButton title={"Register"} onClick={register} />
       <Pressable onPress={() => navigation.navigate("Login")}>
-        <Text style={{fontWeight: "bold"}}>Already have an account. Login</Text>
+        <Text style={{fontWeight: "bold", color: "#fff"}}>Already have an account. Login</Text>
       </Pressable>
-    </View>
+    </ImageBackground>
   )
 }
 
@@ -74,9 +74,11 @@ const component = StyleSheet.create({
     backgroundColor: "green",
     gap: 25,
     flexGrow: 1,
+    width: "100%",
+    height: "100%",
 	},
 	header: {
-		color: "black",
+		color: "#7C3140",
 		fontWeight: "bold",
 		fontSize: 36,
 		textAlign: "center",
