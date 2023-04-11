@@ -5,41 +5,50 @@ import NumericInput from 'react-native-numeric-input';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { UserContext } from '../lib/UserContext';
 import CustomButton from "../components/CustomButton";
+import { supabase } from '../lib/supabase';
+
 
 
 
 
 export default function ProfileScreen() {
     
-    const { username, userID, session } = useContext(UserContext)
+    const { setIsLoggedIn, setSession, username, userID, session } = useContext(UserContext)
     const [relax, setRelax] = useState(0);
     const [exercise, setExercise] = useState(0);
     const [sleep, setSleep] = useState(0);
-    console.log(session.user.email)
+    
 
     async function logOut() {
+      
       const { error } = await supabase.auth.signOut()
       if (error) {
         Alert.alert("Sign Out Error:", error.message)
         console.log("Sign Out Error:", error.message)
       }
-  
-      // setSession(null)
+      setSession(null)
       setIsLoggedIn(false)
+      
     }
+    async function updateGoals() {
 
-    /* const { error } = await supabase
-    .from('profiles')
-    .update({ sleep_goal: sleepGoal, exercise_goal: exerciseGoal, relax_goal: relaxGoal })
-    .eq('id', session.user.id)
+      let sleepMin = sleep*60;
+      let exerciseMin = exercise*60;
+      let relaxMin = relax*60;
 
-    if(error) {
-      Alert.alert("Error", error.message);
-      return 
+      const { data, error } = await supabase
+      .from('profiles')
+      .update({ sleep_goal: sleepMin, exercise_goal: exerciseMin, relax_goal: relaxMin })
+      .eq('id', session.user.id)
+
+      console.log(data)
+
+      if(error) {
+        Alert.alert("Error", error.message);
+        return 
+      }
     }
-
-    setSession(session); 
-  }*/
+  
 
   return (
     <View style={style.container}>
@@ -66,7 +75,7 @@ export default function ProfileScreen() {
           <NumericInput value={sleep} rightButtonBackgroundColor='#498467' 
             leftButtonBackgroundColor='#C44536' borderColor={"black"} style={style.numericInput} onChange={v => setSleep(v)}/>
       </View>
-      <Button
+      <Button onPress={updateGoals}
       title='SAVE' style={style.save} color= "#498467"
       />
     </View> 
@@ -81,7 +90,7 @@ const style = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     rowGap: 10,
-    backgroundColor: "#F9E0AE"
+    backgroundColor: '#DCC9B6'
 },
   goalInputs: {
     flex: 1,

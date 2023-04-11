@@ -7,7 +7,7 @@ export default function CustomButton({title, onClick}) {
   return (
 		<Pressable
 			onPress={onClick}
-			style={({ pressed }) => [style.button, { backgroundColor: pressed ? "#facc15" : "yellow" }]}
+			style={({ pressed }) => [style.button, { backgroundColor: pressed ? "#facc15" : "#498467" }]}
 		>
 			<Text style={style.text}>{title}</Text>
 		</Pressable>
@@ -16,16 +16,13 @@ export default function CustomButton({title, onClick}) {
 
 const style = StyleSheet.create({
 	button: {
-		paddingVertical: 10,
+		paddingVertical: 2,
 		paddingHorizontal: 35,
-		backgroundColor: "yellow",
-		borderWidth: 1,
-		borderColor: "black",
+		backgroundColor: '#498467',
 	},
 	text: {
-		color: "black",
-		fontWeight: "bold",
-		fontSize: 16,
+		color: "white",
+		fontSize: 15,
 		textAlign: "center",
 	},
 });
