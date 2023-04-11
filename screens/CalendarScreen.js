@@ -1,5 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import styles from '../style/style';
+import { supabase } from '../lib/supabase';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Text, View,} from "react-native";
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 
@@ -7,9 +9,11 @@ import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 
 export default function CalendarScreen() {
 
-/*   const sleep = [sleep, setSleep] = useState('yellow');
+  /* 
+     const sleep = [sleep, setSleep] = useState(0);
      const exercise = [exercise, setExercise] = useState('red');
      const relax = [relax, setRelax] = useState('blue');
+     d
 
 */
      const changeColor = () => {
@@ -22,8 +26,28 @@ export default function CalendarScreen() {
           setColor('blue')
       }
   }
- 
+    
 
+  const getDailyData = async () => {
+    let { data: daily_track, error } = await supabase
+        .from('daily_track')
+        .select('some_column,other_column')
+    
+    
+    try {
+        const jsonValue = await AsyncStorage.getItem(sleep)
+        if (jsonValue !== null) {
+            let Data = JSON.parse(jsonValue);
+            setSleep(Data);
+        }
+    }
+    catch (error){
+        console.log(error.message);
+    }
+}
+     
+
+ 
   return (
 
 
@@ -44,7 +68,11 @@ export default function CalendarScreen() {
     
       showScrollIndicator={true}
 
-      />
+      /> 
+
+
+
+
 
 {/*    /// markedDates={{
   ///      '2018-03-28': {
