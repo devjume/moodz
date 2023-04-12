@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from '../style/style';
-import { Text, View, Dimensions, ScrollView } from "react-native";
+import { View, Dimensions, ScrollView } from "react-native";
 import { LineChart } from 'react-native-chart-kit';
 
 
@@ -22,45 +22,45 @@ export default function StatisticsScreen() {
   };
 
   const sleep = {
-    labels: ["January", "February", "March", "April", "May", "June","July","August","September","October", "November", "December"],
+    labels: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
     datasets: [
       {
 
         //supabasedata tähän->
-        data: [25, 43, 18, 32, 24, 32, 34, 23, 23, 23, 23, 24],
-        color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, 
+        data: [5, 6, 8, 7, 7, 5, 8],
+        color: (opacity = 1) => `rgba(248, 237, 51, ${opacity})`, 
         strokeWidth: 2 
       }
     ],
-    legend: ["Sleep"] 
+    legend: ["Sleep(hours)"] 
   };
 
   const exercise = {
-    labels: ["January", "February", "March", "April", "May", "June","July","August","September","October", "November", "December"],
+    labels: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
     datasets: [
       {
 
         //supabasedata tähän->
-        data: [25, 43, 18, 32, 24, 32, 34, 23, 23, 23, 23, 24],
-        color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, 
+        data: [25, 43, 18, 32, 24, 32, 34],
+        color: (opacity = 1) => `rgba(226, 96, 73, ${opacity})`, 
         strokeWidth: 2 
       }
     ],
-    legend: ["Exercise"] 
+    legend: ["Exercise(hours)"] 
   };
 
   const relax = {
-    labels: ["January", "February", "March", "April", "May", "June","July","August","September","October", "November", "December"],
+    labels: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
     datasets: [
       {
 
         //supabasedata tähän->
-        data: [25, 43, 18, 32, 24, 32, 34, 23, 23, 23, 23, 24],
+        data: [25, 43, 18, 32, 24, 32, 34],
         color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, 
         strokeWidth: 2 
       }
     ],
-    legend: ["Relax"] 
+    legend: ["Relax(hours)"] 
   };
 
 
@@ -70,26 +70,27 @@ export default function StatisticsScreen() {
     <View style={styles.container}>
       
       <ScrollView>
-      <Text>Statistics</Text>
+      
 
       <LineChart
         data={sleep}
          width={screenWidth}
-         height={220}
+         height={250}
          chartConfig={chartConfig}
       />
 
       <LineChart
         data={exercise}
          width={screenWidth}
-         height={220}
+         height={250}
+         
          chartConfig={chartConfig}
       />
 
       <LineChart
         data={relax}
          width={screenWidth}
-         height={220}
+         height={250}
          chartConfig={chartConfig}
       />
 

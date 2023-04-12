@@ -1,7 +1,7 @@
 import { TextInput, StyleSheet } from "react-native";
 
 
-export default function CustomInput({placeholder, inputMode, value, onChangeText, secureTextEntry, autoCapitalize} ) {
+export default function AuthInputField({placeholder, inputMode, value, onChangeText, secureTextEntry, autoCapitalize} ) {
 
   return (
 		<TextInput
@@ -18,15 +18,16 @@ export default function CustomInput({placeholder, inputMode, value, onChangeText
 
 const component = StyleSheet.create({
 	input: {
-		borderWidth: 2,
-		borderColor: "black",
+		borderWidth: 3,
+		borderColor: "rgba(129, 44, 44, 0.7)",
 		paddingHorizontal: 10,
 		paddingVertical: 14,
 		fontSize: 24,
-		backgroundColor: "yellow",
+		backgroundColor: "#F9E0B6",
 		color: "black",
 		minWidth: "80%",
 		maxWidth: "80%",
+		borderRadius: 6,
 	},
 	button: {
 		paddingVertical: 10,

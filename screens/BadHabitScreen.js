@@ -3,7 +3,22 @@ import { Text, View, StyleSheet, SafeAreaView, Pressable, Alert, Modal } from "r
 import { TextInput } from "react-native-paper";
 import { useEffect, useState } from 'react'
 import { AntDesign } from '@expo/vector-icons';
+import { supabase } from '../lib/supabase';
+import { UserContext } from '../lib/UserContext';
+
 import { fonts } from 'react-native-elements/dist/config';
+
+async function getData({setData}) {
+  let { data: bad_habits, error } = await supabase
+    .from('bad_habits')
+    .select('*')
+
+    if (error) {
+			console.log("error", error)
+		} else {
+			setData(bad_habits)
+		}
+} 
 
 
 export default function BadHabitScreen() {
@@ -11,20 +26,18 @@ export default function BadHabitScreen() {
   const [editMode, setEditMode] = useState(false);
   const [modalName, setModalName] = useState("");
   const [modalDate, setModalDate] = useState("");
+  const [data, setData] = useState([])
+
+  useEffect(() => {
+    
+    getData({setData});
+
+
+    
+
+  }, [])
   
   
-  const data = [
-    {
-      id: 1,
-      name: "Rööki",
-      date: "2023-03-31T07:17:49+0000"
-    },
-    {
-      id: 2,
-      name: "Huumeetki",
-      date: "2023-02-31T07:17:49+0000"
-    }
-  ]
 
   return (
     <SafeAreaView style={styles.container}>
@@ -42,7 +55,7 @@ export default function BadHabitScreen() {
       {
 				data.map((item) => {
 					return (
-						<Card key={item.id} name={item.name} date={item.date} editMode={editMode} setEditMode={setEditMode} modalVisible={modalVisible} setModalVisible={setModalVisible} setModalDate={setModalDate} setModalName={setModalName}/>
+						<Card key={item.id} name={item.title} date={item.start_date} favorite={item.favorite} editMode={editMode} setEditMode={setEditMode} modalVisible={modalVisible} setModalVisible={setModalVisible} setModalDate={setModalDate} setModalName={setModalName}/>
 					)
 				})
 			}
@@ -152,7 +165,7 @@ const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, se
   
 }
 
-const Card = ({name, date, modalVisible, setModalVisible, setModalName, setModalDate, editMode={editMode}, setEditMode={setEditMode}}) => {
+const Card = ({name, date, favorite, modalVisible, setModalVisible, setModalName, setModalDate, editMode={editMode}, setEditMode={setEditMode}}) => {
 
 return (
   <Pressable
