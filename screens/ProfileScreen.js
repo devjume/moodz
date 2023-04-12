@@ -17,6 +17,35 @@ export default function ProfileScreen() {
     const [relax, setRelax] = useState(0);
     const [exercise, setExercise] = useState(0);
     const [sleep, setSleep] = useState(0);
+
+    useEffect(() => {
+      getGoals()
+    }, [])
+
+    useEffect(() => {
+    }, [relax, exercise, sleep])
+
+    async function getGoals() {
+      let { data: profiles, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', session.user.id)
+
+      if(error) {
+        Alert.alert("Error", error.message);
+        return 
+      }
+
+      let relaxGoal = (profiles[0].relax_goal)/60;
+      let exerciseGoal = (profiles[0].exercise_goal)/60;
+      let sleepGoal = (profiles[0].sleep_goal)/60;
+
+      setRelax(relaxGoal)
+      setExercise(exerciseGoal)
+      setSleep(sleepGoal)
+     
+
+    }
     
 
     async function logOut() {
@@ -62,19 +91,20 @@ export default function ProfileScreen() {
     <View style={style.goalInputs}>
       <View style={style.rivi}>
           <Text style={style.goal}>Relax</Text>
-          <NumericInput value={relax} rightButtonBackgroundColor='#498467' 
+          <NumericInput initValue={relax} value={relax} rightButtonBackgroundColor='#498467' 
             leftButtonBackgroundColor='#C44536' borderColor={"black"} style={style.numericInput} onChange={v => setRelax(v)}/>
       </View>
       <View style={style.rivi}>
           <Text style={style.goal}>Exercise</Text>
-          <NumericInput value={exercise} rightButtonBackgroundColor='#498467' 
+          <NumericInput initValue={exercise} rightButtonBackgroundColor='#498467' 
             leftButtonBackgroundColor='#C44536' borderColor={"black"} style={style.numericInput} onChange={v => setExercise(v)}/>
       </View>
       <View style={style.rivi}>
           <Text style={style.goal}>Sleep</Text>
-          <NumericInput value={sleep} rightButtonBackgroundColor='#498467' 
+          <NumericInput initValue={sleep} rightButtonBackgroundColor='#498467' 
             leftButtonBackgroundColor='#C44536' borderColor={"black"} style={style.numericInput} onChange={v => setSleep(v)}/>
       </View>
+      <Text>{relax}</Text>
       <Button onPress={updateGoals}
       title='SAVE' style={style.save} color= "#498467"
       />

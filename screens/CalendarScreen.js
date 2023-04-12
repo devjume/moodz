@@ -9,13 +9,68 @@ import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 
 export default function CalendarScreen() {
 
-  /* 
-     const sleep = [sleep, setSleep] = useState(0);
-     const exercise = [exercise, setExercise] = useState('red');
-     const relax = [relax, setRelax] = useState('blue');
-     d
 
-*/
+
+
+    const [events, setEvents] = useState({});
+    const [markedDates, setMarkedDates] = useState({
+      '2023-04-12': { marked: true, dotColor: 'blue' },
+      '2023-04-14': { marked: true, dotColor: 'green' },
+      '2023-04-16': { marked: true, dotColor: 'yellow' },
+    });
+  
+    const handleAddEvent = (date, eventType) => {
+      const newMarkedDates = {
+        ...markedDates,
+        [date]: { marked: true, dotColor: getDotColor(eventType) },
+      };
+      setMarkedDates(newMarkedDates);
+    };
+  
+    const getDotColor = (eventType) => {
+      switch (eventType) {
+        case 'sleep':
+          return 'blue';
+        case 'exercise':
+          return 'green';
+        case 'relax':
+          return 'yellow';
+        default:
+          return 'gray';
+      }
+    }
+
+    
+
+   
+    const sleep = {key: 'sleep', color: 'green'};
+    const exercise = {key: 'exercise', color: 'red'};
+    const relax = {key: 'relax', color: 'blue'};
+
+    const onDayPress = (day) => {
+      const newEvent = {
+        [day.dateString]: {
+          selected: true,
+          marked: true,
+          dotColor: 'blue'
+        }
+      }
+      setEvents({ ...events, ...newEvent });
+    }
+
+/*     const marked = {
+      '2023-12-01': {
+        dots: [sleep, exercise]
+      },
+      '2023-12-02': {
+        dots: [relax, exercise, sleep]
+      } 
+    
+    }
+ */
+    
+
+
      const changeColor = () => {
 
       if (buttonColor='green') {
@@ -28,23 +83,22 @@ export default function CalendarScreen() {
   }
     
 
-  const getDailyData = async () => {
+  async function getDailyData () {
     let { data: daily_track, error } = await supabase
         .from('daily_track')
         .select('some_column,other_column')
     
+
+        
+      if(error) {
+      Alert.alert("Error", error.message);
+      return 
+    }	 else {
+			setDailyData(daily_track)
+		}
+
+  }
     
-    try {
-        const jsonValue = await AsyncStorage.getItem(sleep)
-        if (jsonValue !== null) {
-            let Data = JSON.parse(jsonValue);
-            setSleep(Data);
-        }
-    }
-    catch (error){
-        console.log(error.message);
-    }
-}
      
 
  
@@ -59,14 +113,16 @@ export default function CalendarScreen() {
 
 
       onVisibleMonthsChange={(months) => {console.log('now these months are visible', months);}}
-      // Max amount of months allowed to scroll to the past. Default = 50
-        pastScrollRange={12}
-    // Max amount of months allowed to scroll to the future. Default = 50
+      pastScrollRange={12}
       futureScrollRange={20}
-    // Enable or disable scrolling of calendar list
       scrollEnabled={true}
-    
+      markingType="multi-dot"
+      markedDates={events}
+      onDayPress={onDayPress} 
+     // onDayPress={(day) => {handleAddEvent}}
+      
       showScrollIndicator={true}
+      
 
       /> 
 
@@ -74,25 +130,6 @@ export default function CalendarScreen() {
 
 
 
-{/*    /// markedDates={{
-  ///      '2018-03-28': {
-          
-  ///        container: {
- //         style:{{backgroundColor:buttonColor, padding: 15}}
-  //    },
-  //    text: {
- //       color: 'black',
-  //      fontWeight: 'bold'
-  //    }
-  //     }
-  //     }}
-
- ///  markingType={'multi-dot'}
- ///  markedDates={{
- // '2023-10-25': {dots: [relax, sleep, exercise], selected: true, selectedColor: 'red'},
- // '2023-10-26': {dots: [sleep, exercise], disabled: true}
-  // }}
-   /> */}
 
 
 
