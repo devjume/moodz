@@ -1,11 +1,42 @@
-import React from 'react'
+import { useEffect, useState, useContext } from 'react'
 import styles from '../style/style';
-import { View, Dimensions, ScrollView } from "react-native";
+import { View, Dimensions, ScrollView, Alert } from "react-native";
 import { LineChart } from 'react-native-chart-kit';
+import { supabase } from '../lib/supabase';
+import { UserContext } from '../lib/UserContext';
 
 
 
 export default function StatisticsScreen() {
+
+  const { setIsLoggedIn, setSession, username, userID, session } = useContext(UserContext)
+
+  useEffect(() => {
+    getData()
+  }, [])
+
+
+  async function getData() {
+    let { data: category_track, error } = await supabase
+    .from('category_track')
+    .select('*')
+    .eq('id', session.user.id)
+
+    if(error) {
+      Alert.alert("Error", error.message);
+      return 
+    }
+
+    /* let relaxData = (category_track[0].relax_goal)/60;
+    let exerciseData = (category_track[0].exercise_goal)/60;
+    let sleepData = (category_track[0].sleep_goal)/60; */
+
+
+    console.log(category_track.category_id)
+    
+   
+
+  }
 
 
 
