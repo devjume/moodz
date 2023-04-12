@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({   
     
     container: {
-        flex: 1,
+        flex: 3,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#DCC9B6'
@@ -51,8 +51,13 @@ export default StyleSheet.create({
         fontWeight: "bold",
         margin: 10,
       },
+      activity:{
+        flex: 1,
+        fontSize: 20,
+        fontWeight: "bold",
+        margin: 10,
+      },
       row: {
-        marginTop: -200,
         flex: 1,
         flexDirection: "row",
         justifyContent: "center",
@@ -71,6 +76,9 @@ export default StyleSheet.create({
         alignItems: "center",
         textAlign:"center",
         backgroundColor:"#fafafa",
+        borderTopLeftRadius: 5,
+        borderBottomLeftRadius: 5,
+        padding: 4,
       },
       inputMinutes: {
         borderBottomWidth: 1,
@@ -82,13 +90,19 @@ export default StyleSheet.create({
         alignItems: "center",
         textAlign:"center",
         backgroundColor:"#fafafa",
+        borderBottomRightRadius: 5,
+        borderTopRightRadius: 5,
+        padding: 4,
       },
       calendar: {
+        flex: 1,
         padding: 10,
         backgroundColor: "#fafafa",
         width: 200,
         alignItems: "center",
-
+        borderWidth: 1,
+        borderRadius: 5,
+        height: 10,
       }
       //
 });      
