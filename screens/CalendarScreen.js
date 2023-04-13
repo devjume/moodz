@@ -2,13 +2,47 @@ import React, {useState, useEffect} from 'react';
 import styles from '../style/style';
 import { supabase } from '../lib/supabase';
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Text, View,} from "react-native";
+import { Text, View, Alert} from "react-native";
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 
 
 
 export default function CalendarScreen() {
 
+
+
+  useEffect(() => {
+    getDailyData()
+  }, [])
+
+  useEffect(() => {
+  }, [relax, exercise, sleep])
+
+
+  async function getDailyData () {
+    let { data: daily_track, error } = await supabase
+        .from('daily_track')
+        .select('some_column,other_column') 
+    
+
+        
+      if(error) {
+      Alert.alert("Error", error.message);
+      return 
+    }	 else {
+			setDailyData(daily_track)
+		}
+
+
+  
+    console.log(daily_track)
+      
+     
+  
+    }
+
+  
+    
 
 
 
@@ -81,24 +115,31 @@ export default function CalendarScreen() {
           setColor('blue')
       }
   }
+
+
+    const changeForm  = () => {
+      if (buttonColor='green') {
+        setColor('red')
+      }else if (buttonColor='red') {
+        setColor('green')
+      }else {
+        setColor('blue')
+      }
+    }
+
+
+    const changeActivityColor = () => {
+      if (buttonColor= 'green') {
+        setColor('red')
+      }else if (buttonColor='red') {
+        setColor('green')
+      }else {
+        setColor('blue')
+      }
+    }
     
 
-  async function getDailyData () {
-    let { data: daily_track, error } = await supabase
-        .from('daily_track')
-        .select('some_column,other_column')
-    
 
-        
-      if(error) {
-      Alert.alert("Error", error.message);
-      return 
-    }	 else {
-			setDailyData(daily_track)
-		}
-
-  }
-    
      
 
  
@@ -118,9 +159,8 @@ export default function CalendarScreen() {
       scrollEnabled={true}
       markingType="multi-dot"
       markedDates={events}
-      onDayPress={onDayPress} 
-     // onDayPress={(day) => {handleAddEvent}}
-      
+      onDayPress={onDayPress}
+  
       showScrollIndicator={true}
       
 
@@ -134,6 +174,7 @@ export default function CalendarScreen() {
 
 
     </View>
-  )
-}
+ 
+ )
 
+}
