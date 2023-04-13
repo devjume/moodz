@@ -1,12 +1,11 @@
 import React from 'react'
-import { Text, View, StyleSheet, SafeAreaView, Pressable, Alert, Modal } from "react-native";
+import { Text, View, StyleSheet, SafeAreaView, Pressable, Alert, Modal, ScrollView } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import { useEffect, useState, useContext } from 'react'
 import { AntDesign } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
 import DatePicker from '../components/DatePicker';
 import { UserContext } from '../lib/UserContext';
-
 import { fonts } from 'react-native-elements/dist/config';
 
 async function getData({setData}) {
@@ -18,11 +17,11 @@ async function getData({setData}) {
 			console.log("error", error)
 		} else {
 			setData(bad_habits)
-      console.log(bad_habits)
 		}
 } 
 
-async function addHabit(title, date, userID){
+async function addHabit(title, date, userID, dataArray, setData){
+
 
   const { data, error } = await supabase
   .from('bad_habits')
@@ -34,6 +33,14 @@ async function addHabit(title, date, userID){
     console.log("error", error)
   } else {
     console.log("data ines")
+    let date1 = date.toISOString()
+    const habitObject = {
+      title: title,
+      start_date: date1
+    };
+    dataArray.push(habitObject)
+    setData(dataArray)
+    console.log(dataArray)
   }
 
 }
@@ -68,7 +75,7 @@ export default function BadHabitScreen() {
           <Text style={styles.heading}>Time since bad habits:</Text>
         </View>
       </View>
-
+      <ScrollView>
       {
 				data.map((item) => {
 					return (
@@ -76,16 +83,16 @@ export default function BadHabitScreen() {
 					)
 				})
 			}
+      </ScrollView>
+      {modalVisible && <Form dataArray={data} setData={setData} userID={userID} addHabit={addHabit} editMode={editMode} setEditMode={setEditMode} setModalVisible={setModalVisible} modalVisible={modalVisible} oldName={modalName} oldDate={modalDate} setModalDate={setModalDate} setModalName={setModalName}/>}
 
-      {modalVisible && <Form userID={userID} addHabit={addHabit} editMode={editMode} setEditMode={setEditMode} setModalVisible={setModalVisible} modalVisible={modalVisible} oldName={modalName} oldDate={modalDate} setModalDate={setModalDate} setModalName={setModalName}/>}
 
-
-      <Button onPress={console.log(data)}></Button>
+      
     </SafeAreaView>
   )
 }
 
-const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName, editMode, setEditMode, addHabit, userID}) => {
+const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName, editMode, setEditMode, addHabit, userID, dataArray, setData}) => {
 
   const [newName, setNewName] = useState("")
   const [date, setDate] = useState(new Date());
@@ -118,8 +125,6 @@ const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, se
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => {
-                    //en vielä tiiä miten supabase toimii, kuitenkin, tässä eka tulisi setata Modalname newNameksi, jonka jälkeen se viedään databaseen ja tyhjennetään kentät
-                    console.log({newName})
                     setModalVisible(!modalVisible) 
                     setModalName("");
                     setModalDate("");
@@ -170,8 +175,7 @@ const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, se
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => {
-                    console.log(date)
-                    addHabit(newName, date, userID)
+                    addHabit(newName, date, userID, dataArray, setData)
                     setModalName("");
                     setDate(new Date())
                     setModalVisible(!modalVisible) 
