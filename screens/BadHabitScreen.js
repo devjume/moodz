@@ -45,12 +45,40 @@ async function addHabit(title, date, userID, dataArray, setData){
 
 }
 
+async function editHabit(title, date, habitID, oldName, oldDate){
+
+  console.log(title)
+  console.log(date)
+  console.log(habitID)
+  console.log(oldName)
+  console.log(oldDate)
+  
+  // editing habit works partially, date is always saved even if it doesn't change. Name won't be updated if name is same. Nii että juu
+
+  if (title == oldName) {
+    console.log("sama nimi")
+    const { data, error } = await supabase
+    .from('bad_habits')
+    .update({ start_date: date })
+    .eq("id", habitID)
+  } else {
+    console.log("eri nimi")
+    const { data, error } = await supabase
+    .from('bad_habits')
+    .update({ start_date: date, title: title})
+    .eq("id", habitID)
+  }
+
+
+}
+
 
 export default function BadHabitScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [modalName, setModalName] = useState("");
   const [modalDate, setModalDate] = useState("");
+  const [habitID, setHabitID] = useState(null);
   const [data, setData] = useState([])
   const { setIsLoggedIn, setSession, username, userID } = useContext(UserContext)
   
@@ -68,7 +96,7 @@ export default function BadHabitScreen() {
       <Pressable
         style={({ pressed }) => [styles.row, { backgroundColor: pressed ? "#DCC9B6" : "#FFEDD7" }]}
         onPress={()=>setModalVisible(true)}>
-        <Text style={styles.heading}>Add new habit.                        <AntDesign name="pluscircle" size={24} color="black" /></Text>
+        <Text style={styles.heading}>Add new habit.KEKSI TÄHÄN PAREMPI RATKAISU<AntDesign name="pluscircle" size={24} color="black" /></Text>
       </Pressable>
       <View style={[styles.row, {}]}>
         <View style={styles.card}>
@@ -79,12 +107,12 @@ export default function BadHabitScreen() {
       {
 				data.map((item) => {
 					return (
-						<Card key={item.id} name={item.title} date={item.start_date} favorite={item.favorite} editMode={editMode} setEditMode={setEditMode} modalVisible={modalVisible} setModalVisible={setModalVisible} setModalDate={setModalDate} setModalName={setModalName}/>
+						<Card key={item.id} id={item.id} name={item.title} date={item.start_date} favorite={item.favorite} editMode={editMode} setEditMode={setEditMode} modalVisible={modalVisible} setModalVisible={setModalVisible} setModalDate={setModalDate} setModalName={setModalName} setHabitID={setHabitID}/>
 					)
 				})
 			}
       </ScrollView>
-      {modalVisible && <Form dataArray={data} setData={setData} userID={userID} addHabit={addHabit} editMode={editMode} setEditMode={setEditMode} setModalVisible={setModalVisible} modalVisible={modalVisible} oldName={modalName} oldDate={modalDate} setModalDate={setModalDate} setModalName={setModalName}/>}
+      {modalVisible && <Form dataArray={data} editHabit={editHabit} setHabitID={setHabitID} habitID={habitID} setData={setData} userID={userID} addHabit={addHabit} editMode={editMode} setEditMode={setEditMode} setModalVisible={setModalVisible} modalVisible={modalVisible} oldName={modalName} oldDate={modalDate} setModalDate={setModalDate} setModalName={setModalName}/>}
 
 
       
@@ -92,9 +120,9 @@ export default function BadHabitScreen() {
   )
 }
 
-const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName, editMode, setEditMode, addHabit, userID, dataArray, setData}) => {
+const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName, editMode, setEditMode, addHabit, userID, dataArray, setData, habitID, setHabitID, editHabit}) => {
 
-  const [newName, setNewName] = useState("")
+  const [newName, setNewName] = useState(oldName)
   const [date, setDate] = useState(new Date());
 
   if (oldName == null || oldName == "") {
@@ -110,31 +138,36 @@ const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, se
             animationType="fade"
             transparent={true}
             visible={modalVisible}
+            //close form without changing anything
             onRequestClose={() => {
               setModalVisible(!modalVisible);
               setModalName("");
               setModalDate("");
               setNewName("");
               setEditMode(!editMode)
+              setHabitID(null)
             }}>
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
-                <Text style={styles.modalText}>Edit {oldName}</Text>
+                <Text style={styles.modalText}>Edit {oldName} habitID: {habitID}</Text>
                 <TextInput placeholder={oldName} onChangeText={t=>setNewName(t)}></TextInput>
-
+                <DatePicker date={date} setDate={setDate}/>
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
+                  //save form data, send edited info
                   onPress={() => {
+                    editHabit(newName, date, habitID, oldName, oldDate)
                     setModalVisible(!modalVisible) 
                     setModalName("");
                     setModalDate("");
                     setNewName("");
-                    setEditMode(!editMode)
+                    setHabitID(null);
+                    setEditMode(!editMode);
                   }}>
                   <Text style={styles.textStyle}>Save</Text>
                 </Pressable>
-
                 <Pressable
+                //close form without changing anything / part 2
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => {
                     setModalVisible(!modalVisible) 
@@ -142,6 +175,7 @@ const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, se
                     setModalDate("");
                     setNewName("")
                     setEditMode(!editMode)
+                    setHabitID(null)
                   }}>
                   <Text style={styles.textStyle}>Cancel</Text>
                 </Pressable>
@@ -203,7 +237,7 @@ const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, se
   
 }
 
-const Card = ({name, date, favorite, modalVisible, setModalVisible, setModalName, setModalDate, editMode={editMode}, setEditMode={setEditMode}}) => {
+const Card = ({id,name, date, favorite, modalVisible, setModalVisible, setModalName, setModalDate, setHabitID, editMode={editMode}, setEditMode={setEditMode}}) => {
 
 return (
   <Pressable
@@ -213,6 +247,7 @@ return (
       setModalVisible(!modalVisible)
       setModalName(name)
       setModalDate(date)
+      setHabitID(id)
     }}
   >
     <View style={styles.card}>
