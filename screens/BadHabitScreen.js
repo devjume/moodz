@@ -45,6 +45,17 @@ async function addHabit(title, date, userID, dataArray, setData){
 
 }
 
+async function delHabit(habitID){
+
+
+  const { data, error } = await supabase
+  .from('bad_habits')
+  .delete()
+  .eq('id', habitID)
+
+
+}
+
 async function editHabit(title, date, habitID, oldName, oldDate){
 
   console.log(title)
@@ -112,7 +123,7 @@ export default function BadHabitScreen() {
 				})
 			}
       </ScrollView>
-      {modalVisible && <Form dataArray={data} editHabit={editHabit} setHabitID={setHabitID} habitID={habitID} setData={setData} userID={userID} addHabit={addHabit} editMode={editMode} setEditMode={setEditMode} setModalVisible={setModalVisible} modalVisible={modalVisible} oldName={modalName} oldDate={modalDate} setModalDate={setModalDate} setModalName={setModalName}/>}
+      {modalVisible && <Form dataArray={data} delHabit={delHabit}editHabit={editHabit} setHabitID={setHabitID} habitID={habitID} setData={setData} userID={userID} addHabit={addHabit} editMode={editMode} setEditMode={setEditMode} setModalVisible={setModalVisible} modalVisible={modalVisible} oldName={modalName} oldDate={modalDate} setModalDate={setModalDate} setModalName={setModalName}/>}
 
 
       
@@ -120,7 +131,7 @@ export default function BadHabitScreen() {
   )
 }
 
-const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName, editMode, setEditMode, addHabit, userID, dataArray, setData, habitID, setHabitID, editHabit}) => {
+const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName, editMode, setEditMode, addHabit, userID, dataArray, setData, habitID, setHabitID, editHabit}) => {
 
   const [newName, setNewName] = useState(oldName)
   const [date, setDate] = useState(new Date());
@@ -179,7 +190,20 @@ const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, se
                   }}>
                   <Text style={styles.textStyle}>Cancel</Text>
                 </Pressable>
-                
+                <Pressable
+                //delete habit
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => {
+                    delHabit(habitID)
+                    setModalVisible(!modalVisible) 
+                    setModalName("");
+                    setModalDate("");
+                    setNewName("")
+                    setEditMode(!editMode)
+                    setHabitID(null)
+                  }}>
+                  <Text style={styles.textStyle}>poista pahe ja ala narkkaan tai röökään tai mitä vaa</Text>
+                </Pressable>
               </View>
             </View>
           </Modal>
