@@ -104,6 +104,13 @@ export default StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         height: 10,
-      }
+      },
       //
+
+      //Aarnen Css
+      dayStatHeader:{
+        fontSize: 20,
+        fontWeight: "bold",
+        margin: 10,
+      },
 });      

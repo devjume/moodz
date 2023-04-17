@@ -3,6 +3,7 @@ import styles from '../style/style';
 import { View, Text, Modal, TouchableOpacity, Pressable } from 'react-native';
 import { CalendarList } from 'react-native-calendars';
 import { supabase } from '../lib/supabase';
+import { Header } from 'react-native-elements';
 
 
 
@@ -57,7 +58,8 @@ export default function CalendarScreen() {
 
     return (
       <Modal  visible={modalVisible} animationType="slide">
-        <View style={styles.calendar}>
+        <View style={styles.container}>
+          <Text style={styles.dayStatHeader}>Day Statistics</Text>
           <Text>Date: {selectedDate}</Text> 
           <Text>Sleep: {event.sleep || '-'}</Text>
           <Text>Exercise: {event.exercise || '-'}</Text>
