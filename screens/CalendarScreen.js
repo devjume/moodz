@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../style/style';
-import { View, Text, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, Pressable } from 'react-native';
 import { CalendarList } from 'react-native-calendars';
 import { supabase } from '../lib/supabase';
 
@@ -10,6 +10,7 @@ import { supabase } from '../lib/supabase';
 export default function CalendarScreen() {
   const [selectedDate, setSelectedDate] = useState('');
   const [data, setData] = useState({});
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     fetchSupabaseData(selectedDate);
@@ -19,8 +20,7 @@ export default function CalendarScreen() {
     const { data, error } = await supabase
       .from('daily_track')
       .select('date, mood')
-      .gte('date', date)
-      .lte('date', `${date.slice(0, 4)}-12-31`);
+
 
     if (error) {
       console.error(error);
@@ -35,9 +35,10 @@ export default function CalendarScreen() {
 
   const handleDayPress = (day) => {
     setSelectedDate(day.dateString);
+    setModalVisible(true);
   };
 
-  const renderDay = (day) => {
+/*   const renderDay = (day) => {
     const date = day.dateString;
     const event = data[date] || {};
 
@@ -48,22 +49,22 @@ export default function CalendarScreen() {
         <Text>Relax: {event.relax || '-'}</Text>
       </View>
     );
-  };
+  };  */
 
 
   const renderModal = () => {
     const event = data[selectedDate] || {};
 
     return (
-      <Modal visible={modalVisible} animationType="slide">
-        <View>
-          <TouchableOpacity onPress={() => setModalVisible(false)}>
-            <Text>Close</Text>
-          </TouchableOpacity>
+      <Modal  visible={modalVisible} animationType="slide">
+        <View style={styles.calendar}>
           <Text>Date: {selectedDate}</Text> 
           <Text>Sleep: {event.sleep || '-'}</Text>
           <Text>Exercise: {event.exercise || '-'}</Text>
           <Text>Relax: {event.relax || '-'}</Text>
+          <TouchableOpacity onPress={() => setModalVisible(false)}>
+            <Text style={styles.buttonText}>Close</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
     );

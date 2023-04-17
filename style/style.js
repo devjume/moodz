@@ -100,6 +100,7 @@ export default StyleSheet.create({
         backgroundColor: "#fafafa",
         width: 200,
         alignItems: "center",
+        textAlign:"center",
         borderWidth: 1,
         borderRadius: 5,
         height: 10,
