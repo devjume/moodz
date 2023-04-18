@@ -1,9 +1,87 @@
 import React from 'react'
-import { Text, View, StyleSheet, SafeAreaView, Pressable, Alert, Modal } from "react-native";
-import { TextInput } from "react-native-paper";
-import { useEffect, useState } from 'react'
+import { Text, View, StyleSheet, SafeAreaView, Pressable, Alert, Modal, ScrollView } from "react-native";
+import { TextInput, Button } from "react-native-paper";
+import { useEffect, useState, useContext } from 'react'
 import { AntDesign } from '@expo/vector-icons';
+import { supabase } from '../lib/supabase';
+import DatePicker from '../components/DatePicker';
+import { UserContext } from '../lib/UserContext';
 import { fonts } from 'react-native-elements/dist/config';
+
+async function getData({setData}) {
+  let { data: bad_habits, error } = await supabase
+    .from('bad_habits')
+    .select('*')
+
+    if (error) {
+			console.log("error", error)
+		} else {
+			setData(bad_habits)
+		}
+} 
+
+async function addHabit(title, date, userID, dataArray, setData){
+
+
+  const { data, error } = await supabase
+  .from('bad_habits')
+  .insert([
+    { start_date: date, title: title, user_id: userID}
+  ])
+
+  if (error) {
+    console.log("error", error)
+  } else {
+    console.log("data ines")
+    let date1 = date.toISOString()
+    const habitObject = {
+      title: title,
+      start_date: date1
+    };
+    dataArray.push(habitObject)
+    setData(dataArray)
+    console.log(dataArray)
+  }
+
+}
+
+async function delHabit(habitID){
+
+
+  const { data, error } = await supabase
+  .from('bad_habits')
+  .delete()
+  .eq('id', habitID)
+
+
+}
+
+async function editHabit(title, date, habitID, oldName, oldDate){
+
+  console.log(title)
+  console.log(date)
+  console.log(habitID)
+  console.log(oldName)
+  console.log(oldDate)
+  
+  // editing habit works partially, date is always saved even if it doesn't change. Name won't be updated if name is same. Nii että juu
+
+  if (title == oldName) {
+    console.log("sama nimi")
+    const { data, error } = await supabase
+    .from('bad_habits')
+    .update({ start_date: date })
+    .eq("id", habitID)
+  } else {
+    console.log("eri nimi")
+    const { data, error } = await supabase
+    .from('bad_habits')
+    .update({ start_date: date, title: title})
+    .eq("id", habitID)
+  }
+
+
+}
 
 
 export default function BadHabitScreen() {
@@ -11,58 +89,59 @@ export default function BadHabitScreen() {
   const [editMode, setEditMode] = useState(false);
   const [modalName, setModalName] = useState("");
   const [modalDate, setModalDate] = useState("");
+  const [habitID, setHabitID] = useState(null);
+  const [data, setData] = useState([])
+  const { setIsLoggedIn, setSession, username, userID } = useContext(UserContext)
+  
+
+  useEffect(() => {
+    
+    getData({setData});
+
+  }, [])
   
   
-  const data = [
-    {
-      id: 1,
-      name: "Rööki",
-      date: "2023-03-31T07:17:49+0000"
-    },
-    {
-      id: 2,
-      name: "Huumeetki",
-      date: "2023-02-31T07:17:49+0000"
-    }
-  ]
 
   return (
     <SafeAreaView style={styles.container}>
       <Pressable
         style={({ pressed }) => [styles.row, { backgroundColor: pressed ? "#DCC9B6" : "#FFEDD7" }]}
         onPress={()=>setModalVisible(true)}>
-        <Text style={styles.heading}>Add new habit.                        <AntDesign name="pluscircle" size={24} color="black" /></Text>
+        <Text style={styles.heading}>Add new habit.KEKSI TÄHÄN PAREMPI RATKAISU<AntDesign name="pluscircle" size={24} color="black" /></Text>
       </Pressable>
       <View style={[styles.row, {}]}>
         <View style={styles.card}>
           <Text style={styles.heading}>Time since bad habits:</Text>
         </View>
       </View>
-
+      <ScrollView>
       {
 				data.map((item) => {
 					return (
-						<Card key={item.id} name={item.name} date={item.date} editMode={editMode} setEditMode={setEditMode} modalVisible={modalVisible} setModalVisible={setModalVisible} setModalDate={setModalDate} setModalName={setModalName}/>
+						<Card key={item.id} id={item.id} name={item.title} date={item.start_date} favorite={item.favorite} editMode={editMode} setEditMode={setEditMode} modalVisible={modalVisible} setModalVisible={setModalVisible} setModalDate={setModalDate} setModalName={setModalName} setHabitID={setHabitID}/>
 					)
 				})
 			}
+      </ScrollView>
+      {modalVisible && <Form dataArray={data} delHabit={delHabit}editHabit={editHabit} setHabitID={setHabitID} habitID={habitID} setData={setData} userID={userID} addHabit={addHabit} editMode={editMode} setEditMode={setEditMode} setModalVisible={setModalVisible} modalVisible={modalVisible} oldName={modalName} oldDate={modalDate} setModalDate={setModalDate} setModalName={setModalName}/>}
 
-      {modalVisible && <Form editMode={editMode} setEditMode={setEditMode} setModalVisible={setModalVisible} modalVisible={modalVisible} oldName={modalName} oldDate={modalDate} setModalDate={setModalDate} setModalName={setModalName}/>}
 
+      
     </SafeAreaView>
   )
 }
 
-const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName, editMode, setEditMode}) => {
+const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName, editMode, setEditMode, addHabit, userID, dataArray, setData, habitID, setHabitID, editHabit}) => {
 
-  const [newName, setNewName] = useState("")
+  const [newName, setNewName] = useState(oldName)
+  const [date, setDate] = useState(new Date());
 
   if (oldName == null || oldName == "") {
     oldName = "Name"
   }
 
   if (editMode==true) {
-    
+    //EDIT EXISTING HABIT
     return (
       <View style={styles.centeredView}>
           <Modal
@@ -70,33 +149,36 @@ const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, se
             animationType="fade"
             transparent={true}
             visible={modalVisible}
+            //close form without changing anything
             onRequestClose={() => {
               setModalVisible(!modalVisible);
               setModalName("");
               setModalDate("");
               setNewName("");
               setEditMode(!editMode)
+              setHabitID(null)
             }}>
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
-                <Text style={styles.modalText}>Edit {oldName}</Text>
+                <Text style={styles.modalText}>Edit {oldName} habitID: {habitID}</Text>
                 <TextInput placeholder={oldName} onChangeText={t=>setNewName(t)}></TextInput>
-
+                <DatePicker date={date} setDate={setDate}/>
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
+                  //save form data, send edited info
                   onPress={() => {
-                    //en vielä tiiä miten supabase toimii, kuitenkin, tässä eka tulisi setata Modalname newNameksi, jonka jälkeen se viedään databaseen ja tyhjennetään kentät
-                    console.log({newName})
+                    editHabit(newName, date, habitID, oldName, oldDate)
                     setModalVisible(!modalVisible) 
                     setModalName("");
                     setModalDate("");
                     setNewName("");
-                    setEditMode(!editMode)
+                    setHabitID(null);
+                    setEditMode(!editMode);
                   }}>
                   <Text style={styles.textStyle}>Save</Text>
                 </Pressable>
-
                 <Pressable
+                //close form without changing anything / part 2
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => {
                     setModalVisible(!modalVisible) 
@@ -104,10 +186,24 @@ const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, se
                     setModalDate("");
                     setNewName("")
                     setEditMode(!editMode)
+                    setHabitID(null)
                   }}>
                   <Text style={styles.textStyle}>Cancel</Text>
                 </Pressable>
-                
+                <Pressable
+                //delete habit
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => {
+                    delHabit(habitID)
+                    setModalVisible(!modalVisible) 
+                    setModalName("");
+                    setModalDate("");
+                    setNewName("")
+                    setEditMode(!editMode)
+                    setHabitID(null)
+                  }}>
+                  <Text style={styles.textStyle}>poista pahe ja ala narkkaan tai röökään tai mitä vaa</Text>
+                </Pressable>
               </View>
             </View>
           </Modal>
@@ -115,7 +211,7 @@ const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, se
         )
 
   } else {
-
+    //ADD NEW HABIT
     return (
       <View style={styles.centeredView}>
           <Modal
@@ -126,18 +222,31 @@ const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, se
             onRequestClose={() => {
               setModalVisible(!modalVisible);
               setModalName("");
-              setModalDate("");
+              setDate(new Date())
             }}>
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
                 <Text style={styles.modalText}>Add new habit</Text>
-                <TextInput>{oldName}</TextInput>
+                <TextInput placeholder={oldName} onChangeText={t=>setNewName(t)}></TextInput>
+                <DatePicker date={date} setDate={setDate}/>
+                {/* SAVE */}
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => {
+                    addHabit(newName, date, userID, dataArray, setData)
+                    setModalName("");
+                    setDate(new Date())
+                    setModalVisible(!modalVisible) 
+                  }}>
+                  <Text style={styles.textStyle}>Save</Text>
+                </Pressable>
+                {/* CANCEL */}
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => {
                     setModalVisible(!modalVisible) 
                     setModalName("");
-                    setModalDate("");
+                    setDate(new Date())
                   }}>
                   <Text style={styles.textStyle}>Cancel</Text>
                 </Pressable>
@@ -152,7 +261,7 @@ const Form = ({setModalVisible, modalVisible, oldName, oldDate, setModalDate, se
   
 }
 
-const Card = ({name, date, modalVisible, setModalVisible, setModalName, setModalDate, editMode={editMode}, setEditMode={setEditMode}}) => {
+const Card = ({id,name, date, favorite, modalVisible, setModalVisible, setModalName, setModalDate, setHabitID, editMode={editMode}, setEditMode={setEditMode}}) => {
 
 return (
   <Pressable
@@ -162,6 +271,7 @@ return (
       setModalVisible(!modalVisible)
       setModalName(name)
       setModalDate(date)
+      setHabitID(id)
     }}
   >
     <View style={styles.card}>

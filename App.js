@@ -91,11 +91,8 @@ export default function App() {
 
     return (
       <Stack.Navigator>
-        {isLoggedIn ? 
+        {isLoggedIn ? <>
           <Stack.Screen name="App" component={NormalNavigationStack} options={{headerShown: false }}/>
-           :  
-          <Stack.Screen name="Auth" component={AuthNavigationStack} options={{headerShown: false }}/>
-           }
           <Stack.Screen name="Profile" component={ProfileScreen} options={{
             headerTitleStyle: {
             fontWeight: "bold",
@@ -107,6 +104,11 @@ export default function App() {
             headerTintColor: "#DCC9B6",
           
           }} />
+          </>
+           :  
+          <Stack.Screen name="Auth" component={AuthNavigationStack} options={{headerShown: false }}/>
+           }
+          
       </Stack.Navigator>
     )
   }
