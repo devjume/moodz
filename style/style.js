@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
-   
+  
+export const BACKGROUND_COLOR = '#DCC9B6'
 
 export default StyleSheet.create({   
     
