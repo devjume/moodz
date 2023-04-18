@@ -13,10 +13,11 @@ import { supabase } from '../lib/supabase';
 
 export default function ProfileScreen() {
     
-    const { setIsLoggedIn, setSession, username, userID, session } = useContext(UserContext)
+    const { setIsLoggedIn, setSession, username, userID, userEmail, session } = useContext(UserContext)
     const [relax, setRelax] = useState(0);
     const [exercise, setExercise] = useState(0);
     const [sleep, setSleep] = useState(0);
+
 
     useEffect(() => {
       getGoals()
@@ -83,7 +84,7 @@ export default function ProfileScreen() {
     <View style={style.container}>
         <Ionicons name="person-circle-outline" size={128} color="#682C0E" />
         <Text style={style.name}>{username}</Text>
-        <Text style={style.email}>{session.user.email}</Text>
+        <Text style={style.email}>{userEmail}</Text>
 
         <CustomButton title={"Log out"} onClick={logOut} />
 
