@@ -1,6 +1,6 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import style from '../style/style';
-import { Button, Text, View } from 'react-native';
+import { Button, Text, View, StyleSheet } from 'react-native';
 import React, { useState } from "react";
 import { Pressable } from 'react-native';
 
@@ -25,7 +25,7 @@ export default function DatePicker({date, setDate}) {
     return (
         <View style={style.container}>
 
-            <Text>Date = {date.toISOString()}</Text>
+            <Text style={style.selectionHeader}>Date</Text>
 
 
             {datePicker && (
@@ -37,19 +37,19 @@ export default function DatePicker({date, setDate}) {
                     onChange={onDateSelected}
                     positiveButton={{textColor: 'green'}}
                     negativeButton={{textColor: 'red'}}
-                    style={{height: 10}}
                 />
             )}
 
             {!datePicker && (
-                <View style={{ margin: 10 }}>
+                <View style={{ margin: 10, height: 60}}>
                     <Pressable 
                     style={style.calendar}
                     onPress={showDatePicker}
                     textColor="#000000"
+                    
                     >
-                    <Text>Show date picker</Text></Pressable>
-                    <Text>{date.toISOString()}</Text>
+                    <Text>{date.toLocaleDateString()}</Text></Pressable>
+                    {/*<Text>{date.toISOString()}</Text>*/}
                 </View>
             )}
         </View>
