@@ -8,6 +8,8 @@ import DatePicker from '../components/DatePicker';
 import { UserContext } from '../lib/UserContext';
 import { fonts } from 'react-native-elements/dist/config';
 
+
+
 async function getData({setData}) {
   let { data: bad_habits, error } = await supabase
     .from('bad_habits')
@@ -34,35 +36,35 @@ async function addHabit(title, date, userID, dataArray, setData){
   } else {
     console.log("data ines")
     let date1 = date.toISOString()
+    
     const habitObject = {
       title: title,
       start_date: date1
-    };
-    dataArray.push(habitObject)
-    setData(dataArray)
-    console.log(dataArray)
+    }
+
+    //dataArray.push(habitObject)
+    //setData(dataArray)
+    //console.log(dataArray)
+    Alert.alert('Habit "'+ title + '" added')
+    
   }
 
 }
 
-async function delHabit(habitID){
-
+async function delHabit(habitID, title){
 
   const { data, error } = await supabase
   .from('bad_habits')
   .delete()
   .eq('id', habitID)
-
-
+  if (error) {
+    Alert.alert("Error deleting Habit", error)
+  } else {
+    Alert.alert('Habit "'+ title + '" deleted')
+  }
 }
 
 async function editHabit(title, date, habitID, oldName, oldDate){
-
-  console.log(title)
-  console.log(date)
-  console.log(habitID)
-  console.log(oldName)
-  console.log(oldDate)
   
   // editing habit works partially, date is always saved even if it doesn't change. Name won't be updated if name is same. Nii että juu
 
@@ -80,6 +82,7 @@ async function editHabit(title, date, habitID, oldName, oldDate){
     .eq("id", habitID)
   }
 
+  Alert.alert('Jipii muutoksia koska en oo konservatiivinen')
 
 }
 
@@ -125,8 +128,6 @@ export default function BadHabitScreen() {
       </ScrollView>
       {modalVisible && <Form dataArray={data} delHabit={delHabit}editHabit={editHabit} setHabitID={setHabitID} habitID={habitID} setData={setData} userID={userID} addHabit={addHabit} editMode={editMode} setEditMode={setEditMode} setModalVisible={setModalVisible} modalVisible={modalVisible} oldName={modalName} oldDate={modalDate} setModalDate={setModalDate} setModalName={setModalName}/>}
 
-
-      
     </SafeAreaView>
   )
 }
@@ -135,6 +136,16 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
 
   const [newName, setNewName] = useState(oldName)
   const [date, setDate] = useState(new Date());
+
+  function closeForm() {
+    setModalName("");
+    setModalDate("");
+    setNewName("")
+    setEditMode(false)
+    setHabitID(null)
+    setDate(new Date())
+    setModalVisible(false)
+  }
 
   if (oldName == null || oldName == "") {
     oldName = "Name"
@@ -151,12 +162,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
             visible={modalVisible}
             //close form without changing anything
             onRequestClose={() => {
-              setModalVisible(!modalVisible);
-              setModalName("");
-              setModalDate("");
-              setNewName("");
-              setEditMode(!editMode)
-              setHabitID(null)
+              closeForm()
             }}>
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
@@ -167,13 +173,12 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                   style={[styles.button, styles.buttonClose]}
                   //save form data, send edited info
                   onPress={() => {
-                    editHabit(newName, date, habitID, oldName, oldDate)
-                    setModalVisible(!modalVisible) 
-                    setModalName("");
-                    setModalDate("");
-                    setNewName("");
-                    setHabitID(null);
-                    setEditMode(!editMode);
+                    if (date> new Date()) {
+                      Alert.alert("You can't select a date from the future")
+                    } else {
+                      editHabit(newName, date, habitID, oldName, oldDate)
+                      closeForm()
+                    }
                   }}>
                   <Text style={styles.textStyle}>Save</Text>
                 </Pressable>
@@ -181,12 +186,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                 //close form without changing anything / part 2
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => {
-                    setModalVisible(!modalVisible) 
-                    setModalName("");
-                    setModalDate("");
-                    setNewName("")
-                    setEditMode(!editMode)
-                    setHabitID(null)
+                    closeForm()
                   }}>
                   <Text style={styles.textStyle}>Cancel</Text>
                 </Pressable>
@@ -194,13 +194,8 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                 //delete habit
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => {
-                    delHabit(habitID)
-                    setModalVisible(!modalVisible) 
-                    setModalName("");
-                    setModalDate("");
-                    setNewName("")
-                    setEditMode(!editMode)
-                    setHabitID(null)
+                    delHabit(habitID, newName)
+                    closeForm()
                   }}>
                   <Text style={styles.textStyle}>poista pahe ja ala narkkaan tai röökään tai mitä vaa</Text>
                 </Pressable>
@@ -220,9 +215,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => {
-              setModalVisible(!modalVisible);
-              setModalName("");
-              setDate(new Date())
+              closeForm()
             }}>
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
@@ -233,10 +226,12 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => {
+                    if (date> new Date()) {
+                      Alert.alert("You can't select a date from the future")
+                    } else {
                     addHabit(newName, date, userID, dataArray, setData)
-                    setModalName("");
-                    setDate(new Date())
-                    setModalVisible(!modalVisible) 
+                    closeForm()
+                    }
                   }}>
                   <Text style={styles.textStyle}>Save</Text>
                 </Pressable>
@@ -244,9 +239,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => {
-                    setModalVisible(!modalVisible) 
-                    setModalName("");
-                    setDate(new Date())
+                    closeForm()
                   }}>
                   <Text style={styles.textStyle}>Cancel</Text>
                 </Pressable>
@@ -255,10 +248,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
           </Modal>
         </View>
         )
-
   }
-
-  
 }
 
 const Card = ({id,name, date, favorite, modalVisible, setModalVisible, setModalName, setModalDate, setHabitID, editMode={editMode}, setEditMode={setEditMode}}) => {
