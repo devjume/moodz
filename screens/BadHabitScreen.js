@@ -7,9 +7,6 @@ import { AntDesign } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
 import DatePicker from '../components/DatePicker';
 import { UserContext } from '../lib/UserContext';
-import { fonts } from 'react-native-elements/dist/config';
-
-
 
 async function getData({setData}) {
   let { data: bad_habits, error } = await supabase
@@ -22,8 +19,6 @@ async function getData({setData}) {
 			setData(bad_habits)
 		}
 } 
-
-
 
 async function addHabit(title, date, userID, dataArray, setData){
 
@@ -89,7 +84,6 @@ async function editHabit(title, date, habitID, oldName, oldDate){
 
 }
 
-
 export default function BadHabitScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -99,15 +93,12 @@ export default function BadHabitScreen() {
   const [data, setData] = useState([])
   const { setIsLoggedIn, setSession, username, userID } = useContext(UserContext)
   
-
   useEffect(() => {
     
     getData({setData});
 
   }, [])
   
-  
-
   return (
     <SafeAreaView style={styles.container}>
       <Pressable
@@ -295,15 +286,15 @@ return (
     style={({ pressed }) => [styles.card, { backgroundColor: pressed ? "#DCC9B6" : "#FFEDD7" }]} 
     onPress={()=> {
       setEditMode(true)
-      setModalVisible(!modalVisible)
+      setModalVisible(true)
       setModalName(name)
       setModalDate(date)
       setHabitID(id)
     }}
   >
     <View>
-      <Text style={{textAlign: "center"}}>{name}</Text>
-      <Text style={{}}>{countUp(date)}</Text>
+      <Text style={{textAlign: "left", fontWeight:"bold", fontSize: 16}}>{name}</Text>
+      <Text style={{textAlign: "center", fontSize: 16}}>{countUp(date)}</Text>
     </View>
   </Pressable>
 )
@@ -326,7 +317,6 @@ const styles = StyleSheet.create({
   },
   textAlign: {
     textAlign: "center",
-    fontSize: 24
   },
   heading: {
     fontSize: 24
