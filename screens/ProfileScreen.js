@@ -13,29 +13,30 @@ import { supabase } from '../lib/supabase';
 
 export default function ProfileScreen() {
     
-    const { setIsLoggedIn, setSession, username, userID, session } = useContext(UserContext)
+    const { setIsLoggedIn, setSession, username, userID, userEmail, session } = useContext(UserContext)
     const [relax, setRelax] = useState(0);
     const [exercise, setExercise] = useState(0);
     const [sleep, setSleep] = useState(0);
+
 
     useEffect(() => {
       getGoals()
     }, [])
 
-    useEffect(() => {
-    }, [relax, exercise, sleep])
+    
 
     async function getGoals() {
+      try {
       let { data: profiles, error } = await supabase
       .from('profiles')
       .select('*')
-      .eq('id', session.user.id)
+      // .eq('id', session.user.id)
 
       if(error) {
         Alert.alert("Error", error.message);
         return 
       }
-
+      console.log(profiles)
       let relaxGoal = (profiles[0].relax_goal)/60;
       let exerciseGoal = (profiles[0].exercise_goal)/60;
       let sleepGoal = (profiles[0].sleep_goal)/60;
@@ -43,7 +44,9 @@ export default function ProfileScreen() {
       setRelax(relaxGoal)
       setExercise(exerciseGoal)
       setSleep(sleepGoal)
-     
+    } catch(error) {
+      console.log("try catch error, getGoals", error)
+    }
 
     }
     
@@ -83,7 +86,7 @@ export default function ProfileScreen() {
     <View style={style.container}>
         <Ionicons name="person-circle-outline" size={128} color="#682C0E" />
         <Text style={style.name}>{username}</Text>
-        <Text style={style.email}>{session.user.email}</Text>
+        <Text style={style.email}>{userEmail}</Text>
 
         <CustomButton title={"Log out"} onClick={logOut} />
 

@@ -9,33 +9,78 @@ import { UserContext } from '../lib/UserContext';
 
 export default function StatisticsScreen() {
 
+  const [sleepData, setSleepData] = useState("");
+  const [exerciseData, setExerciseData] = useState("");
+  const [relaxData, setRelaxData] = useState("");
+
+
   const { setIsLoggedIn, setSession, username, userID, session } = useContext(UserContext)
 
   useEffect(() => {
-    getData()
+    
+    getExerciseData()
+    getSleepData()
+    getRelaxData()
   }, [])
 
 
-  async function getData() {
-    let { data: category_track, error } = await supabase
+  async function getSleepData() {
+    
+    let { data, error } = await supabase
     .from('category_track')
-    .select('*')
-    .eq('id', session.user.id)
+    .select('minutes')
+    .eq('category_id', 1)
 
     if(error) {
       Alert.alert("Error", error.message);
+      console.log("reipas1")
       return 
     }
 
-    /* let relaxData = (category_track[0].relax_goal)/60;
-    let exerciseData = (category_track[0].exercise_goal)/60;
-    let sleepData = (category_track[0].sleep_goal)/60; */
+    let dataSleep = data;
 
-
-    console.log(category_track.category_id)
+    setSleepData(dataSleep)
     
-   
+  }
 
+  async function getExerciseData() {
+    
+    let { data, error } = await supabase
+    .from('category_track')
+    .select('minutes')
+    .eq('category_id', 2)
+
+    if(error) {
+      Alert.alert("Error", error.message);
+      console.log("reipas2")
+      return 
+    }
+
+    let dataExercise = data;
+
+    setExerciseData(dataExercise)
+    
+  }
+
+  async function getRelaxData() {
+    
+    let { data, error } = await supabase
+    .from('category_track')
+    .select('minutes')
+    .eq('category_id', 3)
+
+    if(error) {
+      Alert.alert("Error", error.message);
+      console.log("reipas3")
+      return 
+    }
+
+    let dataRelax = parseFloat(data)/60;
+
+    console.log("NNNN", dataRelax)
+
+    setRelaxData(dataRelax)
+    
   }
 
 
