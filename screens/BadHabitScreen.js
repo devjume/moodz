@@ -22,6 +22,8 @@ async function getData({setData}) {
 		}
 } 
 
+
+
 async function addHabit(title, date, userID, dataArray, setData){
 
 
@@ -110,11 +112,11 @@ export default function BadHabitScreen() {
       <Pressable
         style={({ pressed }) => [styles.row, { backgroundColor: pressed ? "#DCC9B6" : "#FFEDD7" }]}
         onPress={()=>setModalVisible(true)}>
-        <Text style={styles.heading}>Add new habit.KEKSI TÄHÄN PAREMPI RATKAISU<AntDesign name="pluscircle" size={24} color="black" /></Text>
+        <Text style={styles.heading}>Add new habit.                <AntDesign name="pluscircle" size={24} color="black" style={{justifyContent:"flex-end"}}/></Text>
       </Pressable>
       <View style={[styles.row, {}]}>
-        <View style={styles.card}>
-          <Text style={styles.heading}>Time since bad habits:</Text>
+        <View>
+          <Text style={styles.heading}>Time since bad habits: </Text>
         </View>
       </View>
       <ScrollView>
@@ -250,12 +252,44 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
         )
   }
 }
-
+//card component (one habit)
 const Card = ({id,name, date, favorite, modalVisible, setModalVisible, setModalName, setModalDate, setHabitID, editMode={editMode}, setEditMode={setEditMode}}) => {
+
+  function countUp(countFrom) {
+
+    const [time, setTime] = useState(new Date());
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setTime(new Date());
+      }, 1000);
+
+      return () => clearInterval(interval);
+
+    }, []);
+
+    countFrom = new Date(countFrom)
+
+    var now = new Date(),
+        countFrom = new Date(countFrom),
+        timeDifference = (now - countFrom);
+      
+    var secondsInADay = 60 * 60 * 1000 * 24,
+        secondsInAHour = 60 * 60 * 1000;
+      
+    days = Math.floor(timeDifference / (secondsInADay) * 1);
+    hours = Math.floor((timeDifference % (secondsInADay)) / (secondsInAHour) * 1);
+    minutes = Math.floor(((timeDifference % (secondsInADay)) % (secondsInAHour)) / (60 * 1000) * 1);
+    seconds = Math.floor((((timeDifference % (secondsInADay)) % (secondsInAHour)) % (60 * 1000)) / 1000 * 1);
+
+    return (
+      <Text>{days}d {hours}h {minutes}m {seconds}s</Text>
+    )
+  }
 
 return (
   <Pressable
-    style={({ pressed }) => [styles.row, { backgroundColor: pressed ? "#DCC9B6" : "#FFEDD7" }]} 
+    style={({ pressed }) => [styles.card, { backgroundColor: pressed ? "#DCC9B6" : "#FFEDD7" }]} 
     onPress={()=> {
       setEditMode(true)
       setModalVisible(!modalVisible)
@@ -264,8 +298,9 @@ return (
       setHabitID(id)
     }}
   >
-    <View style={styles.card}>
-      <Text style={styles.heading}>{name}: {date}</Text>
+    <View>
+      <Text style={{textAlign: "center"}}>{name}</Text>
+      <Text style={{}}>{countUp(date)}</Text>
     </View>
   </Pressable>
 )
@@ -335,5 +370,14 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: 'center',
     textDecorationLine: "underline"
+  },
+  card: {
+    flex:1,
+    borderWidth: 1,
+    padding: 20,
+    marginRight: 10,
+    marginLeft: 10,
+    marginTop: 10,
+    backgroundColor: "#FFEDD7"
   }
 });
