@@ -66,14 +66,25 @@ async function editHabit(title, date, habitID, oldName, oldDate){
   
   // editing habit works partially, date is always saved even if it doesn't change. Name won't be updated if name is same. Nii että juu
 
-  if (title == oldName) {
-    console.log("sama nimi")
+  console.log(oldDate)
+  console.log(date)
+
+  if (title == oldName && date == oldDate) {
+    return false 
+  } else if (title == oldName) {
+    console.log("1")
     const { data, error } = await supabase
     .from('bad_habits')
     .update({ start_date: date })
     .eq("id", habitID)
+  } else if (date == oldDate) {
+    console.log("2")
+    const { data, error } = await supabase
+    .from('bad_habits')
+    .update({ title: title})
+    .eq("id", habitID)
   } else {
-    console.log("eri nimi")
+    console.log("3")
     const { data, error } = await supabase
     .from('bad_habits')
     .update({ start_date: date, title: title})
@@ -128,13 +139,10 @@ export default function BadHabitScreen() {
 
 const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName, editMode, setEditMode, addHabit, userID, dataArray, setData, habitID, setHabitID, editHabit}) => {
 
-  
-
   const [newName, setNewName] = useState(oldName)
   const [date, setDate] = useState(new Date());
 
-  console.log("olddate", oldDate)
-  console.log("this date",date)
+  oldDate = new Date(oldDate)
 
   function closeForm() {
     setModalName("");
@@ -167,7 +175,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
               <View style={styles.modalView}>
                 <Text style={styles.modalText}>Edit {oldName} habitID: {habitID}</Text>
                 <TextInput placeholder={oldName} onChangeText={t=>setNewName(t)}></TextInput>
-                <DatePicker date={date} setDate={setDate}/>
+                <DatePicker date={oldDate} setDate={setDate}/>
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
                   //save form data, send edited info
