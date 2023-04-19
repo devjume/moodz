@@ -23,20 +23,20 @@ export default function ProfileScreen() {
       getGoals()
     }, [])
 
-    useEffect(() => {
-    }, [relax, exercise, sleep])
+    
 
     async function getGoals() {
+      try {
       let { data: profiles, error } = await supabase
       .from('profiles')
       .select('*')
-      .eq('id', session.user.id)
+      // .eq('id', session.user.id)
 
       if(error) {
         Alert.alert("Error", error.message);
         return 
       }
-
+      console.log(profiles)
       let relaxGoal = (profiles[0].relax_goal)/60;
       let exerciseGoal = (profiles[0].exercise_goal)/60;
       let sleepGoal = (profiles[0].sleep_goal)/60;
@@ -44,7 +44,9 @@ export default function ProfileScreen() {
       setRelax(relaxGoal)
       setExercise(exerciseGoal)
       setSleep(sleepGoal)
-     
+    } catch(error) {
+      console.log("try catch error, getGoals", error)
+    }
 
     }
     
