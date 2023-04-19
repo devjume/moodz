@@ -24,6 +24,7 @@ export default function StatisticsScreen() {
 
     if(error) {
       Alert.alert("Error", error.message);
+      console.log(category_track[0].category_id)
       return 
     }
 
@@ -32,7 +33,7 @@ export default function StatisticsScreen() {
     let sleepData = (category_track[0].sleep_goal)/60; */
 
 
-    console.log(category_track.category_id)
+    
     
    
 
