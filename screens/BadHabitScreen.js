@@ -106,7 +106,7 @@ export default function BadHabitScreen() {
         onPress={()=>setModalVisible(true)}>
         <Text style={styles.heading}>Add new habit.                <AntDesign name="pluscircle" size={24} color="black" style={{justifyContent:"flex-end"}}/></Text>
       </Pressable>
-      <View style={[styles.row, {}]}>
+      <View style={[styles.row, {marginBottom:12}]}>
         <View>
           <Text style={styles.heading}>Time since bad habits: </Text>
         </View>
@@ -128,8 +128,13 @@ export default function BadHabitScreen() {
 
 const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName, editMode, setEditMode, addHabit, userID, dataArray, setData, habitID, setHabitID, editHabit}) => {
 
+  
+
   const [newName, setNewName] = useState(oldName)
   const [date, setDate] = useState(new Date());
+
+  console.log(oldDate)
+  console.log(date)
 
   function closeForm() {
     setModalName("");
@@ -143,6 +148,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
 
   if (oldName == null || oldName == "") {
     oldName = "Name"
+    setModalName(oldName)
   }
 
   if (editMode==true) {
@@ -169,6 +175,8 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                   onPress={() => {
                     if (date> new Date()) {
                       Alert.alert("You can't select a date from the future")
+                    } else if (newName=="") {
+                      Alert.alert("Please input a name for your habit")
                     } else {
                       editHabit(newName, date, habitID, oldName, oldDate)
                       closeForm()
@@ -222,6 +230,8 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                   onPress={() => {
                     if (date> new Date()) {
                       Alert.alert("You can't select a date from the future")
+                    } else if (newName=="") {
+                      Alert.alert("Please input a name for your habit")
                     } else {
                     addHabit(newName, date, userID, dataArray, setData)
                     closeForm()
@@ -319,10 +329,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   heading: {
-    fontSize: 24
+    fontSize: 24,
+    fontWeight:"bold"
   },
   centeredView: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 22,
@@ -366,11 +376,19 @@ const styles = StyleSheet.create({
   },
   card: {
     flex:1,
-    borderWidth: 1,
     padding: 20,
     marginRight: 10,
     marginLeft: 10,
     marginTop: 10,
-    backgroundColor: "#FFEDD7"
+    marginBottom:12,
+    backgroundColor: "#FFEDD7",
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   }
 });
