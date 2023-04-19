@@ -133,8 +133,8 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
   const [newName, setNewName] = useState(oldName)
   const [date, setDate] = useState(new Date());
 
-  console.log(oldDate)
-  console.log(date)
+  console.log("olddate", oldDate)
+  console.log("this date",date)
 
   function closeForm() {
     setModalName("");
@@ -148,7 +148,6 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
 
   if (oldName == null || oldName == "") {
     oldName = "Name"
-    setModalName(oldName)
   }
 
   if (editMode==true) {
@@ -230,8 +229,6 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                   onPress={() => {
                     if (date> new Date()) {
                       Alert.alert("You can't select a date from the future")
-                    } else if (newName=="") {
-                      Alert.alert("Please input a name for your habit")
                     } else {
                     addHabit(newName, date, userID, dataArray, setData)
                     closeForm()
