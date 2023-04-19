@@ -1,31 +1,114 @@
-import { useEffect, useState, useContext } from 'react'
+import { useEffect, useState, useContext, useCallback } from 'react'
 import { supabase } from '../lib/supabase';
 import { UserContext } from '../lib/UserContext';
 import { Text, View, ScrollView, StyleSheet, FlatList, Alert, Pressable } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { CircularProgress } from 'react-native-circular-progress';
 import { ProgressBar } from 'react-native-paper';
+import { addDays } from 'date-fns'
 
 import styles, {BACKGROUND_COLOR} from '../style/style';
 import CustomButton from "../components/CustomButton"
 
 export default function HomeScreen({navigation}) {
-	const { setIsLoggedIn, setSession, username, userID } = useContext(UserContext)
-	const [categories, setCategories] = useState([])
-	const [date, setDate] = useState(new Date())
+	const { setIsLoggedIn, setSession, username } = useContext(UserContext)
+	const [todayDate, setTodayDate] = useState(new Date())
 	const [dailyData, setDailyData] = useState()
 
+	const [relaxValue, setRelaxValue] = useState(0)
+	const [exerciseValue, setExerciseValue] = useState(0)
+	const [sleepValue, setSleepValue] = useState(0)
+
+	const [relaxGoal, setRelaxGoal] = useState(0)
+	const [exerciseGoal, setExerciseGoal] = useState(0)
+	const [sleepGoal, setSleepGoal] = useState(0)
+
+	const [sleepProgress, setSleepProgress] = useState(0)
+
 	useEffect(() => {
-		const dbDateFormat = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
 
-		let { data, error } = supabase
-  		.from('daily_track')
-  		.select('*')
-			//.eq("date", dbDateFormat)
-			console.log(data)
-			console.log(error)
-
+		getUserGoals()
 	}, [])
+
+	useEffect(() => {
+		async function getDailyData() {
+			try {
+				const dbDateFormat = todayDate.toISOString().split("T")[0]
+				let { data: daily_track, error } = await supabase
+				.from('daily_track')
+				.select('id, mood, date, category_track(category_id, minutes, note)')
+				.eq("date", dbDateFormat)
+				
+				if (error) {
+					Alert.alert("Feth daily_track error", JSON.stringify(error))
+					console.log("Feth daily_track error", error)
+					setDailyData(null)
+				}
+
+				if (daily_track.length < 1) {
+					setSleepValue(0)
+					setExerciseValue(0)
+					setRelaxValue(0)
+				} else {
+					daily_track[0].category_track.forEach(element => {
+						switch(element.category_id) {
+							case 1:
+								setSleepValue(element)
+								break;
+							case 2:
+								setExerciseValue(element)
+								break;
+							case 3:
+								setRelaxValue(element)
+								break;
+						}
+					});
+				}
+
+				
+			} catch(error) {
+				console.log("getDailyData() catch error", error)
+			}
+		}
+
+		getDailyData()
+	}, [todayDate])
+
+	function calculateProgress(activity) {
+		let progress = 0;
+		switch(activity) {
+			case "sleep":
+				progress = ( sleepValue.minutes / sleepGoal)
+				break;
+			case "exercise":
+				progress = ( exerciseValue.minutes / exerciseGoal)
+				break;
+			case "relax":
+				progress = ( relaxValue.minutes / relaxGoal)
+				break;
+		}
+
+		if (!isFinite(progress)) {
+			return 0
+		} else {
+			return progress
+		}
+
+	}
+
+	async function getUserGoals() {
+		let { data: profiles, error } = await supabase
+  		.from('profiles')
+  		.select('sleep_goal, exercise_goal, relax_goal')
+		
+		if (error) {
+			console.log("Error fetching profile goals:", error)
+		}
+
+		setSleepGoal(profiles[0].sleep_goal)
+		setExerciseGoal(profiles[0].exercise_goal)
+		setRelaxGoal(profiles[0].relax_goal)
+	}
 
 	async function logOut() {
 		const { error } = await supabase.auth.signOut()
@@ -38,6 +121,7 @@ export default function HomeScreen({navigation}) {
 		setIsLoggedIn(false)
 	}
 	
+
 
 	async function selectDailyTrack() {
 		let { data: daily_track, error } = await supabase
@@ -78,11 +162,11 @@ export default function HomeScreen({navigation}) {
 	}
 
 	function moveBackwards() {
-		console.log("back")
+		setTodayDate(addDays(todayDate, -1));
 	}
 
 	function moveForward() {
-		console.log("forward")
+		setTodayDate(addDays(todayDate, 1));
 	}
 
 	function CustomBar({title, progress, color}) {
@@ -118,7 +202,7 @@ export default function HomeScreen({navigation}) {
 					<Pressable onPress={moveBackwards} style={({pressed}) => [{backgroundColor: pressed ? 'rgba(103, 65, 80, 0.2)': 'rgba(103, 65, 80, 0.0)', borderRadius: 100, padding: 14}]} >
 						<Ionicons name="arrow-back" size={30} color={"black"}  />
 					</Pressable>
-					<Text style={screen.title}>{date.getDate()}.{date.getMonth()}</Text>
+					<Text style={screen.title}>{todayDate.getDate()}.{todayDate.getMonth()}</Text>
 					<Pressable onPress={moveForward} style={({pressed}) => [{backgroundColor: pressed ? 'rgba(103, 65, 80, 0.2)': 'rgba(103, 65, 80, 0.0)', borderRadius: 100, padding: 14}]} >
 						<Ionicons name="arrow-forward" size={30} color={"black"} />	
 					</Pressable>
@@ -137,9 +221,9 @@ export default function HomeScreen({navigation}) {
 				children={(e) => <Text style={{fontWeight: "bold", fontSize: 28}}>{e}</Text>}
 				/>
 			<View style={screen.barContainer}>
-				<CustomBar title={"Relax"} progress={0.4} color={"#498467"} />
-				<CustomBar title={"Exercise"} progress={0.4} color={"#C44536"}/>
-				<CustomBar title={"Sleep"} progress={0.8} color={"#8B95DF"}/>
+				<CustomBar title={"Sleep"} progress={calculateProgress("sleep")} color={"#8B95DF"}/>
+				<CustomBar title={"Exercise"} progress={calculateProgress("exercise")} color={"#C44536"}/>
+				<CustomBar title={"Relax"} progress={calculateProgress("sleep")} color={"#498467"} />
 			</View>
 		</ScrollView>
 	);
