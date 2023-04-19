@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
-   
+  
+export const BACKGROUND_COLOR = '#DCC9B6'
 
 export default StyleSheet.create({   
     
@@ -100,9 +101,17 @@ export default StyleSheet.create({
         backgroundColor: "#fafafa",
         width: 200,
         alignItems: "center",
+        textAlign:"center",
         borderWidth: 1,
         borderRadius: 5,
         height: 10,
-      }
+      },
       //
+
+      //Aarnen Css
+      dayStatHeader:{
+        fontSize: 20,
+        fontWeight: "bold",
+        margin: 10,
+      },
 });      
