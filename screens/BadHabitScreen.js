@@ -1,5 +1,6 @@
 import React from 'react'
 import { Text, View, StyleSheet, SafeAreaView, Pressable, Alert, Modal, ScrollView } from "react-native";
+import { useFocusEffect } from '@react-navigation/native';
 import { TextInput, Button } from "react-native-paper";
 import { useEffect, useState, useContext } from 'react'
 import { AntDesign } from '@expo/vector-icons';
@@ -259,14 +260,16 @@ const Card = ({id,name, date, favorite, modalVisible, setModalVisible, setModalN
 
     const [time, setTime] = useState(new Date());
 
-    useEffect(() => {
-      const interval = setInterval(() => {
-        setTime(new Date());
-      }, 1000);
-
-      return () => clearInterval(interval);
-
-    }, []);
+    useFocusEffect(
+      React.useCallback(() => {
+        const interval = setInterval(() => {
+          setTime(new Date());
+        }, 1000);
+        return () => {
+          clearInterval(interval);
+        };
+      }, [])
+    );
 
     countFrom = new Date(countFrom)
 
