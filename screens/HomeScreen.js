@@ -23,7 +23,7 @@ export default function HomeScreen({navigation}) {
 	const [exerciseGoal, setExerciseGoal] = useState(0)
 	const [sleepGoal, setSleepGoal] = useState(0)
 
-	const [sleepProgress, setSleepProgress] = useState(0)
+	const [overallProgress, setOverallProgress] = useState(0)
 
 	useEffect(() => {
 
@@ -49,20 +49,32 @@ export default function HomeScreen({navigation}) {
 					setSleepValue(0)
 					setExerciseValue(0)
 					setRelaxValue(0)
+					calculateOverallProgress(0,0,0)
 				} else {
+
+					let sleepMin = 0
+					let exerciseMin = 0
+					let relaxMin = 0
+
 					daily_track[0].category_track.forEach(element => {
 						switch(element.category_id) {
 							case 1:
 								setSleepValue(element)
+								sleepMin = element.minutes
 								break;
 							case 2:
 								setExerciseValue(element)
+								exerciseMin = element.minutes
 								break;
 							case 3:
 								setRelaxValue(element)
+								relaxMin = element.minutes
 								break;
 						}
 					});
+
+					calculateOverallProgress(sleepMin, exerciseMin, relaxMin)
+
 				}
 
 				
@@ -72,7 +84,20 @@ export default function HomeScreen({navigation}) {
 		}
 
 		getDailyData()
+		
 	}, [todayDate])
+	
+	function calculateOverallProgress(sleepMin, exerciseMin, relaxMin) {
+		if (sleepMin + exerciseMin + relaxMin === 0 ) {
+			setOverallProgress(0)
+		}
+
+		const overAllMinutes = sleepMin + exerciseMin + relaxMin
+		const overAllGoals = sleepGoal + exerciseGoal + relaxGoal
+		const progress = Math.ceil((overAllMinutes / overAllGoals)* 100)
+		
+		setOverallProgress(isNaN(progress) ? 0 : progress)
+	}
 
 	function calculateProgress(activity) {
 		let progress = 0;
@@ -121,8 +146,6 @@ export default function HomeScreen({navigation}) {
 		setIsLoggedIn(false)
 	}
 	
-
-
 	async function selectDailyTrack() {
 		let { data: daily_track, error } = await supabase
   		.from('daily_track')
@@ -202,7 +225,7 @@ export default function HomeScreen({navigation}) {
 					<Pressable onPress={moveBackwards} style={({pressed}) => [{backgroundColor: pressed ? 'rgba(103, 65, 80, 0.2)': 'rgba(103, 65, 80, 0.0)', borderRadius: 100, padding: 14}]} >
 						<Ionicons name="arrow-back" size={30} color={"black"}  />
 					</Pressable>
-					<Text style={screen.title}>{todayDate.getDate()}.{todayDate.getMonth()}</Text>
+					<Text style={screen.title}>{todayDate.getDate()}.{todayDate.getMonth()+1}</Text>
 					<Pressable onPress={moveForward} style={({pressed}) => [{backgroundColor: pressed ? 'rgba(103, 65, 80, 0.2)': 'rgba(103, 65, 80, 0.0)', borderRadius: 100, padding: 14}]} >
 						<Ionicons name="arrow-forward" size={30} color={"black"} />	
 					</Pressable>
@@ -211,7 +234,7 @@ export default function HomeScreen({navigation}) {
 			<CircularProgress
   			size={130}
   			width={18}
-  			fill={33}
+  			fill={overallProgress}
   			tintColor="#498467"
 				arcSweepAngle={270}
 				rotation={225}
@@ -223,7 +246,7 @@ export default function HomeScreen({navigation}) {
 			<View style={screen.barContainer}>
 				<CustomBar title={"Sleep"} progress={calculateProgress("sleep")} color={"#8B95DF"}/>
 				<CustomBar title={"Exercise"} progress={calculateProgress("exercise")} color={"#C44536"}/>
-				<CustomBar title={"Relax"} progress={calculateProgress("sleep")} color={"#498467"} />
+				<CustomBar title={"Relax"} progress={calculateProgress("relax")} color={"#498467"} />
 			</View>
 		</ScrollView>
 	);

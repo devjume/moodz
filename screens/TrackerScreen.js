@@ -10,7 +10,7 @@ import { UserContext } from '../lib/UserContext';
 
 export default function TrackerScreen() {
 
-  const [activity, setActivity] = useState("");
+  const [activity, setActivity] = useState("0");
   const [hours, setHours] = useState("")
   const [minutes, setMinutes] = useState("")
   //const [total, setTotal] = useState("")
@@ -48,34 +48,95 @@ export default function TrackerScreen() {
     console.log(category)
   }, [category])
 
+  useEffect(() => {
+    async function fetchData() {
+      try {
 
-  async function fetchIdAndCategory(dailyId){
-    if(dailyId !== undefined){
-      try{
+        let dailyID = await fetchDailyId()
+        console.log("dailyID Tässä", dailyID)
+
+        let fetchItems = await fetchCategoryItems(dailyID, activity)
+        console.log("Kissa Tässä", fetchItems)
+
+        if(fetchItems === undefined) {
+          setMinutes("")
+          setHours("")
+          setNotes("")
+          return 
+        }
+
+        if (fetchItems.length > 0) {
+          let mins = (fetchItems[0].minutes % 60).toString()
+          let hrs = parseInt(fetchItems[0].minutes / 60).toString()
+          let notes1 = fetchItems[0].note
+          let actv = parseInt(fetchItems[0].category_id)
+          console.log("Mins", mins)
+          console.log("hrs", hrs)
+          console.log("notes", notes1)
+          console.log("actv", actv)
+
+          setMinutes(mins)
+          setHours(hrs)
+          setNotes(notes1)
+          setActivity(actv)
+        }
+      } catch (error) {
+        console.log("fetchData error", error);
+      }
+    }
+
+    fetchData();
+  }, [date]);
+
+  async function fetchCategoryItems(dailyId, activity) {
+    if (dailyId !== undefined) {
+      try {
         let { data, error } = await supabase
           .from('category_track')
           .select("*")
-          .eq('daily_id', dailyId )
-          .eq('category_id', parseInt(activity) )
-          console.log(dailyId)
-          console.log(activity)
-          console.log(data)
-          ///return {id : data[0].id, daily_id: data[0].daily_id, minutes: data[0].minutes, notes: data[0].note, category: data[0].category}
-          return data[0].id
+          .eq('daily_id', dailyId)
+          .eq('category_id', parseInt(activity))
+        if (error) {
+          console.log("fetchCategoryItems supabase error", error)
         }
-        catch (error) {
-          console.log("fetchIdAndCategory error", error)
-        }
-    }else{
+        
+        return data
+      }
+      catch (error) {
+        console.log("fetchCategoryItems error", error)
+      }
+    } else {
       return undefined
     }
-    
-    
   }
+
+  async function fetchIdAndCategory(dailyId) {
+    if (dailyId !== undefined) {
+      try {
+        let { data, error } = await supabase
+          .from('category_track')
+          .select("*")
+          .eq('daily_id', dailyId)
+          .eq('category_id', parseInt(activity))
+
+        console.log("fetchIdAndCategory data", data)
+        console.log("fetchIdAndCategory error", error)
+        ///return {id : data[0].id, daily_id: data[0].daily_id, minutes: data[0].minutes, notes: data[0].note, category: data[0].category}
+        return data[0].id
+      }
+      catch (error) {
+        console.log("fetchIdAndCategory error", error)
+      }
+    } else {
+      return undefined
+    }
+  }
+
+
 
   async function insertCategoryTrack(idAndCategory = undefined, dailyId) {
     try {
-      
+
       let hoursToMinutes = (parseInt(hours) || 0) * 60
       let totalMinutes = hoursToMinutes + (parseInt(minutes) || 0)
 
@@ -84,9 +145,9 @@ export default function TrackerScreen() {
         .upsert([
           { id: idAndCategory, category_id: activity, minutes: totalMinutes, note: notes, daily_id: dailyId, user_id: userID }
         ])
-        
+
     }
-    catch (error){
+    catch (error) {
       console.log("insertCategoryTrack error", error)
     }
 
@@ -104,13 +165,13 @@ export default function TrackerScreen() {
         .from('daily_track')
         .select("*")
         .eq('date', wholeDate)
-        console.log(data)
-        console.log(error)
-        if (data.length === 0) {
-          return undefined
-        } else {
-          return data[0].id
-        }
+      console.log("fetchDailyId data: ", data)
+      console.log("fetchDailyId error: ", error)
+      if (data.length === 0) {
+        return undefined
+      } else {
+        return data[0].id
+      }
     } catch (error) {
       console.log("fetchDailyId error", error)
       return undefined
@@ -126,8 +187,7 @@ export default function TrackerScreen() {
           { id: dailyId, user_id: userID, mood: mood, date: date },
         ]))
         .select()
-      console.log("insert happended here")
-      console.log(data)
+      console.log("insertDailyTrack error: ", error)
 
       if (data === []) {
         return undefined
@@ -135,31 +195,49 @@ export default function TrackerScreen() {
         return data[0].id
       }
 
-      
+
     } catch (error) {
       console.log("error insertDailyTrack", error)
       return
     }
   }
 
-  async function insertDailyAndCategory() {
-    try{
-      let dailyId = await fetchDailyId()
-    if (dailyId === undefined) {
-      console.log("Luodaan uusi")
-      dailyId = await insertDailyTrack(dailyId)
-      insertCategoryTrack(undefined, dailyId)
-    } else {
-      console.log("Päivitä dailytrack tässä")
-      console.log(dailyId)
-      const idAndCategory = await fetchIdAndCategory(dailyId )
-      insertCategoryTrack(idAndCategory,dailyId)
+  async function updateMood() {
+    let dailyId = await fetchDailyId()
+    try {
+      let { data, error } = await supabase
+        .from('daily_track')
+        .upsert(([
+          { id: dailyId, user_id: userID, mood: mood, date: date },
+        ]))
+        .select()
+      console.log("updateMood error: ", error)
+
+
+    } catch (error) {
+      console.log("error updateMood", error)
+      return
     }
-    
+  }
+
+  async function insertDailyAndCategory() {
+    try {
+      let dailyId = await fetchDailyId()
+      if (dailyId === undefined) {
+        console.log("Luodaan uusi")
+        dailyId = await insertDailyTrack(dailyId)
+        insertCategoryTrack(undefined, dailyId)
+      } else {
+        console.log("Päivitä dailytrack tässä")
+        console.log(dailyId)
+        const idAndCategory = await fetchIdAndCategory(dailyId)
+        insertCategoryTrack(idAndCategory, dailyId)
+      }
+
     } catch (error) {
       console.log("insertDailyAndCategory error", error)
     }
-    
+
   }
 
 
@@ -274,8 +352,8 @@ export default function TrackerScreen() {
               </Pressable>
             </View>
             <View style={styles.date}>
-              <DatePicker date={date} setDate={setDate} />
-              <Pressable style={styles.button} onPress={() => insertDailyTrack()}>
+              <DatePicker date={date} setDate={setDate} fetchDailyId={fetchDailyId} kissa="koira" activity={"isask"} setMinutes={setMinutes} setHours={setHours} setNotes={setNotes} />
+              <Pressable style={styles.button} onPress={() => updateMood()}>
                 <Text>Save</Text>
               </Pressable>
             </View></> : <><View style={styles.row}>
