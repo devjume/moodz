@@ -11,7 +11,7 @@ import styles, {BACKGROUND_COLOR} from '../style/style';
 import CustomButton from "../components/CustomButton"
 
 export default function HomeScreen({navigation}) {
-	const { setIsLoggedIn, setSession, username } = useContext(UserContext)
+	const { setIsLoggedIn, setSession,  } = useContext(UserContext)
 	const [todayDate, setTodayDate] = useState(new Date())
 	const [dailyData, setDailyData] = useState()
 
