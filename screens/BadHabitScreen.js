@@ -13,6 +13,7 @@ async function getData({setData}) {
   let { data: bad_habits, error } = await supabase
     .from('bad_habits')
     .select('*')
+    .order('start_date')
 
     if (error) {
 			Alert.alert('Error getting data')
@@ -40,9 +41,9 @@ async function addHabit(title, newDate, userID, dataArray, setData){
       start_date: date1
     }
 
-    dataArray.push(habitObject)
+    /* dataArray.push(habitObject)
     setData(dataArray)
-    console.log(dataArray)
+    console.log(dataArray) */
     Alert.alert('Habit "'+ title + '" added')
     
   }
@@ -67,7 +68,7 @@ async function editHabit(title, date, habitID, oldName, oldDate){
   let oldDateString = String(oldDate)
   let dateString = String(date)
 
-  //name and date are old data. So nothing changed
+  //name and date are same as old data. So nothing changed
    if (title == oldName && dateString == oldDateString) {
     Alert.alert('Nothing was changed')
   } 
@@ -116,6 +117,7 @@ export default function BadHabitScreen() {
   const [modalDate, setModalDate] = useState("");
   const [habitID, setHabitID] = useState(null);
   const [data, setData] = useState([])
+  
   const { setIsLoggedIn, setSession, username, userID } = useContext(UserContext)
   
   useEffect(() => {
@@ -393,7 +395,6 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: 'center',
-    textDecorationLine: "underline"
   },
   card: {
     flex:1,
@@ -403,6 +404,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom:12,
     backgroundColor: "#FFEDD7",
+    /* ------------------------- */ 
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
