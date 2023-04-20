@@ -20,29 +20,29 @@ async function getData({setData}) {
 		}
 } 
 
-async function addHabit(title, date, userID, dataArray, setData){
+async function addHabit(title, newDate, userID, dataArray, setData){
 
 
   const { data, error } = await supabase
   .from('bad_habits')
   .insert([
-    { start_date: date, title: title, user_id: userID}
+    { start_date: newDate, title: title, user_id: userID}
   ])
 
   if (error) {
     console.log("error", error)
   } else {
     console.log("data ines")
-    let date1 = date.toISOString()
+    let date1 = newDate.toISOString()
     
     const habitObject = {
       title: title,
       start_date: date1
     }
 
-    //dataArray.push(habitObject)
-    //setData(dataArray)
-    //console.log(dataArray)
+    dataArray.push(habitObject)
+    setData(dataArray)
+    console.log(dataArray)
     Alert.alert('Habit "'+ title + '" added')
     
   }
@@ -107,6 +107,7 @@ export default function BadHabitScreen() {
   useEffect(() => {
     
     getData({setData});
+    console.log("infit")
 
   }, [])
   
@@ -115,7 +116,7 @@ export default function BadHabitScreen() {
       <Pressable
         style={({ pressed }) => [styles.row, { backgroundColor: pressed ? "#DCC9B6" : "#FFEDD7" }]}
         onPress={()=>setModalVisible(true)}>
-        <Text style={styles.heading}>Add new habit.                <AntDesign name="pluscircle" size={24} color="black" style={{justifyContent:"flex-end"}}/></Text>
+        <Text style={styles.heading}>Add new habit                  <AntDesign name="pluscircle" size={24} color="black" style={{justifyContent:"flex-end"}}/></Text>
       </Pressable>
       <View style={[styles.row, {marginBottom:12}]}>
         <View>
@@ -139,10 +140,12 @@ export default function BadHabitScreen() {
 
 const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName, editMode, setEditMode, addHabit, userID, dataArray, setData, habitID, setHabitID, editHabit}) => {
 
-  const [newName, setNewName] = useState(oldName)
-  const [date, setDate] = useState(new Date());
-
   oldDate = new Date(oldDate)
+
+  const [newName, setNewName] = useState(oldName)
+  const [date, setDate] = useState(oldDate);
+  const [newDate, setNewDate] = useState(new Date());
+  
 
   function closeForm() {
     setModalName("");
@@ -174,8 +177,8 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
                 <Text style={styles.modalText}>Edit {oldName} habitID: {habitID}</Text>
-                <TextInput placeholder={oldName} onChangeText={t=>setNewName(t)}></TextInput>
-                <DatePicker date={oldDate} setDate={setDate}/>
+                <TextInput defaultValue={oldName} onChangeText={t=>setNewName(t)}></TextInput>
+                <DatePicker date={date} setDate={setDate}/>
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
                   //save form data, send edited info
@@ -229,8 +232,8 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
                 <Text style={styles.modalText}>Add new habit</Text>
-                <TextInput placeholder={oldName} onChangeText={t=>setNewName(t)}></TextInput>
-                <DatePicker date={date} setDate={setDate}/>
+                <TextInput placeholder="Habit name" onChangeText={t=>setNewName(t)}></TextInput>
+                <DatePicker date={newDate} setDate={setNewDate}/>
                 {/* SAVE */}
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
@@ -238,7 +241,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                     if (date> new Date()) {
                       Alert.alert("You can't select a date from the future")
                     } else {
-                    addHabit(newName, date, userID, dataArray, setData)
+                    addHabit(newName, newDate, userID, dataArray, setData)
                     closeForm()
                     }
                   }}>
