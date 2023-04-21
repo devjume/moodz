@@ -10,8 +10,8 @@ import { UserContext } from '../lib/UserContext';
 export default function StatisticsScreen() {
 
   const [sleepData, setSleepData] = useState([]);
-  const [exerciseData, setExerciseData] = useState("");
-  const [relaxData, setRelaxData] = useState("");
+  const [exerciseData, setExerciseData] = useState([]);
+  const [relaxData, setRelaxData] = useState([]);
 
 
   const { setIsLoggedIn, setSession, username, userID, session } = useContext(UserContext)
@@ -24,7 +24,7 @@ export default function StatisticsScreen() {
    
   }, [])
 
-  console.log(sleepData)
+  
 
   async function getSleepData() {
     
@@ -115,7 +115,7 @@ export default function StatisticsScreen() {
     useShadowColorFromDataset: false 
   };
 
-  const sleep = {
+  let sleep = {
     labels: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
     datasets: [
       {
@@ -129,7 +129,7 @@ export default function StatisticsScreen() {
     legend: ["Sleep(hours)"] 
   };
 
-  const exercise = {
+  let exercise = {
     labels: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
     datasets: [
       {
@@ -143,7 +143,7 @@ export default function StatisticsScreen() {
     legend: ["Exercise(hours)"] 
   };
 
-  const relax = {
+  let relax = {
     labels: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
     datasets: [
       {
@@ -151,7 +151,7 @@ export default function StatisticsScreen() {
         //supabasedata tähän->
         data: relaxData,
         color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, 
-        strokeWidth: 7 
+        strokeWidth: 2 
       }
     ],
     legend: ["Relax(hours)"] 
@@ -165,30 +165,36 @@ export default function StatisticsScreen() {
       
       <ScrollView>
       
-
-      <LineChart
+      {sleepData.length > 0 &&
+        <LineChart
         data={sleep}
          width={screenWidth}
          height={250}
          chartConfig={chartConfig}
          fromZero={true}
-      />
+      /> 
+      }
+       
 
-      <LineChart
+       {exerciseData.length > 0 &&
+        <LineChart
         data={exercise}
          width={screenWidth}
          height={250}
-         fromZero={true}
          chartConfig={chartConfig}
-      />
+         fromZero={true}
+      /> 
+      }
 
-      <LineChart
+      {relaxData.length > 0 &&
+        <LineChart
         data={relax}
          width={screenWidth}
          height={250}
          chartConfig={chartConfig}
          fromZero={true}
-      />
+      /> 
+      }
 
     </ScrollView>
 
