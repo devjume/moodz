@@ -10,7 +10,7 @@ import { UserContext } from '../lib/UserContext';
 
 export default function TrackerScreen() {
 
-  const [activity, setActivity] = useState("0");
+  const [activity, setActivity] = useState("");
   const [hours, setHours] = useState("")
   const [minutes, setMinutes] = useState("")
   //const [total, setTotal] = useState("")
@@ -20,8 +20,6 @@ export default function TrackerScreen() {
   const [notes, setNotes] = useState("")
   const { setIsLoggedIn, setSession, username, userID } = useContext(UserContext)
 
-
-  //const activities = ["Sleep", "Exercise", "Relax"];
 
   useEffect(() => {
     async function fetchCategories() {
@@ -44,9 +42,11 @@ export default function TrackerScreen() {
     fetchCategories()
   }, [])
 
+
   useEffect(() => {
-    console.log(category)
+    console.log("category UseEffect")
   }, [category])
+
 
   useEffect(() => {
     async function fetchData() {
@@ -57,8 +57,9 @@ export default function TrackerScreen() {
 
         let fetchItems = await fetchCategoryItems(dailyID, activity)
         console.log("Kissa Tässä", fetchItems)
+        console.log("activity", category[0])
 
-        if(fetchItems === undefined) {
+        if( fetchItems === undefined || fetchItems.length === 0 ){
           setMinutes("")
           setHours("")
           setNotes("")
@@ -86,7 +87,7 @@ export default function TrackerScreen() {
     }
 
     fetchData();
-  }, [date]);
+  }, [date, activity]);
 
   async function fetchCategoryItems(dailyId, activity) {
     if (dailyId !== undefined) {
@@ -232,6 +233,12 @@ export default function TrackerScreen() {
         console.log(dailyId)
         const idAndCategory = await fetchIdAndCategory(dailyId)
         insertCategoryTrack(idAndCategory, dailyId)
+      }
+      if(activity === ""){
+        alert("Select an activity!")
+      }
+      if(minutes === "" && hours===""){
+        alert("Set duration!")
       }
 
     } catch (error) {
