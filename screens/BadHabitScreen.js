@@ -9,12 +9,14 @@ import DatePicker from '../components/DatePicker';
 import { UserContext } from '../lib/UserContext';
 
 async function getData({setData}) {
+  
   let { data: bad_habits, error } = await supabase
     .from('bad_habits')
     .select('*')
+    .order('start_date')
 
     if (error) {
-			console.log("error", error)
+			Alert.alert('Error getting data')
 		} else {
 			setData(bad_habits)
 		}
@@ -22,29 +24,36 @@ async function getData({setData}) {
 
 async function addHabit(title, newDate, userID, dataArray, setData){
 
+  try {
+      let { data: inserted, error } = await supabase
+      .from('bad_habits')
+      .insert([
+        { start_date: newDate, title: title, user_id: userID}
+      ])
 
-  const { data, error } = await supabase
-  .from('bad_habits')
-  .insert([
-    { start_date: newDate, title: title, user_id: userID}
-  ])
+      console.log(inserted)
 
-  if (error) {
-    console.log("error", error)
-  } else {
-    console.log("data ines")
-    let date1 = newDate.toISOString()
+      let { data: id, error2 } = await supabase
+      .from('bad_habits')
+      .select('id')
+      .order("id", {ascending: false})
+      .limit(1)
+
+      let id1 = id[0].id
+      let date1 = newDate.toISOString()
     
     const habitObject = {
       title: title,
-      start_date: date1
+      start_date: date1,
+      id: id1
     }
 
     dataArray.push(habitObject)
-    setData(dataArray)
-    console.log(dataArray)
+    setData([...dataArray])
     Alert.alert('Habit "'+ title + '" added')
-    
+
+  } catch (error) {
+    Alert.alert('Error adding habit')
   }
 
 }
@@ -64,35 +73,49 @@ async function delHabit(habitID, title){
 
 async function editHabit(title, date, habitID, oldName, oldDate){
   
-  // editing habit works partially, date is always saved even if it doesn't change. Name won't be updated if name is same. Nii että juu
+  let oldDateString = String(oldDate)
+  let dateString = String(date)
 
-  console.log(oldDate)
-  console.log(date)
-
-  if (title == oldName && date == oldDate) {
-    return false 
-  } else if (title == oldName) {
-    console.log("1")
+  //name and date are same as old data. So nothing changed
+   if (title == oldName && dateString == oldDateString) {
+    Alert.alert('Nothing was changed')
+  } 
+  //name is same as old, date is different so update date
+  else if (title == oldName && dateString !== oldDateString) {
     const { data, error } = await supabase
     .from('bad_habits')
     .update({ start_date: date })
     .eq("id", habitID)
-  } else if (date == oldDate) {
-    console.log("2")
+    if (error) {
+      Alert.alert("Error updating date", error)
+    } else {
+      Alert.alert('Date updated')
+    }
+  } 
+  //name changed, date old data, so just update name
+  else if ( title !== oldName && dateString == oldDateString ) {
     const { data, error } = await supabase
     .from('bad_habits')
     .update({ title: title})
     .eq("id", habitID)
-  } else {
-    console.log("3")
+    if (error) {
+      Alert.alert("Error updating name", error)
+    } else {
+      Alert.alert('name updated')
+    }
+  } 
+  // update both
+  else {
     const { data, error } = await supabase
     .from('bad_habits')
     .update({ start_date: date, title: title})
     .eq("id", habitID)
+    if (error) {
+      Alert.alert("Error updating data", error)
+    } else {
+      Alert.alert('Date and name updated') 
+    }
   }
-
-  Alert.alert('Jipii muutoksia koska en oo konservatiivinen')
-
 }
 
 export default function BadHabitScreen() {
@@ -102,6 +125,7 @@ export default function BadHabitScreen() {
   const [modalDate, setModalDate] = useState("");
   const [habitID, setHabitID] = useState(null);
   const [data, setData] = useState([])
+  
   const { setIsLoggedIn, setSession, username, userID } = useContext(UserContext)
   
   useEffect(() => {
@@ -110,7 +134,7 @@ export default function BadHabitScreen() {
     console.log("infit")
 
   }, [])
-  
+
   return (
     <SafeAreaView style={styles.container}>
       <Pressable
@@ -133,7 +157,6 @@ export default function BadHabitScreen() {
 			}
       </ScrollView>
       {modalVisible && <Form dataArray={data} delHabit={delHabit}editHabit={editHabit} setHabitID={setHabitID} habitID={habitID} setData={setData} userID={userID} addHabit={addHabit} editMode={editMode} setEditMode={setEditMode} setModalVisible={setModalVisible} modalVisible={modalVisible} oldName={modalName} oldDate={modalDate} setModalDate={setModalDate} setModalName={setModalName}/>}
-
     </SafeAreaView>
   )
 }
@@ -380,7 +403,6 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: 'center',
-    textDecorationLine: "underline"
   },
   card: {
     flex:1,
@@ -390,6 +412,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom:12,
     backgroundColor: "#FFEDD7",
+    /* ------------------------- */ 
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
