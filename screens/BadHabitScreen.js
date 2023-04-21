@@ -8,19 +8,7 @@ import { supabase } from '../lib/supabase';
 import DatePicker from '../components/DatePicker';
 import { UserContext } from '../lib/UserContext';
 
-async function getData({setData}) {
-  
-  let { data: bad_habits, error } = await supabase
-    .from('bad_habits')
-    .select('*')
-    .order('start_date')
 
-    if (error) {
-			Alert.alert('Error getting data')
-		} else {
-			setData(bad_habits)
-		}
-} 
 
 async function addHabit(title, newDate, userID, dataArray, setData){
 
@@ -30,8 +18,6 @@ async function addHabit(title, newDate, userID, dataArray, setData){
       .insert([
         { start_date: newDate, title: title, user_id: userID}
       ])
-
-      console.log(inserted)
 
       let { data: id, error2 } = await supabase
       .from('bad_habits')
@@ -58,20 +44,30 @@ async function addHabit(title, newDate, userID, dataArray, setData){
 
 }
 
-async function delHabit(habitID, title){
+async function delHabit(habitID, title, dataArray, setData){
 
-  const { data, error } = await supabase
-  .from('bad_habits')
-  .delete()
-  .eq('id', habitID)
-  if (error) {
+  try {
+    const { data, error } = await supabase
+    .from('bad_habits')
+    .delete()
+    .eq('id', habitID)
+
+    Alert.alert('Habit "'+ title + '" deleted') 
+
+    for (let i = 0; i < dataArray.length; i++) {
+
+      if (dataArray[i].id == habitID) {
+        let habitIndex = dataArray.indexOf(dataArray[i])
+        dataArray.splice(habitIndex,1)
+        setData([...dataArray])
+      }
+    }
+  } catch (error) {
     Alert.alert("Error deleting Habit", error)
-  } else {
-    Alert.alert('Habit "'+ title + '" deleted')
   }
 }
 
-async function editHabit(title, date, habitID, oldName, oldDate){
+async function editHabit(title, date, habitID, oldName, oldDate, dataArray, setData){
   
   let oldDateString = String(oldDate)
   let dateString = String(date)
@@ -90,6 +86,13 @@ async function editHabit(title, date, habitID, oldName, oldDate){
       Alert.alert("Error updating date", error)
     } else {
       Alert.alert('Date updated')
+      for (let i = 0; i < dataArray.length; i++) {
+        if (dataArray[i].id == habitID) {
+          let habit = dataArray[i]
+          habit.start_date = date
+          setData([...dataArray])
+        }
+      }
     }
   } 
   //name changed, date old data, so just update name
@@ -101,7 +104,14 @@ async function editHabit(title, date, habitID, oldName, oldDate){
     if (error) {
       Alert.alert("Error updating name", error)
     } else {
-      Alert.alert('name updated')
+      Alert.alert('Name updated')
+      for (let i = 0; i < dataArray.length; i++) {
+        if (dataArray[i].id == habitID) {
+          let habit = dataArray[i]
+          habit.title = title 
+          setData([...dataArray])
+        }
+      }
     }
   } 
   // update both
@@ -113,7 +123,15 @@ async function editHabit(title, date, habitID, oldName, oldDate){
     if (error) {
       Alert.alert("Error updating data", error)
     } else {
-      Alert.alert('Date and name updated') 
+      Alert.alert('Date and name updated')
+      for (let i = 0; i < dataArray.length; i++) {
+        if (dataArray[i].id == habitID) {
+          let habit = dataArray[i]
+          habit.title = title 
+          habit.start_date = date
+          setData([...dataArray])
+        }
+      }
     }
   }
 }
@@ -129,8 +147,23 @@ export default function BadHabitScreen() {
   const { setIsLoggedIn, setSession, username, userID } = useContext(UserContext)
   
   useEffect(() => {
+    //function to fetch all bad habits from database
+    async function getData() {
+  
+      let { data: bad_habits, error } = await supabase
+        .from('bad_habits')
+        .select('*')
+        .order('start_date')
     
-    getData({setData});
+        if (error) {
+          Alert.alert('Error getting data')
+        } else {
+          setData(bad_habits)
+        }
+    } 
+    //run said function
+    getData()
+
     console.log("infit")
 
   }, [])
@@ -211,7 +244,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                     } else if (newName=="") {
                       Alert.alert("Please input a name for your habit")
                     } else {
-                      editHabit(newName, date, habitID, oldName, oldDate)
+                      editHabit(newName, date, habitID, oldName, oldDate, dataArray, setData)
                       closeForm()
                     }
                   }}>
@@ -229,7 +262,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                 //delete habit
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => {
-                    delHabit(habitID, newName)
+                    delHabit(habitID, newName, dataArray, setData)
                     closeForm()
                   }}>
                   <Text style={styles.textStyle}>poista pahe ja ala narkkaan tai röökään tai mitä vaa</Text>
