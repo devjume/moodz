@@ -92,7 +92,6 @@ export default function DatePicker({ date, setDate, activity, kissa, setMinutes,
     return (
         <View style={style.container}>
 
-            <Text style={style.selectionHeader}>Date</Text>
 
 
             {datePicker && (

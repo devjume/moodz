@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Text, View, StyleSheet, TextInput, Pressable, KeyboardAvoidingView } from "react-native";
+import { Text, View, StyleSheet, TextInput, Pressable, KeyboardAvoidingView, Alert, Modal } from "react-native";
 import SelectDropdown from 'react-native-select-dropdown';
 import DatePicker from '../components/DatePicker';
 import { supabase } from '../lib/supabase';
@@ -19,6 +19,7 @@ export default function TrackerScreen() {
   const [mood, setMood] = useState()
   const [notes, setNotes] = useState("")
   const { setIsLoggedIn, setSession, username, userID } = useContext(UserContext)
+  const [showModal, setShowModal] = useState(false);
 
 
   useEffect(() => {
@@ -59,11 +60,11 @@ export default function TrackerScreen() {
         console.log("Kissa Tässä", fetchItems)
         console.log("activity", category[0])
 
-        if( fetchItems === undefined || fetchItems.length === 0 ){
+        if (fetchItems === undefined || fetchItems.length === 0) {
           setMinutes("")
           setHours("")
           setNotes("")
-          return 
+          return
         }
 
         if (fetchItems.length > 0) {
@@ -100,7 +101,7 @@ export default function TrackerScreen() {
         if (error) {
           console.log("fetchCategoryItems supabase error", error)
         }
-        
+
         return data
       }
       catch (error) {
@@ -234,11 +235,17 @@ export default function TrackerScreen() {
         const idAndCategory = await fetchIdAndCategory(dailyId)
         insertCategoryTrack(idAndCategory, dailyId)
       }
-      if(activity === ""){
-        alert("Select an activity!")
+      if (activity === "") {
+        Alert.alert("No activity selected!", "Select an activity!")
       }
-      if(minutes === "" && hours===""){
-        alert("Set duration!")
+      else if (minutes === "" && hours === "") {
+        Alert.alert("Empty duration!", "Please set duration", [
+          { text: "Yes sir!" }
+        ])
+      }
+      else {
+        setShowModal(true);
+        setTimeout(() => setShowModal(false), 2000)
       }
 
     } catch (error) {
@@ -389,6 +396,7 @@ export default function TrackerScreen() {
             </View>
 
             <View style={styles.date}>
+              <Text style={styles.selectionHeader}>Date</Text>
               <DatePicker date={date} setDate={setDate} />
             </View>
             <Text style={styles.selectionHeader}>Notes for {activity === 1 ? "Sleep" : ""}
@@ -409,6 +417,11 @@ export default function TrackerScreen() {
             <Pressable style={styles.button} onPress={() => insertDailyAndCategory()}>
               <Text>Save</Text>
             </Pressable>
+            <Modal transparent={true} visible={showModal} animationType="fade">
+              <View>
+                <Text style={styles.modalText}>Data saved</Text>
+              </View>
+            </Modal>
           </>}
 
         </View>
@@ -539,6 +552,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 5,
   },
+  
+  modalText: {
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: 'bold',
+    backgroundColor: "#ffffff",
+    padding: 17,
+  }
 
   //
 });      
