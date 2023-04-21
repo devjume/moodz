@@ -24,28 +24,36 @@ async function getData({setData}) {
 
 async function addHabit(title, newDate, userID, dataArray, setData){
 
-  const { data, error } = await supabase
-  .from('bad_habits')
-  .insert([
-    { start_date: newDate, title: title, user_id: userID}
-  ])
+  try {
+      let { data: inserted, error } = await supabase
+      .from('bad_habits')
+      .insert([
+        { start_date: newDate, title: title, user_id: userID}
+      ])
 
-  if (error) {
-    Alert.alert('Error adding habit')
-  } else {
-    console.log("data ines")
-    let date1 = newDate.toISOString()
+      console.log(inserted)
+
+      let { data: id, error2 } = await supabase
+      .from('bad_habits')
+      .select('id')
+      .order("id", {ascending: false})
+      .limit(1)
+
+      let id1 = id[0].id
+      let date1 = newDate.toISOString()
     
     const habitObject = {
       title: title,
-      start_date: date1
+      start_date: date1,
+      id: id1
     }
 
-    /* dataArray.push(habitObject)
-    setData(dataArray)
-    console.log(dataArray) */
+    dataArray.push(habitObject)
+    setData([...dataArray])
     Alert.alert('Habit "'+ title + '" added')
-    
+
+  } catch (error) {
+    Alert.alert('Error adding habit')
   }
 
 }
@@ -126,7 +134,7 @@ export default function BadHabitScreen() {
     console.log("infit")
 
   }, [])
-  
+
   return (
     <SafeAreaView style={styles.container}>
       <Pressable
