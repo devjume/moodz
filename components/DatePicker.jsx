@@ -7,7 +7,9 @@ import { supabase } from '../lib/supabase';
 
 
 
-export default function DatePicker({ date, setDate, activity, kissa, setMinutes, setHours, setNotes }) {
+export default function DatePicker({ date, setDate, activity, kissa, setMinutes, setHours, setNotes, badHabit }) {
+
+    
 
     useEffect(() => {
       console.log(kissa)
@@ -77,6 +79,7 @@ export default function DatePicker({ date, setDate, activity, kissa, setMinutes,
     const [datePicker, setDatePicker] = useState(false);
 
 
+
     function showDatePicker() {
         setDatePicker(true);
     };
@@ -87,34 +90,79 @@ export default function DatePicker({ date, setDate, activity, kissa, setMinutes,
         console.log("DatePicker Log")
     };
 
-    return (
-        <View style={style.container}>
+    if (badHabit==true) {
+        return (
+            <View style={style.container}>
+    
+                {datePicker && (
+                    <DateTimePicker
+                        value={date}
+                        mode={'date'}
+                        display={'default'}
+                        is24Hour={true}
+                        onChange={onDateSelected}
+                        positiveButton={{ textColor: 'green' }}
+                        negativeButton={{ textColor: 'red' }}
+                    />
+                )}
+    
+                {badHabit && (
+                    <View style={{ }}>
+                        <Pressable
+                            style={style.calendar}
+                            onPress={showDatePicker}
+                            textColor="#000000"
+    
+                        >
+                            <Text style={{fontSize: 20}}>{date.toLocaleDateString()}</Text></Pressable>
+                    </View>
+                )}
+            </View>
+        );
+    } else {
+        return (
+            <View style={style.container}>
+    
+    
+    
+                {datePicker && (
+                    <DateTimePicker
+                        value={date}
+                        mode={'date'}
+                        display={'default'}
+                        is24Hour={true}
+                        onChange={onDateSelected}
+                        positiveButton={{ textColor: 'green' }}
+                        negativeButton={{ textColor: 'red' }}
+                    />
+                )}
+    
+                {!datePicker && (
+                    <View style={{ margin: 10, height: 60 }}>
+                        <Pressable
+                            style={style.calendar}
+                            onPress={showDatePicker}
+                            textColor="#000000"
+    
+                        >
+                            <Text style={{fontSize: 20}}>{date.toLocaleDateString()}</Text></Pressable>
+                    </View>
+                )}
+    
+                {badHabit && (
+                    <View style={{ }}>
+                        <Pressable
+                            style={style.calendar}
+                            onPress={showDatePicker}
+                            textColor="#000000"
+    
+                        >
+                            <Text style={{fontSize: 20}}>{date.toLocaleDateString()}</Text></Pressable>
+                    </View>
+                )}
+            </View>
+        );
+    }
 
-
-
-            {datePicker && (
-                <DateTimePicker
-                    value={date}
-                    mode={'date'}
-                    display={'default'}
-                    is24Hour={true}
-                    onChange={onDateSelected}
-                    positiveButton={{ textColor: 'green' }}
-                    negativeButton={{ textColor: 'red' }}
-                />
-            )}
-
-            {!datePicker && (
-                <View style={{ margin: 10, height: 60 }}>
-                    <Pressable
-                        style={style.calendar}
-                        onPress={showDatePicker}
-                        textColor="#000000"
-
-                    >
-                        <Text style={{fontSize: 20}}>{date.toLocaleDateString()}</Text></Pressable>
-                </View>
-            )}
-        </View>
-    );
+   
 }
