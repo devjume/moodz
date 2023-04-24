@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, SafeAreaView, Pressable, Alert, Modal, ScrollVi
 import { useFocusEffect } from '@react-navigation/native';
 import { TextInput, Button } from "react-native-paper";
 import { useEffect, useState, useContext } from 'react'
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
 import DatePicker from '../components/DatePicker';
 import { UserContext } from '../lib/UserContext';
@@ -250,7 +250,48 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
 
           <View style={{flex: 1, flexDirection: "column", justifyContent:"flex-end"}}>
             <View style={{backgroundColor:"aquamarine", flex: 0.33}}>
-              <Text style={styles.modalText}>Edit {oldName} habitID: {habitID}</Text> 
+
+              <View style={{flexDirection:"row"}}>
+              <Text style={styles.modalHeading}>Edit "{oldName}"</Text> 
+
+              <Pressable
+                //delete habit
+                  style={{backgroundColor:"red", flex:0.1, justifyContent:"center"}}
+                  onPress={() => {
+                    alertConfirmation();
+                  }}>
+                  <Text style={styles.textStyle}><FontAwesome name="trash-o" size={24} color="black" /></Text>
+                </Pressable>
+
+              </View>
+             
+              
+              <TextInput defaultValue={oldName} onChangeText={t=>setNewName(t)}></TextInput>
+              <DatePicker date={date} setDate={setDate}/>
+              <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  //save form data, send edited info
+                  onPress={() => {
+                    if (date> new Date()) {
+                      Alert.alert("You can't select a date from the future")
+                    } else if (newName=="") {
+                      Alert.alert("Please input a name for your habit")
+                    } else {
+                      editHabit(newName, date, habitID, oldName, oldDate, dataArray, setData)
+                      closeForm()
+                    }
+                  }}>
+                  <Text style={styles.textStyle}>Save</Text>
+                </Pressable>
+                <Pressable
+                //close form without changing anything / part 2
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => {
+                    closeForm()
+                  }}>
+                  <Text style={styles.textStyle}>Cancel</Text>
+                </Pressable>
+                
             </View>
            
           </View>
@@ -439,12 +480,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight:"bold"
   },
-  centeredView: {
+  modalHeading: {
     backgroundColor: "red",
-
-
-    alignSelf: "flex-end"
-    
+    textAlign: "center",
+    margin: 10,
+    fontSize: 16,
+    fontWeight: "bold",
+    flex:0.9
   },
   modalView: {
     margin: 20,
