@@ -82,10 +82,8 @@ export default function DatePicker({ date, setDate, activity, kissa, setMinutes,
     };
 
     async function onDateSelected(event, value) {
-        console.log(kissa)
         setDate(value);
         setDatePicker(false);
-        //await updateFrontendData(value)
         console.log("DatePicker Log")
     };
 
@@ -114,8 +112,7 @@ export default function DatePicker({ date, setDate, activity, kissa, setMinutes,
                         textColor="#000000"
 
                     >
-                        <Text>{date.toLocaleDateString()}</Text></Pressable>
-                    {/*<Text>{date.toISOString()}</Text>*/}
+                        <Text style={{fontSize: 20}}>{date.toLocaleDateString()}</Text></Pressable>
                 </View>
             )}
         </View>

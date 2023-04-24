@@ -48,7 +48,7 @@ export default function RegisterScreen({navigation}) {
     setEmail("")
     setUsername("")
     setPassword("")
-    navigation.navigate("SetGoals", {session: data.session})
+    navigation.navigate("InfoScreen", {session: data.session})
   }
 
 

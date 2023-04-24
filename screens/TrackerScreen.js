@@ -6,7 +6,7 @@ import { supabase } from '../lib/supabase';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { UserContext } from '../lib/UserContext';
-
+import InfoCards from "../components/InfoCards"
 
 export default function TrackerScreen() {
 
@@ -255,8 +255,6 @@ export default function TrackerScreen() {
   }
 
 
-
-
   function consoleLog() {
     let hoursToMinutes = parseFloat(hours) * 60
     let totalMinutes = (hoursToMinutes + parseFloat(minutes))
@@ -318,6 +316,7 @@ export default function TrackerScreen() {
         <View style={styles.activity}>
           <Text style={styles.selectionHeader}>Activity:</Text>
           <SelectDropdown
+            style={styles.selectDropdown}
             data={category}
             defaultButtonText={"Select activity"}
             onSelect={(selectedItem, name) => {
@@ -333,11 +332,14 @@ export default function TrackerScreen() {
               // if data array is an array of objects then return item.property to represent item in dropdown
               return item.name
             }}
-            dropdownOverlayColor={"#9c6363"}
+            dropdownOverlayColor={"#DCC9B6"}
           />
 
 
           {activity == 4 ? <>
+            <View style={styles.row}>
+              <Text>Select todays mood</Text>
+            </View>
             <View style={styles.row}>
               <Pressable
                 onPress={() => setMood(1)}
@@ -423,7 +425,6 @@ export default function TrackerScreen() {
               </View>
             </Modal>
           </>}
-
         </View>
       </KeyboardAvoidingView>
     </View>
@@ -466,7 +467,7 @@ const styles = StyleSheet.create({
     margin: 30,
     flexDirection: "row",
     padding: 10,
-    backgroundColor: "#75d9af",
+    backgroundColor: "#498467",
     width: 150,
     borderRadius: 15,
     justifyContent: 'center',
@@ -481,6 +482,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     margin: 10,
+  },
+  selectDropdown:{
+    
   },
   activity: {
     flexShrink: 1,
@@ -500,32 +504,44 @@ const styles = StyleSheet.create({
     borderColor: "#cccccc",
   },
   inputHours: {
-    borderBottomWidth: 1,
-    borderTopWidth: 1,
-    borderLeftWidth: 1,
+    width: 115,
     fontSize: 20,
-    color: "#6a4595",
+    color: "#000000",
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
     backgroundColor: "#fafafa",
-    borderTopLeftRadius: 5,
-    borderBottomLeftRadius: 5,
-    padding: 4,
+    padding: 5,
+    paddingLeft: 10,
+    marginRight: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   inputMinutes: {
-    borderBottomWidth: 1,
-    borderTopWidth: 1,
-    borderRightWidth: 1,
+    width: 115,
     fontSize: 20,
-    color: "#6a4595",
+    color: "#000000",
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
     backgroundColor: "#fafafa",
-    borderBottomRightRadius: 5,
-    borderTopRightRadius: 5,
-    padding: 4,
+    padding: 5,
+    paddingRight: 10,
+    marginLeft: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   calendar: {
     flex: 1,
@@ -533,24 +549,30 @@ const styles = StyleSheet.create({
     backgroundColor: "#fafafa",
     width: 200,
     alignItems: "center",
-    borderWidth: 1,
-    borderRadius: 5,
+    
   },
   date: {
     flex: 1,
+    alignItems: "center",
   },
   inputNotes: {
     fontSize: 20,
-    color: "#6a4595",
+    color: "#000000",
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
     backgroundColor: "#fafafa",
     width: 250,
-    height: 100,
-    borderRadius: 5,
-    borderWidth: 1,
-    padding: 5,
+    minHeight: 100,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   
   modalText: {
