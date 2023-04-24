@@ -247,13 +247,9 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
           onRequestClose={() => {
             closeForm()
           }}>
-
-          <View style={{flex: 1, flexDirection: "column", justifyContent:"flex-end", marginLeft:10,marginRight:10}}>
-            <View style={{backgroundColor:"#FFEDD7", flex: 0.33, borderTopWidth: 1}}>
-
+          <View style={{flex:1, flexDirection:"column-reverse"}}>
+          <View style={styles.modalContainer}>
               <View style={{flexDirection:"row"}}>
-            
-                
                   <Text style={styles.modalHeading}>Edit: "{oldName}"</Text> 
                   <Pressable
                  //delete habit
@@ -263,15 +259,21 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                   }}>
                   <Text style={styles.textStyle}><FontAwesome name="trash-o" size={24} color="black" /></Text>
                 </Pressable>
-
               </View>
-             
-              
-              <TextInput value={newName} onChangeText={t=>setNewName(t)}></TextInput>
+              <TextInput style={styles.textInput} value={newName} onChangeText={t=>setNewName(t)}></TextInput>
               <DatePicker badHabit={true} date={date} setDate={setDate}/>
-              <View style={{flexDirection:"column"}}>
-              <Pressable
+                <View style={{ flexDirection:"row", flex:0.33}}>                
+                  <Pressable
+                //close form without changing anything / part 2
                   style={[styles.button, styles.buttonClose]}
+                  onPress={() => {
+                    closeForm()
+                  }}>
+                  <Text style={styles.textStyle}>Cancel</Text>
+                  </Pressable>
+
+                  <Pressable
+                  style={[styles.button, styles.buttonSave]}
                   //save form data, send edited info
                   onPress={() => {
                     if (date> new Date()) {
@@ -284,103 +286,46 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                     }
                   }}>
                   <Text style={styles.textStyle}>Update</Text>
-                </Pressable>
-                <Pressable
-                //close form without changing anything / part 2
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => {
-                    closeForm()
-                  }}>
-                  <Text style={styles.textStyle}>Cancel</Text>
-                </Pressable>
-              </View>
-              
-                
+                  </Pressable>
+                </View>
             </View>
-           
           </View>
+   
         </Modal>
     
     )
     
-  }
-
-
-  if (false==true) {
-    //EDIT EXISTING HABIT
+  } else {
+    //ADD NEW HABIT
     return (
-      <View style={styles.centeredView}>
-          <Modal
-            statusBarTranslucent={false}
-            animationType="fade"
-            transparent={true}
-            visible={modalVisible}
-            //close form without changing anything
-            onRequestClose={() => {
-              closeForm()
-            }}>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Text style={styles.modalText}>Edit {oldName} habitID: {habitID}</Text>
-                <TextInput defaultValue={oldName} onChangeText={t=>setNewName(t)}></TextInput>
-                <DatePicker date={date} setDate={setDate}/>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  //save form data, send edited info
-                  onPress={() => {
-                    if (date> new Date()) {
-                      Alert.alert("You can't select a date from the future")
-                    } else if (newName=="") {
-                      Alert.alert("Please input a name for your habit")
-                    } else {
-                      editHabit(newName, date, habitID, oldName, oldDate, dataArray, setData)
-                      closeForm()
-                    }
-                  }}>
-                  <Text style={styles.textStyle}>Save</Text>
-                </Pressable>
-                <Pressable
+      <Modal
+          statusBarTranslucent={false}
+          animationType="fade"
+          transparent={true}
+          visible={modalVisible}
+          //close form without changing anything
+          onRequestClose={() => {
+            closeForm()
+          }}>
+          <View style={{flex:1, flexDirection:"column-reverse"}}>
+          <View style={styles.modalContainer}>
+              <View style={{flexDirection:"row"}}>
+                  <Text style={styles.modalHeading}>Add new habit</Text> 
+              </View>
+              <TextInput style={styles.textInput} placeholder="Habit name" onChangeText={t=>setNewName(t)}></TextInput>
+              <DatePicker badHabit={true} date={newDate} setDate={setNewDate}/>
+                <View style={{ flexDirection:"row", flex:0.33}}>                
+                  <Pressable
                 //close form without changing anything / part 2
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => {
                     closeForm()
                   }}>
                   <Text style={styles.textStyle}>Cancel</Text>
-                </Pressable>
-                <Pressable
-                //delete habit
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => {
-                    alertConfirmation();
-                  }}>
-                  <Text style={styles.textStyle}>poista pahe ja ala narkkaan tai röökään tai mitä vaa</Text>
-                </Pressable>
-              </View>
-            </View>
-          </Modal>
-        </View>
-        )
-
-  } else if (false == true){
-    //ADD NEW HABIT
-    return (
-      <View style={styles.centeredView}>
-          <Modal
-            statusBarTranslucent={false}
-            animationType="fade"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              closeForm()
-            }}>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Text style={styles.modalText}>Add new habit</Text>
-                <TextInput placeholder="Habit name" onChangeText={t=>setNewName(t)}></TextInput>
-                <DatePicker date={newDate} setDate={setNewDate}/>
-                {/* SAVE */}
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
+                  </Pressable>
+                  <Pressable
+                  style={[styles.button, styles.buttonSave]}
+                  //save form data, send edited info
                   onPress={() => {
                     if (date> new Date()) {
                       Alert.alert("You can't select a date from the future")
@@ -390,19 +335,12 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                     }
                   }}>
                   <Text style={styles.textStyle}>Save</Text>
-                </Pressable>
-                {/* CANCEL */}
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => {
-                    closeForm()
-                  }}>
-                  <Text style={styles.textStyle}>Cancel</Text>
-                </Pressable>
-              </View>
+                  </Pressable>
+                </View>
             </View>
-          </Modal>
-        </View>
+          </View>
+   
+        </Modal>
         )
   }
 }
@@ -469,7 +407,6 @@ const styles = StyleSheet.create({
   },
   pressable: {
    backgroundColor: "#FFEDD7"
-    
   },
   row: {
     flexDirection: 'row',
@@ -491,29 +428,20 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     flex:0.9,
   },
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 15,
-    paddingTop: 10,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
   button: {
     padding: 10,
-    elevation: 2,
+    borderTopWidth:1,
+  },
+  buttonClose:{
+   flex:1,
+   backgroundColor:"red"
+  },
+  buttonSave:{
+    flex:1,
+    backgroundColor:"aquamarine"
   },
   textStyle: {
     textAlign: 'center',
-
   },
   modalText: {
     marginBottom: 15,
@@ -536,5 +464,26 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+  },
+  modalContainer: {
+    flex: 0.33, 
+    marginLeft:10,
+    marginRight:10,
+    backgroundColor:"#FFEDD7",
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 20,
+    borderWidth:1,
+    overflow:"hidden"
+  },
+  textInput: {
+    backgroundColor:"white",
+    padding: 10,
+    textAlign:"center"
   }
 });

@@ -92,7 +92,7 @@ export default function DatePicker({ date, setDate, activity, kissa, setMinutes,
 
     if (badHabit==true) {
         return (
-            <View style={style.container}>
+            <View style={{justifyContent:"center", flex:1, alignItems:"center"}}>
     
                 {datePicker && (
                     <DateTimePicker
