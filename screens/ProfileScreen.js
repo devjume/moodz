@@ -107,7 +107,7 @@ export default function ProfileScreen() {
           <NumericInput initValue={sleep} rightButtonBackgroundColor='#498467' 
             leftButtonBackgroundColor='#C44536' borderColor={"black"} style={style.numericInput} onChange={v => setSleep(v)}/>
       </View>
-      <Text>{relax}</Text>
+      
       <Button onPress={updateGoals}
       title='SAVE' style={style.save} color= "#498467"
       />

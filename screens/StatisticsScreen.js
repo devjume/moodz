@@ -9,9 +9,9 @@ import { UserContext } from '../lib/UserContext';
 
 export default function StatisticsScreen() {
 
-  const [sleepData, setSleepData] = useState("");
-  const [exerciseData, setExerciseData] = useState("");
-  const [relaxData, setRelaxData] = useState("");
+  const [sleepData, setSleepData] = useState([]);
+  const [exerciseData, setExerciseData] = useState([]);
+  const [relaxData, setRelaxData] = useState([]);
 
 
   const { setIsLoggedIn, setSession, username, userID, session } = useContext(UserContext)
@@ -21,8 +21,10 @@ export default function StatisticsScreen() {
     getExerciseData()
     getSleepData()
     getRelaxData()
+   
   }, [])
 
+  
 
   async function getSleepData() {
     
@@ -33,13 +35,20 @@ export default function StatisticsScreen() {
 
     if(error) {
       Alert.alert("Error", error.message);
-      console.log("reipas1")
       return 
     }
 
-    let dataSleep = data;
 
-    setSleepData(dataSleep)
+    let dataSleep = [];
+
+    for(i = 0; i < data.length; i++) {
+
+      minutes = Math.floor(data[i].minutes / 60);
+      dataSleep.push(minutes)
+    }
+    
+
+    setSleepData(dataSleep.slice(-7))
     
   }
 
@@ -52,13 +61,19 @@ export default function StatisticsScreen() {
 
     if(error) {
       Alert.alert("Error", error.message);
-      console.log("reipas2")
       return 
     }
 
-    let dataExercise = data;
+    let dataExercise = [];
 
-    setExerciseData(dataExercise)
+    for(i = 0; i < data.length; i++) {
+
+      minutes = Math.floor(data[i].minutes / 60);
+      dataExercise.push(minutes)
+    }
+    
+
+    setExerciseData(dataExercise.slice(-7))
     
   }
 
@@ -71,16 +86,19 @@ export default function StatisticsScreen() {
 
     if(error) {
       Alert.alert("Error", error.message);
-      console.log("reipas3")
       return 
     }
 
-    let dataRelax = parseFloat(data)/60;
+    let dataRelax = [];
 
-    console.log("NNNN", dataRelax)
+    for(i = 0; i < data.length; i++) {
 
-    setRelaxData(dataRelax)
+      minutes = Math.floor(data[i].minutes / 60);
+      dataRelax.push(minutes)
+    }
     
+
+    setRelaxData(dataRelax.slice(-7))
   }
 
 
@@ -97,27 +115,27 @@ export default function StatisticsScreen() {
     useShadowColorFromDataset: false 
   };
 
-  const sleep = {
+  let sleep = {
     labels: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
     datasets: [
       {
 
         //supabasedata tähän->
-        data: [5, 6, 8, 7, 7, 5, 8],
+        data: sleepData,
         color: (opacity = 1) => `rgba(248, 237, 51, ${opacity})`, 
-        strokeWidth: 2 
+        strokeWidth: 2, 
       }
     ],
     legend: ["Sleep(hours)"] 
   };
 
-  const exercise = {
+  let exercise = {
     labels: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
     datasets: [
       {
 
         //supabasedata tähän->
-        data: [25, 43, 18, 32, 24, 32, 34],
+        data: exerciseData,
         color: (opacity = 1) => `rgba(226, 96, 73, ${opacity})`, 
         strokeWidth: 2 
       }
@@ -125,13 +143,13 @@ export default function StatisticsScreen() {
     legend: ["Exercise(hours)"] 
   };
 
-  const relax = {
+  let relax = {
     labels: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
     datasets: [
       {
 
         //supabasedata tähän->
-        data: [25, 43, 18, 32, 24, 32, 34],
+        data: relaxData,
         color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, 
         strokeWidth: 2 
       }
@@ -147,28 +165,36 @@ export default function StatisticsScreen() {
       
       <ScrollView>
       
-
-      <LineChart
+      {sleepData.length > 0 &&
+        <LineChart
         data={sleep}
          width={screenWidth}
          height={250}
          chartConfig={chartConfig}
-      />
+         fromZero={true}
+      /> 
+      }
+       
 
-      <LineChart
+       {exerciseData.length > 0 &&
+        <LineChart
         data={exercise}
          width={screenWidth}
          height={250}
-         
          chartConfig={chartConfig}
-      />
+         fromZero={true}
+      /> 
+      }
 
-      <LineChart
+      {relaxData.length > 0 &&
+        <LineChart
         data={relax}
          width={screenWidth}
          height={250}
          chartConfig={chartConfig}
-      />
+         fromZero={true}
+      /> 
+      }
 
     </ScrollView>
 

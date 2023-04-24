@@ -17,6 +17,7 @@ import BadHabitScreen from './screens/BadHabitScreen';
 import TrackerScreen from './screens/TrackerScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import style from './style/style';
+import InfoScreen from './screens/Auth/InfoScreen';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -30,6 +31,7 @@ export default function App() {
           component={LoginScreen}
         ></Stack.Screen>
         <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="InfoScreen" component={InfoScreen}/>
         <Stack.Screen name="SetGoals" component={SetGoalsScreen} />
       </Stack.Navigator>
     )

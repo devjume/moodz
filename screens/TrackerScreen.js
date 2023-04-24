@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Text, View, StyleSheet, TextInput, Pressable, KeyboardAvoidingView } from "react-native";
+import { Text, View, StyleSheet, TextInput, Pressable, KeyboardAvoidingView, Alert, Modal } from "react-native";
 import SelectDropdown from 'react-native-select-dropdown';
 import DatePicker from '../components/DatePicker';
 import { supabase } from '../lib/supabase';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { UserContext } from '../lib/UserContext';
-
+import InfoCards from "../components/InfoCards"
 
 export default function TrackerScreen() {
 
@@ -19,9 +19,8 @@ export default function TrackerScreen() {
   const [mood, setMood] = useState()
   const [notes, setNotes] = useState("")
   const { setIsLoggedIn, setSession, username, userID } = useContext(UserContext)
+  const [showModal, setShowModal] = useState(false);
 
-
-  //const activities = ["Sleep", "Exercise", "Relax"];
 
   useEffect(() => {
     async function fetchCategories() {
@@ -44,38 +43,102 @@ export default function TrackerScreen() {
     fetchCategories()
   }, [])
 
+
   useEffect(() => {
-    console.log(category)
+    console.log("category UseEffect")
   }, [category])
 
 
-  async function fetchIdAndCategory(dailyId){
-    if(dailyId !== undefined){
-      try{
+  useEffect(() => {
+    async function fetchData() {
+      try {
+
+        let dailyID = await fetchDailyId()
+        console.log("dailyID Tässä", dailyID)
+
+        let fetchItems = await fetchCategoryItems(dailyID, activity)
+        console.log("Kissa Tässä", fetchItems)
+        console.log("activity", category[0])
+
+        if (fetchItems === undefined || fetchItems.length === 0) {
+          setMinutes("")
+          setHours("")
+          setNotes("")
+          return
+        }
+
+        if (fetchItems.length > 0) {
+          let mins = (fetchItems[0].minutes % 60).toString()
+          let hrs = parseInt(fetchItems[0].minutes / 60).toString()
+          let notes1 = fetchItems[0].note
+          let actv = parseInt(fetchItems[0].category_id)
+          console.log("Mins", mins)
+          console.log("hrs", hrs)
+          console.log("notes", notes1)
+          console.log("actv", actv)
+
+          setMinutes(mins)
+          setHours(hrs)
+          setNotes(notes1)
+          setActivity(actv)
+        }
+      } catch (error) {
+        console.log("fetchData error", error);
+      }
+    }
+
+    fetchData();
+  }, [date, activity]);
+
+  async function fetchCategoryItems(dailyId, activity) {
+    if (dailyId !== undefined) {
+      try {
         let { data, error } = await supabase
           .from('category_track')
           .select("*")
-          .eq('daily_id', dailyId )
-          .eq('category_id', parseInt(activity) )
-          console.log(dailyId)
-          console.log(activity)
-          console.log(data)
-          ///return {id : data[0].id, daily_id: data[0].daily_id, minutes: data[0].minutes, notes: data[0].note, category: data[0].category}
-          return data[0].id
+          .eq('daily_id', dailyId)
+          .eq('category_id', parseInt(activity))
+        if (error) {
+          console.log("fetchCategoryItems supabase error", error)
         }
-        catch (error) {
-          console.log("fetchIdAndCategory error", error)
-        }
-    }else{
+
+        return data
+      }
+      catch (error) {
+        console.log("fetchCategoryItems error", error)
+      }
+    } else {
       return undefined
     }
-    
-    
   }
+
+  async function fetchIdAndCategory(dailyId) {
+    if (dailyId !== undefined) {
+      try {
+        let { data, error } = await supabase
+          .from('category_track')
+          .select("*")
+          .eq('daily_id', dailyId)
+          .eq('category_id', parseInt(activity))
+
+        console.log("fetchIdAndCategory data", data)
+        console.log("fetchIdAndCategory error", error)
+        ///return {id : data[0].id, daily_id: data[0].daily_id, minutes: data[0].minutes, notes: data[0].note, category: data[0].category}
+        return data[0].id
+      }
+      catch (error) {
+        console.log("fetchIdAndCategory error", error)
+      }
+    } else {
+      return undefined
+    }
+  }
+
+
 
   async function insertCategoryTrack(idAndCategory = undefined, dailyId) {
     try {
-      
+
       let hoursToMinutes = (parseInt(hours) || 0) * 60
       let totalMinutes = hoursToMinutes + (parseInt(minutes) || 0)
 
@@ -84,9 +147,9 @@ export default function TrackerScreen() {
         .upsert([
           { id: idAndCategory, category_id: activity, minutes: totalMinutes, note: notes, daily_id: dailyId, user_id: userID }
         ])
-        
+
     }
-    catch (error){
+    catch (error) {
       console.log("insertCategoryTrack error", error)
     }
 
@@ -104,13 +167,13 @@ export default function TrackerScreen() {
         .from('daily_track')
         .select("*")
         .eq('date', wholeDate)
-        console.log(data)
-        console.log(error)
-        if (data.length === 0) {
-          return undefined
-        } else {
-          return data[0].id
-        }
+      console.log("fetchDailyId data: ", data)
+      console.log("fetchDailyId error: ", error)
+      if (data.length === 0) {
+        return undefined
+      } else {
+        return data[0].id
+      }
     } catch (error) {
       console.log("fetchDailyId error", error)
       return undefined
@@ -126,8 +189,7 @@ export default function TrackerScreen() {
           { id: dailyId, user_id: userID, mood: mood, date: date },
         ]))
         .select()
-      console.log("insert happended here")
-      console.log(data)
+      console.log("insertDailyTrack error: ", error)
 
       if (data === []) {
         return undefined
@@ -135,34 +197,62 @@ export default function TrackerScreen() {
         return data[0].id
       }
 
-      
+
     } catch (error) {
       console.log("error insertDailyTrack", error)
       return
     }
   }
 
-  async function insertDailyAndCategory() {
-    try{
-      let dailyId = await fetchDailyId()
-    if (dailyId === undefined) {
-      console.log("Luodaan uusi")
-      dailyId = await insertDailyTrack(dailyId)
-      insertCategoryTrack(undefined, dailyId)
-    } else {
-      console.log("Päivitä dailytrack tässä")
-      console.log(dailyId)
-      const idAndCategory = await fetchIdAndCategory(dailyId )
-      insertCategoryTrack(idAndCategory,dailyId)
+  async function updateMood() {
+    let dailyId = await fetchDailyId()
+    try {
+      let { data, error } = await supabase
+        .from('daily_track')
+        .upsert(([
+          { id: dailyId, user_id: userID, mood: mood, date: date },
+        ]))
+        .select()
+      console.log("updateMood error: ", error)
+
+
+    } catch (error) {
+      console.log("error updateMood", error)
+      return
     }
-    
+  }
+
+  async function insertDailyAndCategory() {
+    try {
+      let dailyId = await fetchDailyId()
+      if (dailyId === undefined) {
+        console.log("Luodaan uusi")
+        dailyId = await insertDailyTrack(dailyId)
+        insertCategoryTrack(undefined, dailyId)
+      } else {
+        console.log("Päivitä dailytrack tässä")
+        console.log(dailyId)
+        const idAndCategory = await fetchIdAndCategory(dailyId)
+        insertCategoryTrack(idAndCategory, dailyId)
+      }
+      if (activity === "") {
+        Alert.alert("No activity selected!", "Select an activity!")
+      }
+      else if (minutes === "" && hours === "") {
+        Alert.alert("Empty duration!", "Please set duration", [
+          { text: "Yes sir!" }
+        ])
+      }
+      else {
+        setShowModal(true);
+        setTimeout(() => setShowModal(false), 2000)
+      }
+
     } catch (error) {
       console.log("insertDailyAndCategory error", error)
     }
-    
+
   }
-
-
 
 
   function consoleLog() {
@@ -226,6 +316,7 @@ export default function TrackerScreen() {
         <View style={styles.activity}>
           <Text style={styles.selectionHeader}>Activity:</Text>
           <SelectDropdown
+            style={styles.selectDropdown}
             data={category}
             defaultButtonText={"Select activity"}
             onSelect={(selectedItem, name) => {
@@ -241,11 +332,14 @@ export default function TrackerScreen() {
               // if data array is an array of objects then return item.property to represent item in dropdown
               return item.name
             }}
-            dropdownOverlayColor={"#9c6363"}
+            dropdownOverlayColor={"#DCC9B6"}
           />
 
 
           {activity == 4 ? <>
+            <View style={styles.row}>
+              <Text>Select todays mood</Text>
+            </View>
             <View style={styles.row}>
               <Pressable
                 onPress={() => setMood(1)}
@@ -274,8 +368,8 @@ export default function TrackerScreen() {
               </Pressable>
             </View>
             <View style={styles.date}>
-              <DatePicker date={date} setDate={setDate} />
-              <Pressable style={styles.button} onPress={() => insertDailyTrack()}>
+              <DatePicker date={date} setDate={setDate} fetchDailyId={fetchDailyId} kissa="koira" activity={"isask"} setMinutes={setMinutes} setHours={setHours} setNotes={setNotes} />
+              <Pressable style={styles.button} onPress={() => updateMood()}>
                 <Text>Save</Text>
               </Pressable>
             </View></> : <><View style={styles.row}>
@@ -304,6 +398,7 @@ export default function TrackerScreen() {
             </View>
 
             <View style={styles.date}>
+              <Text style={styles.selectionHeader}>Date</Text>
               <DatePicker date={date} setDate={setDate} />
             </View>
             <Text style={styles.selectionHeader}>Notes for {activity === 1 ? "Sleep" : ""}
@@ -324,8 +419,12 @@ export default function TrackerScreen() {
             <Pressable style={styles.button} onPress={() => insertDailyAndCategory()}>
               <Text>Save</Text>
             </Pressable>
+            <Modal transparent={true} visible={showModal} animationType="fade">
+              <View>
+                <Text style={styles.modalText}>Data saved</Text>
+              </View>
+            </Modal>
           </>}
-
         </View>
       </KeyboardAvoidingView>
     </View>
@@ -368,7 +467,7 @@ const styles = StyleSheet.create({
     margin: 30,
     flexDirection: "row",
     padding: 10,
-    backgroundColor: "#75d9af",
+    backgroundColor: "#498467",
     width: 150,
     borderRadius: 15,
     justifyContent: 'center',
@@ -383,6 +482,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     margin: 10,
+  },
+  selectDropdown:{
+    
   },
   activity: {
     flexShrink: 1,
@@ -402,32 +504,44 @@ const styles = StyleSheet.create({
     borderColor: "#cccccc",
   },
   inputHours: {
-    borderBottomWidth: 1,
-    borderTopWidth: 1,
-    borderLeftWidth: 1,
+    width: 115,
     fontSize: 20,
-    color: "#6a4595",
+    color: "#000000",
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
     backgroundColor: "#fafafa",
-    borderTopLeftRadius: 5,
-    borderBottomLeftRadius: 5,
-    padding: 4,
+    padding: 5,
+    paddingLeft: 10,
+    marginRight: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   inputMinutes: {
-    borderBottomWidth: 1,
-    borderTopWidth: 1,
-    borderRightWidth: 1,
+    width: 115,
     fontSize: 20,
-    color: "#6a4595",
+    color: "#000000",
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
     backgroundColor: "#fafafa",
-    borderBottomRightRadius: 5,
-    borderTopRightRadius: 5,
-    padding: 4,
+    padding: 5,
+    paddingRight: 10,
+    marginLeft: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   calendar: {
     flex: 1,
@@ -435,25 +549,39 @@ const styles = StyleSheet.create({
     backgroundColor: "#fafafa",
     width: 200,
     alignItems: "center",
-    borderWidth: 1,
-    borderRadius: 5,
+    
   },
   date: {
     flex: 1,
+    alignItems: "center",
   },
   inputNotes: {
     fontSize: 20,
-    color: "#6a4595",
+    color: "#000000",
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
     backgroundColor: "#fafafa",
     width: 250,
-    height: 100,
-    borderRadius: 5,
-    borderWidth: 1,
-    padding: 5,
+    minHeight: 100,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
+  
+  modalText: {
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: 'bold',
+    backgroundColor: "#ffffff",
+    padding: 17,
+  }
 
   //
 });      
