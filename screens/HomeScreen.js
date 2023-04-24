@@ -27,7 +27,6 @@ export default function HomeScreen({navigation}) {
 	const [dataReceived, setDataReceived] = useState(false)
 
 	useEffect(() => {
-
 		getUserGoals()
 	}, [])
 
@@ -112,7 +111,7 @@ export default function HomeScreen({navigation}) {
 		const relaxSection = calculateSingleSection(relaxMin, relaxGoal)
 
 		const progress = sleepSection + exerciseSection + relaxSection;
-		
+
 		setOverallProgress(isNaN(progress) ? 0 : Math.round(progress))
 	}
 
