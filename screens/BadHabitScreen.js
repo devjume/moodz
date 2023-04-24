@@ -1,7 +1,7 @@
 import React from 'react'
-import { Text, View, StyleSheet, SafeAreaView, Pressable, Alert, Modal, ScrollView, KeyboardAvoidingView } from "react-native";
+import { Text, View, StyleSheet, SafeAreaView, Pressable, Alert, Modal, ScrollView, TextInput } from "react-native";
 import { useFocusEffect } from '@react-navigation/native';
-import { TextInput, Button } from "react-native-paper";
+import {  Button } from "react-native-paper";
 import { useEffect, useState, useContext } from 'react'
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
@@ -237,9 +237,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
   if (editMode==true) {
 
     return (
-      <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
+     
         <Modal
           statusBarTranslucent={false}
           animationType="fade"
@@ -252,7 +250,10 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
 
           <View style={{flex: 1, flexDirection: "column", justifyContent:"flex-end"}}>
             <View style={{backgroundColor:"#FFEDD7", flex: 0.33, borderTopWidth: 1}}>
+
               <View style={{flexDirection:"row"}}>
+            
+                
                   <Text style={styles.modalHeading}>Edit: "{oldName}"</Text> 
                   <Pressable
                  //delete habit
@@ -262,10 +263,11 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                   }}>
                   <Text style={styles.textStyle}><FontAwesome name="trash-o" size={24} color="black" /></Text>
                 </Pressable>
+
               </View>
              
-              <Text>Name</Text>
-              <TextInput style={styles.textInput} defaultValue={oldName} onChangeText={t=>setNewName(t)} />
+              
+              <TextInput value={newName} onChangeText={t=>setNewName(t)}></TextInput>
               <DatePicker date={date} setDate={setDate}/>
               <Pressable
                   style={[styles.button, styles.buttonClose]}
@@ -280,7 +282,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                       closeForm()
                     }
                   }}>
-                  <Text style={styles.textStyle}>Save</Text>
+                  <Text style={styles.textStyle}>Update</Text>
                 </Pressable>
                 <Pressable
                 //close form without changing anything / part 2
@@ -295,7 +297,6 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
            
           </View>
         </Modal>
-        </KeyboardAvoidingView>
     
     )
     
@@ -539,8 +540,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-  },
-  textInput: {
-    alignSelf:"center"
   }
 });
