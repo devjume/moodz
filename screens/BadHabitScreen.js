@@ -221,7 +221,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
 
   function alertConfirmation() {
     //function to make two option alert
-    string = String('Are you sure you want to delete "' + newName + '" ?' )
+    string = String('Are you sure you want to delete "' + oldName + '" ?' )
 
     Alert.alert(
       string ,
