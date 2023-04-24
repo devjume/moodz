@@ -5,7 +5,7 @@ import { Text, View, ScrollView, StyleSheet, FlatList, Alert, Pressable } from "
 import { Ionicons } from '@expo/vector-icons';
 import { CircularProgress } from 'react-native-circular-progress';
 import { ProgressBar } from 'react-native-paper';
-import { addDays } from 'date-fns'
+import { addDays, min } from 'date-fns'
 
 import styles, {BACKGROUND_COLOR} from '../style/style';
 import CustomButton from "../components/CustomButton"
@@ -24,6 +24,7 @@ export default function HomeScreen({navigation}) {
 	const [sleepGoal, setSleepGoal] = useState(0)
 
 	const [overallProgress, setOverallProgress] = useState(0)
+	const [dataReceived, setDataReceived] = useState(false)
 
 	useEffect(() => {
 
@@ -56,6 +57,11 @@ export default function HomeScreen({navigation}) {
 					let exerciseMin = 0
 					let relaxMin = 0
 
+					setSleepValue(0)
+					setExerciseValue(0)
+					setRelaxValue(0)
+					calculateOverallProgress(0,0,0)
+
 					daily_track[0].category_track.forEach(element => {
 						switch(element.category_id) {
 							case 1:
@@ -77,7 +83,6 @@ export default function HomeScreen({navigation}) {
 
 				}
 
-				
 			} catch(error) {
 				console.log("getDailyData() catch error", error)
 			}
@@ -92,11 +97,23 @@ export default function HomeScreen({navigation}) {
 			setOverallProgress(0)
 		}
 
-		const overAllMinutes = sleepMin + exerciseMin + relaxMin
-		const overAllGoals = sleepGoal + exerciseGoal + relaxGoal
-		const progress = Math.ceil((overAllMinutes / overAllGoals)* 100)
+		function calculateSingleSection(minutes, goal) {
+			const percentage = minutes / goal
+
+			if (percentage > 1) {
+				return 33.33
+			} else {
+				return isNaN(percentage) ? 0 : (percentage * 33.33)
+			}
+		}
+
+		const sleepSection = calculateSingleSection(sleepMin, sleepGoal)
+		const exerciseSection = calculateSingleSection(exerciseMin, exerciseGoal)
+		const relaxSection = calculateSingleSection(relaxMin, relaxGoal)
+
+		const progress = sleepSection + exerciseSection + relaxSection;
 		
-		setOverallProgress(isNaN(progress) ? 0 : progress)
+		setOverallProgress(isNaN(progress) ? 0 : Math.round(progress))
 	}
 
 	function calculateProgress(activity) {
@@ -128,11 +145,13 @@ export default function HomeScreen({navigation}) {
 		
 		if (error) {
 			console.log("Error fetching profile goals:", error)
+			return
 		}
 
 		setSleepGoal(profiles[0].sleep_goal)
 		setExerciseGoal(profiles[0].exercise_goal)
 		setRelaxGoal(profiles[0].relax_goal)
+		setDataReceived(true)
 	}
 
 	async function logOut() {
