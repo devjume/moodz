@@ -241,20 +241,31 @@ export default function CalendarScreen() {
 				</View>
         
         <View style={{display: "flex", flexDirection: "row", gap: 90, alignItems: "center"}}>
-			  <CircularProgress 
-  			   size={130}
-  			   width={18}
-  			   fill={overallProgress}
-  			   tintColor="#498467"
-            arcSweepAngle={270}
-            rotation={225}
-            backgroundColor="#D9D9D9"
-            lineCap='round'
-            style={{marginVertical: 10}}
-            children={(e) => <Text style={{fontWeight: "bold", fontSize: 28}}>{e}</Text>}
-				  />
+          <View>
+           <CircularProgress 
+              size={130}
+              width={18}
+              fill={overallProgress}
+              tintColor="#498467"
+                arcSweepAngle={270}
+                rotation={225}
+                backgroundColor="#D9D9D9"
+                lineCap='round'
+                style={{marginVertical: 10}}
+                children={(e) => <Text style={{fontWeight: "bold", fontSize: 28}}>{e}</Text>}
+				      />
 
-          <Text style={styles.dayStatHeader}>Daily Mood</Text>
+              <Text style={styles.subHeader}>Daily Progress</Text>
+
+            </View>  
+
+            <View>
+
+
+
+              <Text style={styles.subHeader}>Daily Mood</Text>
+
+            </View> 
 
 
           </View> 
@@ -311,7 +322,8 @@ export default function CalendarScreen() {
             onDayPress={handleDayPress} 
             markedDates={{ [selectedDate]: { selected: true } }} 
             pastScrollRange={12}
-            futureScrollRange={20}
+            
+            futureScrollRange={1}
             scrollEnabled={true}/>
       {selectedDate && renderModal()}
     </View>

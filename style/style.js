@@ -127,6 +127,13 @@ export default StyleSheet.create({
      fontWeight: "bold",	
   },
 
+  subHeader: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 15
+    
+  }
+
   
       
 
