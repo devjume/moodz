@@ -248,7 +248,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
             closeForm()
           }}>
 
-          <View style={{flex: 1, flexDirection: "column", justifyContent:"flex-end"}}>
+          <View style={{flex: 1, flexDirection: "column", justifyContent:"flex-end", marginLeft:10,marginRight:10}}>
             <View style={{backgroundColor:"#FFEDD7", flex: 0.33, borderTopWidth: 1}}>
 
               <View style={{flexDirection:"row"}}>
@@ -268,7 +268,8 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
              
               
               <TextInput value={newName} onChangeText={t=>setNewName(t)}></TextInput>
-              <DatePicker date={date} setDate={setDate}/>
+              <DatePicker badHabit={true} date={date} setDate={setDate}/>
+              <View style={{flexDirection:"column"}}>
               <Pressable
                   style={[styles.button, styles.buttonClose]}
                   //save form data, send edited info
@@ -292,6 +293,8 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                   }}>
                   <Text style={styles.textStyle}>Cancel</Text>
                 </Pressable>
+              </View>
+              
                 
             </View>
            
@@ -505,15 +508,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   button: {
-    borderRadius: 20,
     padding: 10,
     elevation: 2,
-  },
-  buttonOpen: {
-    backgroundColor: '#F194FF',
-  },
-  buttonClose: {
-    backgroundColor: '#2196F3',
   },
   textStyle: {
     textAlign: 'center',
