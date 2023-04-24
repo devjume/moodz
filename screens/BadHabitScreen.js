@@ -194,6 +194,8 @@ export default function BadHabitScreen() {
   )
 }
 
+
+
 const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName, editMode, setEditMode, addHabit, userID, dataArray, setData, habitID, setHabitID, editHabit}) => {
 
   oldDate = new Date(oldDate)
@@ -217,7 +219,49 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
     oldName = "Name"
   }
 
+  function alertConfirmation() {
+    //function to make two option alert
+    string = String('Are you sure you want to delete "' + newName + '" ?' )
+
+    Alert.alert(
+      string ,
+      "Your data will be lost",
+      [
+        {text: 'Yes', onPress: () => {delHabit(habitID, newName, dataArray, setData), closeForm()}},
+        {text: 'No', onPress: () => null},
+      ],
+      { cancelable: false }
+    );
+  }
+
   if (editMode==true) {
+
+    return (
+     
+        <Modal
+          statusBarTranslucent={false}
+          animationType="fade"
+          transparent={true}
+          visible={modalVisible}
+          //close form without changing anything
+          onRequestClose={() => {
+            closeForm()
+          }}>
+
+          <View style={{flex: 1, flexDirection: "column", justifyContent:"flex-end"}}>
+            <View style={{backgroundColor:"aquamarine", flex: 0.33}}>
+              <Text style={styles.modalText}>Edit {oldName} habitID: {habitID}</Text> 
+            </View>
+           
+          </View>
+        </Modal>
+    
+    )
+    
+  }
+
+
+  if (false==true) {
     //EDIT EXISTING HABIT
     return (
       <View style={styles.centeredView}>
@@ -262,8 +306,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                 //delete habit
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => {
-                    delHabit(habitID, newName, dataArray, setData)
-                    closeForm()
+                    alertConfirmation();
                   }}>
                   <Text style={styles.textStyle}>poista pahe ja ala narkkaan tai röökään tai mitä vaa</Text>
                 </Pressable>
@@ -273,7 +316,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
         </View>
         )
 
-  } else {
+  } else if (false == true){
     //ADD NEW HABIT
     return (
       <View style={styles.centeredView}>
@@ -397,9 +440,11 @@ const styles = StyleSheet.create({
     fontWeight:"bold"
   },
   centeredView: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 22,
+    backgroundColor: "red",
+
+
+    alignSelf: "flex-end"
+    
   },
   modalView: {
     margin: 20,
