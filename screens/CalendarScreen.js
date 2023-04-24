@@ -265,6 +265,7 @@ export default function CalendarScreen() {
           <TextInput
              style={{ height: 200, width: '80%', borderColor: 'gray', borderWidth: 1, marginTop: 20, marginBottom: 25 }}
               multiline={true}
+              editable = {false}
               value={notes}
                onChangeText={setNotes}
         />
@@ -277,6 +278,7 @@ export default function CalendarScreen() {
           <TextInput
              style={{ height: 200, width: '80%', borderColor: 'gray', borderWidth: 1, marginTop: 20, marginBottom: 25 }}
               multiline={true}
+              editable = {false}
               value={notes}
                onChangeText={setNotes}
         />
@@ -289,6 +291,7 @@ export default function CalendarScreen() {
           <TextInput
              style={{ height: 200, width: '80%', borderColor: 'gray', borderWidth: 1, marginTop: 20, marginBottom: 25 }}
               multiline={true}
+              editable = {false}
               value={notes}
                onChangeText={setNotes}
           />
