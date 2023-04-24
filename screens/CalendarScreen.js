@@ -1,17 +1,16 @@
 import React, { useEffect, useState} from 'react';
-import styles, {BACKGROUND_COLOR} from '../style/style';
-import { View, Text, Modal, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
+import styles from '../style/style';
+import { View, Text, Modal, TextInput, ScrollView, TouchableOpacity, Pressable } from 'react-native';
 import { CalendarList } from 'react-native-calendars';
 import { supabase } from '../lib/supabase';
 import { CircularProgress } from 'react-native-circular-progress';
 import { ProgressBar } from 'react-native-paper';
-import { Ionicons } from '@expo/vector-icons';
-import { Header } from 'react-native-elements';
 
 
 
 
-export default function CalendarScreen({navigation}) {
+
+export default function CalendarScreen() {
   const [selectedDate, setSelectedDate] = useState('');
   const [data, setData] = useState({});
 /*   const [sleepData, setSleepData] = useState({});
@@ -25,119 +24,41 @@ export default function CalendarScreen({navigation}) {
   const [relaxValue, setRelaxValue] = useState(0)
 	const [exerciseValue, setExerciseValue] = useState(0)
 	const [sleepValue, setSleepValue] = useState(0)
+  const [dailyMood, setDailyMood] = useState(0)
 
   const [relaxGoal, setRelaxGoal] = useState(0)
-	const [exerciseGoal, setExerciseGoal] = useState(0)
+	const [exerciseGoal, setExerciseGoal] = useState(0) 
 	const [sleepGoal, setSleepGoal] = useState(0)
+
+  const [notes, setNotes] = useState('');
 
   const [modalVisible, setModalVisible] = useState(false);
   const [overallProgress, setOverallProgress] = useState(0);
 
 
 
+  useEffect(() => {
 
-/*     useEffect(() => {
-    
-    fetchExerciseData(selectedDate)
-    fetchSleepData(selectedDate)
-    fetchRelaxData(selectedDate)
-  }, [selectedDate]) 
-
-    const fetchSupabaseData = async (date) => {
-    const { data, error } = await supabase
-      .from('daily_track')
-      .select('date, mood')
+		getUserGoals()
+    getUserNotes()
+    getDailyMood()
+	}, [])
 
 
-    if (error) {
-      console.error(error);
-    } else {
-      const newData = {};
-      data.forEach((item) => {
-        newData[item.date] = item;
-      });
-      setData(newData);
-    }
-  }; 
-
-
-  async function fetchSleepData() {
-    
-    let { data, error } = await supabase
-    .from('category_track')
-    .select('minutes')
-    .eq('category_id', 1)
-
-
-
-    if(error) {
-      Alert.alert("Error", error.message);
-      console.log("Error")
-      return 
-    }
-
-    let dataSleep = data;
-
-    setSleepData(dataSleep)
-    
-  }
-
-  async function fetchExerciseData() {
-    
-    let { data, error } = await supabase
-    .from('category_track')
-    .select('minutes')
-    .eq('category_id', 2)
-
-
-
-    if(error) {
-      Alert.alert("Error", error.message);
-      console.log("Error")
-      return 
-    }
-
-    let dataExercise = data;
-
-    setExerciseData(dataExercise)
-    
-  }
-
-  async function fetchRelaxData() {
-    
-
-    let { data, error } = await supabase
-    .from('category_track')
-    .select('minutes')
-    .eq('category_id', 3)
-
-
-
-    if(error) {
-      Alert.alert("Error", error.message);
-      console.log("Error")
-      return 
-    }
-
-    let dataRelax = parseFloat(data)/60;
-
-
-    console.log("NNNN", dataRelax)
-
-    setRelaxData(dataRelax)
-    
-  } */
 
 
   useEffect(() => {
 		async function getDailyData() {
 			
       try {
-				const dbDateFormat = todayDate.toISOString().split("T")[0]
+				
+        const dbDateFormat = todayDate.toISOString().split("T")[0]
 				let { data: daily_track, error } = await supabase
 				.from('daily_track')
 				.select('id, mood, date, category_track(category_id, minutes, note)')
 				.eq("date", dbDateFormat)
+
+        
 				
 				if (error) {
 
@@ -152,6 +73,7 @@ export default function CalendarScreen({navigation}) {
 					setRelaxValue(0)
 					calculateOverallProgress(0,0,0)
 				} else {
+
 
 					let sleepMin = 0
 					let exerciseMin = 0
@@ -187,7 +109,7 @@ export default function CalendarScreen({navigation}) {
 
 		getDailyData()
 		
-	}, [todayDate])
+	}, [])
 	
 	function calculateOverallProgress(sleepMin, exerciseMin, relaxMin) {
 		if (sleepMin + exerciseMin + relaxMin === 0 ) {
@@ -198,8 +120,55 @@ export default function CalendarScreen({navigation}) {
 		const overAllGoals = sleepGoal + exerciseGoal + relaxGoal
 		const progress = Math.ceil((overAllMinutes / overAllGoals)* 100)
 		
-		setOverallProgress(isNaN(progress) ? 0 : progress)
+		setOverallProgress(isNaN(progress) ? 0 : progress) 
 	}
+
+  
+
+  
+	async function getUserGoals() {
+		let { data: profiles, error } = await supabase
+  		.from('profiles')
+  		.select('sleep_goal, exercise_goal, relax_goal')
+		
+		if (error) {
+			console.log("Couldn't fetch profile goals", error)
+		}
+
+		setSleepGoal(profiles[0].sleep_goal)
+		setExerciseGoal(profiles[0].exercise_goal)
+		setRelaxGoal(profiles[0].relax_goal)
+	}
+
+
+
+  async function getUserNotes() {
+    let { data: category_track, error } = await supabase
+      .from('category_track')
+      .select('note')
+      .eq('date', new Date().toISOString().slice(0, 10));
+
+      if (error) {
+        console-log("Couldn't fetch profile notes")
+      }
+      else if (data.length > 0) {
+         setNotes(category_track[0].note);
+    }
+  
+
+  }
+
+  async function getDailyMood() {
+      let { data: daily_track, error } = await supabase
+      .from('daily_track')
+      .select('mood')
+
+      if (error) {
+        console-log("Couldn't fetch Daily Mood")
+      } else setDailyMood(daily_track[0])
+  }
+
+
 
 	function calculateProgress(activity) {
 		let progress = 0;
@@ -235,10 +204,10 @@ export default function CalendarScreen({navigation}) {
 
 
 
-	function CustomBar({title, progress, color}) {
+	function CustomBar({title, progress, color}) { 
 		return (
 			<View>
-				<Text style={{fontWeight: "bold", fontSize: 18, paddingBottom: 4}}>{title}</Text>
+				<Text style={{fontWeight: "bold", fontSize: 18 , paddingBottom: 4}}>{title}</Text>
 				<View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 8, justifyContent: "space-between"}}>
 			     <ProgressBar progress={progress} color={color} style={{minWidth: 300, height: 30, backgroundColor: "#D9D9D9", borderRadius: 25}}/>    
 				</View>
@@ -264,42 +233,83 @@ export default function CalendarScreen({navigation}) {
             <Text style={styles.buttonText}>Close</Text>
           </TouchableOpacity>
         </View> */}
-
+      <ScrollView>
       <View style={styles.container}>
         <Text style={styles.dayStatHeader}>Day Statistics</Text>
 				<View style={{display: "flex", flexDirection: "row", gap: 90, alignItems: "center"}}>
-					<Text style={screen.title}>{selectedDate}</Text>
+					<Text style={styles.title}>{selectedDate}</Text>
 				</View>
         
-			
-			<CircularProgress
-  			size={130}
-  			width={18}
-  			fill={overallProgress}
-  			tintColor="#498467"
-				arcSweepAngle={270}
-				rotation={225}
-  			backgroundColor="#D9D9D9"
-				lineCap='round'
-				style={{marginVertical: 10}}
-				children={(e) => <Text style={{fontWeight: "bold", fontSize: 28}}>{e}</Text>}
-				/>
+        <View style={{display: "flex", flexDirection: "row", gap: 90, alignItems: "center"}}>
+			  <CircularProgress 
+  			   size={130}
+  			   width={18}
+  			   fill={overallProgress}
+  			   tintColor="#498467"
+            arcSweepAngle={270}
+            rotation={225}
+            backgroundColor="#D9D9D9"
+            lineCap='round'
+            style={{marginVertical: 10}}
+            children={(e) => <Text style={{fontWeight: "bold", fontSize: 28}}>{e}</Text>}
+				  />
+
+          <Text style={styles.dayStatHeader}>Daily Mood</Text>
+
+
+          </View> 
 			
 				<CustomBar title={"Sleep"} progress={calculateProgress("sleep")} color={"#8B95DF"}/>
+
+        <Text style={styles.dayStatHeader}>Sleep Notes</Text>
+          <TextInput
+             style={{ height: 200, width: '80%', borderColor: 'gray', borderWidth: 1, marginTop: 20, marginBottom: 25 }}
+              multiline={true}
+              editable = {false}
+              value={notes}
+               onChangeText={setNotes}
+        />
+
+
+
 				<CustomBar title={"Exercise"} progress={calculateProgress("exercise")} color={"#C44536"}/>
+
+        <Text style={styles.dayStatHeader}>Exercise Notes</Text>
+          <TextInput
+             style={{ height: 200, width: '80%', borderColor: 'gray', borderWidth: 1, marginTop: 20, marginBottom: 25 }}
+              multiline={true}
+              editable = {false}
+              value={notes}
+               onChangeText={setNotes}
+        />
+
+
+
 				<CustomBar title={"Relax"} progress={calculateProgress("relax")} color={"#498467"} />
 
-        <TouchableOpacity onPress={() => setModalVisible (false)}>
+        <Text style={styles.dayStatHeader}>Relax Notes</Text>
+          <TextInput
+             style={{ height: 200, width: '80%', borderColor: 'gray', borderWidth: 1, marginTop: 20, marginBottom: 25 }}
+              multiline={true}
+              editable = {false}
+              value={notes}
+               onChangeText={setNotes}
+          />
+
+        <TouchableOpacity onPress={() => setModalVisible (false)} style={styles.button}>
             <Text style={styles.buttonText}>Close</Text>
           </TouchableOpacity>
 			</View>
+      </ScrollView>
       </Modal>
     );
   };
 
   return (
     <View>
-      <CalendarList onDayPress={handleDayPress} markedDates={{ [selectedDate]: { selected: true } }} 
+      <CalendarList 
+            onDayPress={handleDayPress} 
+            markedDates={{ [selectedDate]: { selected: true } }} 
             pastScrollRange={12}
             futureScrollRange={20}
             scrollEnabled={true}/>
@@ -308,31 +318,6 @@ export default function CalendarScreen({navigation}) {
   );
 }
 
-const screen = StyleSheet.create({
-  container: {
-		display: "flex",
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "flex-start",
-    gap: 0,
-		backgroundColor: BACKGROUND_COLOR,
-		paddingVertical: 10,
-  },
-	section: {
-		display: "flex",
-    flexShrink: 1,
-		flexDirection: "column",
-		padding: 8,
-		alignItems: "center",
-	},
-	title: {
-		fontSize: 28,
-		fontWeight: "bold",	
-	},
-	barContainer: {
-		display: "flex",
-		gap: 16,
-	}
-});
+
 
 

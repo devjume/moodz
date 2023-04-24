@@ -118,5 +118,23 @@ export default StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     margin: 10,
+    marginTop: 25,
+    paddingTop: 15
   },
+      
+  title: {
+     fontSize: 28,
+     fontWeight: "bold",	
+  },
+
+  
+      
+
+
+      
+
+
+     
+
+      
 });      

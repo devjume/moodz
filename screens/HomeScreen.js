@@ -11,7 +11,7 @@ import styles, {BACKGROUND_COLOR} from '../style/style';
 import CustomButton from "../components/CustomButton"
 
 export default function HomeScreen({navigation}) {
-	const { setIsLoggedIn, setSession,  } = useContext(UserContext)
+	const { setIsLoggedIn, setSession, username } = useContext(UserContext)
 	const [todayDate, setTodayDate] = useState(new Date())
 	const [dailyData, setDailyData] = useState()
 
@@ -215,7 +215,7 @@ export default function HomeScreen({navigation}) {
 			<View>
 				<Text style={{fontWeight: "bold", fontSize: 18, paddingBottom: 4}}>{title}</Text>
 				<View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 8, justifyContent: "space-between"}}>
-				<ProgressBar progress={progress} color={color} style={{minWidth: 300, height: 30, backgroundColor: "#D9D9D9", borderRadius: 25}}/>
+				 <ProgressBar progress={progress} color={color} style={{minWidth: 300, height: 30, backgroundColor: "#D9D9D9", borderRadius: 25}}/> 
 				<Pressable onPress={() => navigation.navigate('Tracker')}>
 					{({pressed}) => (
 						<Ionicons name="add-circle-outline" size={38} color={"#292D32"}  />
