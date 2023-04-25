@@ -1,15 +1,15 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { Text, View, StyleSheet, TextInput, Pressable, KeyboardAvoidingView, Alert, Modal } from "react-native";
+import React, { useEffect, useState, useContext, useRef } from 'react'
+import { Text, View, StyleSheet, TextInput, Pressable, KeyboardAvoidingView, Alert, Modal, Button } from "react-native";
 import SelectDropdown from 'react-native-select-dropdown';
 import DatePicker from '../components/DatePicker';
 import { supabase } from '../lib/supabase';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { UserContext } from '../lib/UserContext';
+import { useIsFocused } from '@react-navigation/native';
 import InfoCards from "../components/InfoCards"
 
-export default function TrackerScreen() {
-
+export default function TrackerScreen({route, navigation}) {
   const [activity, setActivity] = useState("");
   const [hours, setHours] = useState("")
   const [minutes, setMinutes] = useState("")
@@ -20,9 +20,11 @@ export default function TrackerScreen() {
   const [notes, setNotes] = useState("")
   const { setIsLoggedIn, setSession, username, userID } = useContext(UserContext)
   const [showModal, setShowModal] = useState(false);
-
+  const dropdownRef = useRef({});
+  const isFocused = useIsFocused();
 
   useEffect(() => {
+     
     async function fetchCategories() {
       let { data: category, error } = await supabase
         .from('category')
@@ -37,22 +39,48 @@ export default function TrackerScreen() {
         };
         category.push(moodObject)
         setCategory(category)
-      }
+      } 
+      
     }
     console.log("Avattu")
     fetchCategories()
   }, [])
-
-
+  
+  //  Resetoi kaiken, kun screeni aukaistaan
   useEffect(() => {
-    console.log("category UseEffect")
-  }, [category])
+    dropdownRef.current.reset()
+    setActivity("")
+    setHours(null)
+    setMinutes(null)
+    setNotes("")
+  }, [isFocused])
+  
+  
+  useEffect(() => {
+    
+    if (category.length === 0 || route.params === undefined) {
+      return
+    }
 
+    switch(route.params.homeScreenActivityId) {
+      case 1:
+        setActivity(1)
+        dropdownRef.current.selectIndex(0)
+        break;
+      case 2:
+        setActivity(2)
+        dropdownRef.current.selectIndex(1)
+        break;
+      case 3:
+        setActivity(3)
+        dropdownRef.current.selectIndex(2)
+        break;
+    }
+  }, [route.params, category])
 
   useEffect(() => {
     async function fetchData() {
       try {
-
         let dailyID = await fetchDailyId()
         console.log("dailyID Tässä", dailyID)
 
@@ -254,19 +282,6 @@ export default function TrackerScreen() {
 
   }
 
-
-  function consoleLog() {
-    let hoursToMinutes = parseFloat(hours) * 60
-    let totalMinutes = (hoursToMinutes + parseFloat(minutes))
-    console.log(activity)
-    console.log(minutes)
-    console.log(hours)
-    console.log(totalMinutes)
-    console.log(date)
-    console.log(mood)
-    console.log(notes)
-  }
-
   function sanitazedMinutes(text) {
     // Remove non-numeric characters
     const mins = text.replace(/[^0-9]/g, '');
@@ -305,9 +320,6 @@ export default function TrackerScreen() {
     }
   };
 
-
-
-
   return (
     <View style={styles.container}>
       <KeyboardAvoidingView
@@ -318,8 +330,10 @@ export default function TrackerScreen() {
           <SelectDropdown
             style={styles.selectDropdown}
             data={category}
+            ref={dropdownRef}
             defaultButtonText={"Select activity"}
             onSelect={(selectedItem, name) => {
+              console.log("DROPDOWN item selected", selectedItem)
               setActivity(selectedItem.id)
             }}
             buttonTextAfterSelection={(selectedItem, index) => {
@@ -425,6 +439,7 @@ export default function TrackerScreen() {
               </View>
             </Modal>
           </>}
+          <Button onPress={() => dropdownRef.current.selectIndex(1)} title="Test11" />
         </View>
       </KeyboardAvoidingView>
     </View>

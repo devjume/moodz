@@ -147,9 +147,17 @@ export default function HomeScreen({navigation}) {
 			return
 		}
 
-		setSleepGoal(profiles[0].sleep_goal)
-		setExerciseGoal(profiles[0].exercise_goal)
-		setRelaxGoal(profiles[0].relax_goal)
+		if (profiles) {
+			setSleepGoal(profiles[0].sleep_goal)
+			setExerciseGoal(profiles[0].exercise_goal)
+			setRelaxGoal(profiles[0].relax_goal)
+		} else {
+			setSleepGoal(0)
+			setExerciseGoal(0)
+			setRelaxGoal(0)
+		}
+
+		
 		setDataReceived(true)
 	}
 
@@ -210,13 +218,14 @@ export default function HomeScreen({navigation}) {
 		setTodayDate(addDays(todayDate, 1));
 	}
 
-	function CustomBar({title, progress, color}) {
+	function CustomBar({title, progress, color, categoryId}) {
 		return (
 			<View>
 				<Text style={{fontWeight: "bold", fontSize: 18, paddingBottom: 4}}>{title}</Text>
 				<View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 8, justifyContent: "space-between"}}>
 				<ProgressBar progress={progress} color={color} style={{minWidth: 300, height: 30, backgroundColor: "#D9D9D9", borderRadius: 25}}/>
-				<Pressable onPress={() => navigation.navigate('Tracker')}>
+				<Pressable onPress={() => navigation.navigate('Tracker', { homeScreenActivityId: categoryId })}>
+					
 					{({pressed}) => (
 						<Ionicons name="add-circle-outline" size={38} color={"#292D32"}  />
 					)}
@@ -262,9 +271,9 @@ export default function HomeScreen({navigation}) {
 				children={(e) => <Text style={{fontWeight: "bold", fontSize: 28}}>{e}</Text>}
 				/>
 			<View style={screen.barContainer}>
-				<CustomBar title={"Sleep"} progress={calculateProgress("sleep")} color={"#8B95DF"}/>
-				<CustomBar title={"Exercise"} progress={calculateProgress("exercise")} color={"#C44536"}/>
-				<CustomBar title={"Relax"} progress={calculateProgress("relax")} color={"#498467"} />
+				<CustomBar title={"Sleep"} progress={calculateProgress("sleep")} color={"#8B95DF"} categoryId={1}/>
+				<CustomBar title={"Exercise"} progress={calculateProgress("exercise")} color={"#C44536"} categoryId={2}/>
+				<CustomBar title={"Relax"} progress={calculateProgress("relax")} color={"#498467"} categoryId={3}/>
 			</View>
 		</ScrollView>
 	);
