@@ -97,7 +97,7 @@ export default StyleSheet.create({
   },
   calendar: {
     flexShrink: 1,
-    padding: 20,
+    padding: 10,
     backgroundColor: "#fafafa",
     width: 250,
     alignItems: "center",
@@ -110,6 +110,8 @@ export default StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+    borderColor: "#dedede",
+    borderWidth: 2,
   },
   //
 
@@ -118,5 +120,30 @@ export default StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     margin: 10,
+    marginTop: 25,
+    paddingTop: 15
   },
+      
+  title: {
+     fontSize: 28,
+     fontWeight: "bold",	
+  },
+
+  subHeader: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 15
+    
+  }
+
+  
+      
+
+
+      
+
+
+     
+
+      
 });      

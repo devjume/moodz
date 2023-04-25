@@ -8,12 +8,6 @@ const infoCards = [
     description: 'Please note that this life management app is not intended to provide medical advice or replace the advice of a healthcare professional. We, the creators of the app, are not experts in the medical or health fields. This app is designed to assist you in tracking your daily activities, such as sleep, exercise, and relaxation, to help you achieve your personal goals.',
   },
   {
-    title: 'Get started',
-    description: 'First you will set your daily goals on the following activities:' ,
-    activities: 'Sleep, Exercise, Relax',
-    description2: '',
-  },
-  {
     title: 'Profile page',
     description: 'In the profile page you can update your activity goals. Also log out button is found in this page',
   },
@@ -36,6 +30,12 @@ const infoCards = [
   {
     title: 'Bad habits page',
     description: 'In the bad habit page you are able to add new bad habits that you have stopped. Once you\'ve added a bad habit a counter will tell you how long have you gone without doing this particular habit. You can also update or delete existing bad habits if you want to.',
+  },
+  {
+    title: 'Get started',
+    description: 'Next you will set your daily goal duration on the following activities:' ,
+    activities: 'Sleep, Exercise, Relax',
+    description2: 'The durations are your own personal goals that are set by you to try to achieve daily.',
   },
 ];
 
