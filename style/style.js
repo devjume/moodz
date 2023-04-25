@@ -97,7 +97,7 @@ export default StyleSheet.create({
   },
   calendar: {
     flexShrink: 1,
-    padding: 20,
+    padding: 10,
     backgroundColor: "#fafafa",
     width: 250,
     alignItems: "center",

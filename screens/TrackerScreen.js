@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Text, View, StyleSheet, TextInput, Pressable, KeyboardAvoidingView, Alert, Modal } from "react-native";
+import { Text, View, StyleSheet, TextInput, Pressable, KeyboardAvoidingView, Alert, Modal, ScrollView, Button } from "react-native";
 import SelectDropdown from 'react-native-select-dropdown';
 import DatePicker from '../components/DatePicker';
 import { supabase } from '../lib/supabase';
@@ -20,6 +20,9 @@ export default function TrackerScreen() {
   const [notes, setNotes] = useState("")
   const { setIsLoggedIn, setSession, username, userID } = useContext(UserContext)
   const [showModal, setShowModal] = useState(false);
+  const [pressed, setPressed] = useState(false);
+  const pressIn = () => setPressed(true);
+  const pressOut = () => setPressed(false);
 
 
   useEffect(() => {
@@ -169,6 +172,13 @@ export default function TrackerScreen() {
         .eq('date', wholeDate)
       console.log("fetchDailyId data: ", data)
       console.log("fetchDailyId error: ", error)
+      console.log("MOODI", data[0].mood)
+      if (data[0].mood !== undefined) {
+        setMood(data[0].mood)
+      }
+      else {
+        setMood("")
+      }
       if (data.length === 0) {
         return undefined
       } else {
@@ -213,8 +223,17 @@ export default function TrackerScreen() {
           { id: dailyId, user_id: userID, mood: mood, date: date },
         ]))
         .select()
-      console.log("updateMood error: ", error)
+      if (error) {
+        console.log("updateMood error: ", error)
+      }
 
+      if (mood === undefined) {
+        Alert.alert("No mood selected", "Select mood")
+      }
+      else {
+        setShowModal(true);
+        setTimeout(() => setShowModal(false), 2000)
+      }
 
     } catch (error) {
       console.log("error updateMood", error)
@@ -236,11 +255,11 @@ export default function TrackerScreen() {
         insertCategoryTrack(idAndCategory, dailyId)
       }
       if (activity === "") {
-        Alert.alert("No activity selected!", "Select an activity!")
+        Alert.alert("No activity selected", "Please select an activity")
       }
       else if (minutes === "" && hours === "") {
-        Alert.alert("Empty duration!", "Please set duration", [
-          { text: "Yes sir!" }
+        Alert.alert("Empty duration", "Please set duration", [
+          { text: "Yes sir" }
         ])
       }
       else {
@@ -298,7 +317,7 @@ export default function TrackerScreen() {
       const sanitizedValue = parseInt(hrs, 10);
       if (sanitizedValue > 23) {
         setHours('23');
-        alert("Maximum time for a task is 23 hours and 59 minutes!")
+        alert("Maximum time for a task is 23 hours and 59 minutes")
       } else {
         setHours(hrs);
       }
@@ -312,120 +331,133 @@ export default function TrackerScreen() {
     <View style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
       >
-        <View style={styles.activity}>
-          <Text style={styles.selectionHeader}>Activity:</Text>
-          <SelectDropdown
-            style={styles.selectDropdown}
-            data={category}
-            defaultButtonText={"Select activity"}
-            onSelect={(selectedItem, name) => {
-              setActivity(selectedItem.id)
-            }}
-            buttonTextAfterSelection={(selectedItem, index) => {
-              // text represented after item is selected
-              // if data array is an array of objects then return selectedItem.property to render after item is selected
-              return selectedItem.name
-            }}
-            rowTextForSelection={(item, index) => {
-              // text represented for each item in dropdown
-              // if data array is an array of objects then return item.property to represent item in dropdown
-              return item.name
-            }}
-            dropdownOverlayColor={"#DCC9B6"}
-          />
+        <ScrollView style={{ width: "100%" }}>
+          <View style={styles.activity}>
+            <Text style={styles.selectionHeader}>Activity:</Text>
+            <SelectDropdown
+              style={styles.selectDropdown}
+              data={category}
+              buttonStyle={{backgroundColor: "#fafafa", width:250}}
+              defaultButtonText={"Select activity"}
+              onSelect={(selectedItem, name) => {
+                setActivity(selectedItem.id)
+              }}
+              buttonTextAfterSelection={(selectedItem, index) => {
+                // text represented after item is selected
+                // if data array is an array of objects then return selectedItem.property to render after item is selected
+                return selectedItem.name
+              }}
+              rowTextForSelection={(item, index) => {
+                // text represented for each item in dropdown
+                // if data array is an array of objects then return item.property to represent item in dropdown
+                return item.name
+              }}
+              dropdownOverlayColor={"#DCC9B6"}
+            />
 
 
-          {activity == 4 ? <>
-            <View style={styles.row}>
-              <Text>Select todays mood</Text>
-            </View>
-            <View style={styles.row}>
-              <Pressable
-                onPress={() => setMood(1)}
-              >
-                <FontAwesome5 name="dizzy" size={60} color={mood === 1 ? "#000000" : "#ffe62a"} />
-              </Pressable>
-              <Pressable
-                onPress={() => setMood(2)}
-              >
-                <FontAwesome5 name="frown" size={60} color={mood === 2 ? "#000000" : "#ffe62a"} />
-              </Pressable>
-              <Pressable
-                onPress={() => setMood(3)}
-              >
-                <FontAwesome5 name="meh" size={60} color={mood === 3 ? "#000000" : "#ffe62a"} />
-              </Pressable>
-              <Pressable
-                onPress={() => setMood(4)}
-              >
-                <FontAwesome5 name="smile" size={60} color={mood === 4 ? "#000000" : "#ffe62a"} />
-              </Pressable>
-              <Pressable
-                onPress={() => setMood(5)}
-              >
-                <FontAwesome5 name="smile-beam" size={60} color={mood === 5 ? "#000000" : "#ffe62a"} />
-              </Pressable>
-            </View>
-            <View style={styles.date}>
-              <DatePicker date={date} setDate={setDate} fetchDailyId={fetchDailyId} kissa="koira" activity={"isask"} setMinutes={setMinutes} setHours={setHours} setNotes={setNotes} />
-              <Pressable style={styles.button} onPress={() => updateMood()}>
-                <Text>Save</Text>
-              </Pressable>
-            </View></> : <><View style={styles.row}>
-              <View style={styles.inputWrap}>
-                <Text style={styles.selectionHeader}>Duration</Text>
-                <TextInput
-                  style={styles.inputHours}
-                  onChangeText={text => sanitazedHours(text)}
-                  value={hours}
-                  maxLength={2}
-                  keyboardType="numeric"
-                  placeholder='hours'
-                />
+            {activity == 4 ? <>
+              <View style={styles.row}>
+                <Text style={styles.selectionHeader}>Select mood:</Text>
               </View>
-              <View style={styles.inputWrap}>
-                <Text style={styles.selectionHeader}></Text>
-                <TextInput
-                  style={styles.inputMinutes}
-                  onChangeText={text => sanitazedMinutes(text)}
-                  maxLength={2}
-                  value={minutes}
-                  keyboardType="numeric"
-                  placeholder='minutes'
-                />
+              <View style={styles.moodRow}>
+                <Pressable
+                  onPress={() => setMood(1)}
+                >
+                  <FontAwesome5 name="dizzy" size={60} color={mood === 1 ? "#000000" : "#ffe62a"} />
+                </Pressable>
+                <Pressable
+                  onPress={() => setMood(2)}
+                >
+                  <FontAwesome5 name="frown" size={60} color={mood === 2 ? "#000000" : "#ffe62a"} />
+                </Pressable>
+                <Pressable
+                  onPress={() => setMood(3)}
+                >
+                  <FontAwesome5 name="meh" size={60} color={mood === 3 ? "#000000" : "#ffe62a"} />
+                </Pressable>
+                <Pressable
+                  onPress={() => setMood(4)}
+                >
+                  <FontAwesome5 name="smile" size={60} color={mood === 4 ? "#000000" : "#ffe62a"} />
+                </Pressable>
+                <Pressable
+                  onPress={() => setMood(5)}
+                >
+                  <FontAwesome5 name="smile-beam" size={60} color={mood === 5 ? "#000000" : "#ffe62a"} />
+                </Pressable>
+                <Modal transparent={true} visible={showModal} animationType="fade">
+                  <View>
+                    <Text style={styles.modalText}>Data saved</Text>
+                  </View>
+                </Modal>
               </View>
-            </View>
-
-            <View style={styles.date}>
-              <Text style={styles.selectionHeader}>Date</Text>
-              <DatePicker date={date} setDate={setDate} />
-            </View>
-            <Text style={styles.selectionHeader}>Notes for {activity === 1 ? "Sleep" : ""}
-              {activity === 2 ? "Exercise" : ""}
-              {activity === 3 ? "Relax" : ""}
-              {activity === 4 ? "Mood" : ""}
-            </Text>
-            <View style={styles.row}>
-
-              <TextInput
-                style={styles.inputNotes}
-                value={notes}
-                onChangeText={t => setNotes(t)}
-                multiline
-                placeholder='Some notes for sleep, exercise, relax or mood'
-              />
-            </View>
-            <Pressable style={styles.button} onPress={() => insertDailyAndCategory()}>
-              <Text>Save</Text>
-            </Pressable>
-            <Modal transparent={true} visible={showModal} animationType="fade">
+              <View style={styles.date}>
+                <DatePicker date={date} setDate={setDate} fetchDailyId={fetchDailyId} kissa="koira" activity={"isask"} setMinutes={setMinutes} setHours={setHours} setNotes={setNotes} />
+              </View>
               <View>
-                <Text style={styles.modalText}>Data saved</Text>
+                <Pressable style={[styles.button, pressed && styles.buttonPressed]}
+                  onPressIn={pressIn}
+                  onPressOut={pressOut} onPress={() => updateMood()} >
+                  <Text style={styles.buttonText}>SAVE</Text>
+                </Pressable>
+              </View></> : <><View style={styles.durationView}>
+                <Text style={styles.selectionHeader}>Duration:</Text>
+
+                <View style={{ flexDirection: 'row' }}>
+                  <TextInput
+                    style={styles.inputHours}
+                    onChangeText={text => sanitazedHours(text)}
+                    value={hours}
+                    maxLength={2}
+                    keyboardType="numeric"
+                    placeholder='hours'
+                  />
+                  <TextInput
+                    style={styles.inputMinutes}
+                    onChangeText={text => sanitazedMinutes(text)}
+                    maxLength={2}
+                    value={minutes}
+                    keyboardType="numeric"
+                    placeholder='minutes'
+                  />
+                </View>
               </View>
-            </Modal>
-          </>}
-        </View>
+
+              <View style={styles.date}>
+                <Text style={styles.selectionHeader}>Date:</Text>
+                <DatePicker date={date} setDate={setDate} />
+              </View>
+              <Text style={styles.selectionHeader}>Notes for {activity === 1 ? "Sleep:" : ""}
+                {activity === 2 ? "Exercise:" : ""}
+                {activity === 3 ? "Relax:" : ""}
+                {activity === 4 ? "Mood:" : ""}
+              </Text>
+              <View style={styles.row}>
+
+                <TextInput
+                  style={styles.inputNotes}
+                  value={notes}
+                  onChangeText={t => setNotes(t)}
+                  multiline
+                  placeholder='Some notes for sleep, exercise, relax or mood'
+                />
+              </View>
+              <Pressable style={[styles.button, pressed && styles.buttonPressed]}
+                  onPressIn={pressIn}
+                  onPressOut={pressOut} onPress={() => insertDailyAndCategory()}>
+                <Text style={styles.buttonText}>SAVE</Text>
+              </Pressable>
+              <Modal transparent={true} visible={showModal} animationType="fade">
+                <View>
+                  <Text style={styles.modalText}>Data saved</Text>
+                </View>
+              </Modal>
+            </>}
+          </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </View>
   )
@@ -466,25 +498,28 @@ const styles = StyleSheet.create({
   button: {
     margin: 30,
     flexDirection: "row",
-    padding: 10,
+    padding: 7,
     backgroundColor: "#498467",
-    width: 150,
-    borderRadius: 15,
+    width: 250,
     justifyContent: 'center',
     alignItems: 'center'
   },
+  buttonPressed: {
+    backgroundColor: '#317052',
+  },
   buttonText: {
-    color: "#152d33",
-    fontSize: 20
+    color: "#ffffff",
+    fontWeight: "bold"
   },
   // VEETIN CSS
   selectionHeader: {
     fontSize: 20,
     fontWeight: "bold",
     margin: 10,
+    textAlign: "center"
   },
-  selectDropdown:{
-    
+  selectDropdown: {
+
   },
   activity: {
     flexShrink: 1,
@@ -500,8 +535,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  moodRow: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: 100,
+  },
   inputWrap: {
     borderColor: "#cccccc",
+  },
+  durationView: {
+    padding: 13
   },
   inputHours: {
     width: 115,
@@ -549,7 +594,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fafafa",
     width: 200,
     alignItems: "center",
-    
+
   },
   date: {
     flex: 1,
@@ -574,14 +619,18 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  
+
   modalText: {
     textAlign: "center",
     fontSize: 18,
     fontWeight: 'bold',
     backgroundColor: "#ffffff",
     padding: 17,
-  }
+  },
+  save: {
+    margin: 100,
+    alignSelf: "flex-end"
+  },
 
   //
 });      
