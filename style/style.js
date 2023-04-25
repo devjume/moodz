@@ -110,6 +110,8 @@ export default StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+    borderColor: "#dedede",
+    borderWidth: 2,
   },
   //
 

@@ -60,8 +60,7 @@ export default function TrackerScreen() {
         console.log("dailyID Tässä", dailyID)
 
         let fetchItems = await fetchCategoryItems(dailyID, activity)
-        console.log("Kissa Tässä", fetchItems)
-        console.log("activity", category[0])
+        console.log("FetchItems", fetchItems)
 
         if (fetchItems === undefined || fetchItems.length === 0) {
           setMinutes("")
@@ -172,7 +171,6 @@ export default function TrackerScreen() {
         .eq('date', wholeDate)
       console.log("fetchDailyId data: ", data)
       console.log("fetchDailyId error: ", error)
-      console.log("MOODI", data[0].mood)
       if (data[0].mood !== undefined) {
         setMood(data[0].mood)
       }
@@ -255,12 +253,10 @@ export default function TrackerScreen() {
         insertCategoryTrack(idAndCategory, dailyId)
       }
       if (activity === "") {
-        Alert.alert("No activity selected", "Please select an activity")
+        Alert.alert("No activity selected", "Please select an activity.")
       }
       else if (minutes === "" && hours === "") {
-        Alert.alert("Empty duration", "Please set duration", [
-          { text: "Yes sir" }
-        ])
+        Alert.alert("Empty duration", "Please set duration.")
       }
       else {
         setShowModal(true);
@@ -339,7 +335,15 @@ export default function TrackerScreen() {
             <SelectDropdown
               style={styles.selectDropdown}
               data={category}
-              buttonStyle={{backgroundColor: "#fafafa", width:250}}
+              buttonStyle={{backgroundColor: "#fafafa", width:250, fontSize: 20, borderColor: "#dedede",
+              borderWidth: 2, shadowColor: '#000',
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 5,}}
               defaultButtonText={"Select activity"}
               onSelect={(selectedItem, name) => {
                 setActivity(selectedItem.id)
@@ -502,7 +506,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#498467",
     width: 250,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    borderColor: "#317554",
+    borderWidth: 2,
   },
   buttonPressed: {
     backgroundColor: '#317052',
@@ -567,6 +581,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+    borderColor: "#dedede",
+    borderWidth: 2,
   },
   inputMinutes: {
     width: 115,
@@ -587,6 +603,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+    borderColor: "#dedede",
+    borderWidth: 2,
   },
   calendar: {
     flex: 1,
@@ -618,6 +636,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+    borderColor: "#dedede",
+    borderWidth: 2,
   },
 
   modalText: {
