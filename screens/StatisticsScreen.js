@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from 'react'
 import styles from '../style/style';
-import { View, Dimensions, ScrollView, Alert } from "react-native";
+import { View, Dimensions, ScrollView, Alert, StyleSheet, Button } from "react-native";
 import { LineChart } from 'react-native-chart-kit';
 import { supabase } from '../lib/supabase';
 import { UserContext } from '../lib/UserContext';
@@ -12,6 +12,7 @@ export default function StatisticsScreen() {
   const [sleepData, setSleepData] = useState([]);
   const [exerciseData, setExerciseData] = useState([]);
   const [relaxData, setRelaxData] = useState([]);
+  const [scale, setScale] = useState('day');
 
 
   const { setIsLoggedIn, setSession, username, userID, session } = useContext(UserContext)
@@ -103,6 +104,8 @@ export default function StatisticsScreen() {
 
 
 
+
+
   const screenWidth = Dimensions.get("window").width;
   const chartConfig = {
     backgroundGradientFrom: "#1E2923",
@@ -115,12 +118,15 @@ export default function StatisticsScreen() {
     useShadowColorFromDataset: false 
   };
 
+
+
+
   let sleep = {
     labels: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
     datasets: [
       {
 
-        //supabasedata tähän->
+        
         data: sleepData,
         color: (opacity = 1) => `rgba(248, 237, 51, ${opacity})`, 
         strokeWidth: 2, 
@@ -134,7 +140,7 @@ export default function StatisticsScreen() {
     datasets: [
       {
 
-        //supabasedata tähän->
+        
         data: exerciseData,
         color: (opacity = 1) => `rgba(226, 96, 73, ${opacity})`, 
         strokeWidth: 2 
@@ -148,13 +154,38 @@ export default function StatisticsScreen() {
     datasets: [
       {
 
-        //supabasedata tähän->
+        
         data: relaxData,
         color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, 
         strokeWidth: 2 
       }
     ],
     legend: ["Relax(hours)"] 
+  };
+
+
+  async function toggleScale() {
+    if (scale === 'day') {
+      setScale('month');
+      
+      sleep.labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      sleep.datasets[0].data = relaxData;
+      exercise.labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      exercise.datasets[0].data = exerciseData;
+      relax.labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      relax.datasets[0].data = relaxData;
+      
+    } else {
+      setScale('day');;
+      
+      sleep.labels = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+      sleep.datasets[0].data = relaxData;
+      exercise.labels = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+      exercise.datasets[0].data = exerciseData;
+      relax.labels = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+      relax.datasets[0].data = relaxData;
+      
+    }
   };
 
 
@@ -182,7 +213,7 @@ export default function StatisticsScreen() {
          width={screenWidth}
          height={250}
          chartConfig={chartConfig}
-         fromZero={true}
+         fromZero={true} 
       /> 
       }
 
@@ -195,6 +226,9 @@ export default function StatisticsScreen() {
          fromZero={true}
       /> 
       }
+
+
+        <Button style={styles.subHeader} title={`Toggle to ${scale}-scale`} onPress={toggleScale} />
 
     </ScrollView>
 
