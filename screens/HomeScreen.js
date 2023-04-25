@@ -31,6 +31,11 @@ export default function HomeScreen({navigation}) {
 	}, [])
 
 	useEffect(() => {
+		setSleepValue(0)
+		setExerciseValue(0)
+		setRelaxValue(0)
+		calculateOverallProgress(0,0,0)
+
 		async function getDailyData() {
 			try {
 				const dbDateFormat = todayDate.toISOString().split("T")[0]
@@ -306,3 +311,6 @@ const screen = StyleSheet.create({
 	}
 });
 
+// TODO:
+// * lisää bad habit laatikot home screeniin
+// 
