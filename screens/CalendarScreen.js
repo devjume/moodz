@@ -322,7 +322,6 @@ export default function CalendarScreen() {
             onDayPress={handleDayPress} 
             markedDates={{ [selectedDate]: { selected: true } }} 
             pastScrollRange={12}
-            
             futureScrollRange={1}
             scrollEnabled={true}/>
       {selectedDate && renderModal()}
