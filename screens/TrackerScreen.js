@@ -342,7 +342,7 @@ export default function TrackerScreen({route, navigation}) {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-        <ScrollView style={{ width: "100%" }}>
+        <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={false}>
           <View style={styles.activity}>
             <Text style={styles.selectionHeader}>Activity:</Text>
             <SelectDropdown
