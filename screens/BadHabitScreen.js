@@ -199,6 +199,7 @@ export default function BadHabitScreen() {
 const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName, editMode, setEditMode, addHabit, userID, dataArray, setData, habitID, setHabitID, editHabit}) => {
 
   oldDate = new Date(oldDate)
+  
 
   const [newName, setNewName] = useState(oldName)
   const [date, setDate] = useState(oldDate);
@@ -253,11 +254,11 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                   <Text style={styles.modalHeading}>Edit: "{oldName}"</Text> 
                   <Pressable
                  //delete habit
-                  style={{backgroundColor:"red", flex:0.1, justifyContent:"center"}}
+                  style={{flex:0.1, justifyContent:"center"}}
                   onPress={() => {
                     alertConfirmation();
                   }}>
-                  <Text style={styles.textStyle}><FontAwesome name="trash-o" size={24} color="black" /></Text>
+                  <Text style={{textAlign:"center"}}><FontAwesome name="trash-o" size={20} color="#C44536"/></Text>
                 </Pressable>
               </View>
               <TextInput style={styles.textInput} value={newName} onChangeText={t=>setNewName(t)}></TextInput>
@@ -269,7 +270,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                   onPress={() => {
                     closeForm()
                   }}>
-                  <Text style={styles.textStyle}>Cancel</Text>
+                  <Text style={styles.buttonText}>Cancel</Text>
                   </Pressable>
 
                   <Pressable
@@ -285,7 +286,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                       closeForm()
                     }
                   }}>
-                  <Text style={styles.textStyle}>Update</Text>
+                  <Text style={styles.buttonText}>Update</Text>
                   </Pressable>
                 </View>
             </View>
@@ -321,7 +322,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                   onPress={() => {
                     closeForm()
                   }}>
-                  <Text style={styles.textStyle}>Cancel</Text>
+                  <Text style={styles.buttonText}>Cancel</Text>
                   </Pressable>
                   <Pressable
                   style={[styles.button, styles.buttonSave]}
@@ -334,7 +335,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                     closeForm()
                     }
                   }}>
-                  <Text style={styles.textStyle}>Save</Text>
+                  <Text style={styles.buttonText}>Save</Text>
                   </Pressable>
                 </View>
             </View>
@@ -424,7 +425,7 @@ const styles = StyleSheet.create({
   modalHeading: {
     textAlign: "left",
     margin: 10,
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "bold",
     flex:0.9,
   },
@@ -434,14 +435,17 @@ const styles = StyleSheet.create({
   },
   buttonClose:{
    flex:1,
-   backgroundColor:"red"
+   backgroundColor:"#C44536"
   },
   buttonSave:{
     flex:1,
-    backgroundColor:"aquamarine"
+    backgroundColor:"#498467"
   },
-  textStyle: {
+  buttonText: {
     textAlign: 'center',
+    color: "#fff",
+    fontWeight:"bold"
+
   },
   modalText: {
     marginBottom: 15,
