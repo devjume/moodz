@@ -327,7 +327,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                   style={[styles.button, styles.buttonSave]}
                   //save form data, send edited info
                   onPress={() => {
-                    if (date> new Date()) {
+                    if (date> new Date() || newDate> new Date()) {
                       Alert.alert("You can't select a date from the future")
                     } else {
                     addHabit(newName, newDate, userID, dataArray, setData)

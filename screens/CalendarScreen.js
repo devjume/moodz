@@ -5,12 +5,14 @@ import { CalendarList } from 'react-native-calendars';
 import { supabase } from '../lib/supabase';
 import { CircularProgress } from 'react-native-circular-progress';
 import { ProgressBar } from 'react-native-paper';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 
 
 
 
 export default function CalendarScreen() {
+
   const [selectedDate, setSelectedDate] = useState('');
   const [data, setData] = useState({});
 /*   const [sleepData, setSleepData] = useState({});
@@ -111,16 +113,28 @@ export default function CalendarScreen() {
 		
 	}, [])
 	
-	function calculateOverallProgress(sleepMin, exerciseMin, relaxMin) {
+  function calculateOverallProgress(sleepMin, exerciseMin, relaxMin) {
 		if (sleepMin + exerciseMin + relaxMin === 0 ) {
 			setOverallProgress(0)
 		}
 
-		const overAllMinutes = sleepMin + exerciseMin + relaxMin
-		const overAllGoals = sleepGoal + exerciseGoal + relaxGoal
-		const progress = Math.ceil((overAllMinutes / overAllGoals)* 100)
-		
-		setOverallProgress(isNaN(progress) ? 0 : progress) 
+		function calculateSingleSection(minutes, goal) {
+			const percentage = minutes / goal
+
+			if (percentage > 1) {
+				return 33.33
+			} else {
+				return isNaN(percentage) ? 0 : (percentage * 33.33)
+			}
+		}
+
+		const sleepSection = calculateSingleSection(sleepMin, sleepGoal)
+		const exerciseSection = calculateSingleSection(exerciseMin, exerciseGoal)
+		const relaxSection = calculateSingleSection(relaxMin, relaxGoal)
+
+		const progress = sleepSection + exerciseSection + relaxSection;
+
+		setOverallProgress(isNaN(progress) ? 0 : Math.round(progress))
 	}
 
   
@@ -138,6 +152,10 @@ export default function CalendarScreen() {
 		setSleepGoal(profiles[0].sleep_goal)
 		setExerciseGoal(profiles[0].exercise_goal)
 		setRelaxGoal(profiles[0].relax_goal)
+    
+
+    
+    
 	}
 
 
@@ -166,6 +184,11 @@ export default function CalendarScreen() {
       if (error) {
         console-log("Couldn't fetch Daily Mood")
       } else setDailyMood(daily_track[0])
+
+      displayDailyMood(mood)
+
+
+    
   }
 
 
@@ -183,6 +206,8 @@ export default function CalendarScreen() {
 			case "relax":
 				  progress = ( relaxValue.minutes / relaxGoal)
 				  break;
+
+      
 		}
 
 		if (!isFinite(progress)) {
@@ -200,6 +225,7 @@ export default function CalendarScreen() {
 
     setSelectedDate(day.dateString);
     setModalVisible(true);
+    
   };
 
 
@@ -214,7 +240,7 @@ export default function CalendarScreen() {
 				
 			</View>
 		)
-	}
+	} 
   
 
 
@@ -250,7 +276,7 @@ export default function CalendarScreen() {
                 arcSweepAngle={270}
                 rotation={225}
                 backgroundColor="#D9D9D9"
-                lineCap='round'
+                lineCap='round' 
                 style={{marginVertical: 10}}
                 children={(e) => <Text style={{fontWeight: "bold", fontSize: 28}}>{e}</Text>}
 				      />
@@ -261,8 +287,8 @@ export default function CalendarScreen() {
 
             <View>
 
-
-
+      
+              <FontAwesome5 name="smile-beam" size={70} color={dailyMood === 5 ? "#000000" : "#ffe62a"} />
               <Text style={styles.subHeader}>Daily Mood</Text>
 
             </View> 
@@ -286,7 +312,7 @@ export default function CalendarScreen() {
 				<CustomBar title={"Exercise"} progress={calculateProgress("exercise")} color={"#C44536"}/>
 
         <Text style={styles.dayStatHeader}>Exercise Notes</Text>
-          <TextInput
+          <TextInput 
              style={{ height: 200, width: '80%', borderColor: 'gray', borderWidth: 1, marginTop: 20, marginBottom: 25 }}
               multiline={true}
               editable = {false}
@@ -304,7 +330,7 @@ export default function CalendarScreen() {
               multiline={true}
               editable = {false}
               value={notes}
-               onChangeText={setNotes}
+               onChangeText={setNotes} 
           />
 
         <TouchableOpacity onPress={() => setModalVisible (false)} style={styles.button}>
@@ -321,7 +347,7 @@ export default function CalendarScreen() {
       <CalendarList 
             onDayPress={handleDayPress} 
             markedDates={{ [selectedDate]: { selected: true } }} 
-            pastScrollRange={12}
+            pastScrollRange={6}
             futureScrollRange={1}
             scrollEnabled={true}/>
       {selectedDate && renderModal()}
