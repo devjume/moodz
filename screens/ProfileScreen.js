@@ -94,17 +94,17 @@ export default function ProfileScreen() {
     <View style={style.goalInputs}>
       <View style={style.rivi}>
           <Text style={style.goal}>Relax</Text>
-          <NumericInput initValue={relax} value={relax} rightButtonBackgroundColor='#498467' 
+          <NumericInput initValue={relax} value={relax} minValue={0} rightButtonBackgroundColor='#498467' 
             leftButtonBackgroundColor='#C44536' borderColor={"black"} style={style.numericInput} onChange={v => setRelax(v)}/>
       </View>
       <View style={style.rivi}>
           <Text style={style.goal}>Exercise</Text>
-          <NumericInput initValue={exercise} rightButtonBackgroundColor='#498467' 
+          <NumericInput initValue={exercise} minValue={0} rightButtonBackgroundColor='#498467' 
             leftButtonBackgroundColor='#C44536' borderColor={"black"} style={style.numericInput} onChange={v => setExercise(v)}/>
       </View>
       <View style={style.rivi}>
           <Text style={style.goal}>Sleep</Text>
-          <NumericInput initValue={sleep} rightButtonBackgroundColor='#498467' 
+          <NumericInput initValue={sleep} minValue={0} rightButtonBackgroundColor='#498467' 
             leftButtonBackgroundColor='#C44536' borderColor={"black"} style={style.numericInput} onChange={v => setSleep(v)}/>
       </View>
       
