@@ -83,7 +83,7 @@ export default function TrackerScreen({route, navigation}) {
         break;
     }
 
-    setDate(route.params.homeScreenDate)
+    setDate(new Date(route.params.homeScreenDate))
 
   }, [route.params, category])
 

@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { CircularProgress } from 'react-native-circular-progress';
 import { ProgressBar } from 'react-native-paper';
 import { addDays, min } from 'date-fns'
+import { useIsFocused } from '@react-navigation/native';
 
 import styles, {BACKGROUND_COLOR} from '../style/style';
 import CustomButton from "../components/CustomButton"
@@ -26,9 +27,16 @@ export default function HomeScreen({navigation}) {
 	const [overallProgress, setOverallProgress] = useState(0)
 	const [dataReceived, setDataReceived] = useState(false)
 
+	const isFocused = useIsFocused();
+
 	useEffect(() => {
 		getUserGoals()
 	}, [])
+
+	useEffect(() => {
+		console.log("focused")
+	}, [isFocused])
+	
 
 	useEffect(() => {
 		setSleepValue(0)
@@ -229,7 +237,7 @@ export default function HomeScreen({navigation}) {
 				<Text style={{fontWeight: "bold", fontSize: 18, paddingBottom: 4}}>{title}</Text>
 				<View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 8, justifyContent: "space-between"}}>
 				<ProgressBar progress={progress} color={color} style={{minWidth: 300, height: 30, backgroundColor: "#D9D9D9", borderRadius: 25}}/>
-				<Pressable onPress={() => navigation.navigate('Tracker', { homeScreenActivityId: categoryId, homeScreenDate: todayDate })}>
+				<Pressable onPress={() => navigation.navigate('Tracker', { homeScreenActivityId: categoryId, homeScreenDate: todayDate.toISOString() })}>
 					
 					{({pressed}) => (
 						<Ionicons name="add-circle-outline" size={38} color={"#292D32"}  />
@@ -312,7 +320,6 @@ const screen = StyleSheet.create({
 });
 
 // TODO:
-// * jos homescreeniltä painaa plussa, näkyy tracker screenillä silti tämä päivä
 // * lisää bad habit laatikot home screeniin
 // * home screen ei päivity automaattisesti, jos tunteja lisää esim. tracker screenillä
 // * korjaa authsessionrefresh error
