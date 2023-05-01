@@ -5,7 +5,7 @@ import { Text, View, ScrollView, StyleSheet, FlatList, Alert, Pressable } from "
 import { Ionicons } from '@expo/vector-icons';
 import { CircularProgress } from 'react-native-circular-progress';
 import { ProgressBar } from 'react-native-paper';
-import { addDays, min } from 'date-fns'
+import { addDays, formatDistance, isEqual } from 'date-fns'
 import { useIsFocused } from '@react-navigation/native';
 
 import styles, {BACKGROUND_COLOR} from '../style/style';
@@ -35,6 +35,7 @@ export default function HomeScreen({navigation}) {
 
 	useEffect(() => {
 		getDailyData()
+
 	}, [isFocused])
 	
 
@@ -44,7 +45,6 @@ export default function HomeScreen({navigation}) {
 		setRelaxValue(0)
 		calculateOverallProgress(0,0,0)
 		getDailyData()
-		
 	}, [todayDate])
 
 	async function getDailyData() {
@@ -259,12 +259,14 @@ export default function HomeScreen({navigation}) {
   return (
 		<ScrollView contentContainerStyle={screen.container}>
 			<View style={screen.section}>
-				<Text style={screen.title}>Today</Text>
 				<View style={{display: "flex", flexDirection: "row", gap: 90, alignItems: "center"}}>
 					<Pressable onPress={moveBackwards} style={({pressed}) => [{backgroundColor: pressed ? 'rgba(103, 65, 80, 0.2)': 'rgba(103, 65, 80, 0.0)', borderRadius: 100, padding: 14}]} >
 						<Ionicons name="arrow-back" size={30} color={"black"}  />
 					</Pressable>
-					<Text style={screen.title}>{todayDate.getDate()}.{todayDate.getMonth()+1}</Text>
+					<View style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+						<Text style={screen.title}>{todayDate.getDate()}.{todayDate.getMonth()+1}</Text>
+						<Text style={screen.today}>{todayDate.toDateString() === new Date().toDateString() ? "Today" : formatDistance(todayDate, Date.now(), {addSuffix: true})}</Text>
+					</View>
 					<Pressable onPress={moveForward} style={({pressed}) => [{backgroundColor: pressed ? 'rgba(103, 65, 80, 0.2)': 'rgba(103, 65, 80, 0.0)', borderRadius: 100, padding: 14}]} >
 						<Ionicons name="arrow-forward" size={30} color={"black"} />	
 					</Pressable>
@@ -315,12 +317,15 @@ const screen = StyleSheet.create({
 	barContainer: {
 		display: "flex",
 		gap: 16,
+	},
+	today: {
+		fontSize: 12,
 	}
 });
 
 // TODO:
 // * lisää bad habit laatikot home screeniin
-// * home screen ei päivity automaattisesti, jos tunteja lisää esim. tracker screenillä
+// * poista today homescreeniltä
 // * korjaa authsessionrefresh error
 // 24.4 3h home screen
 // 25.4 3h home screen
