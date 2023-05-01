@@ -52,6 +52,8 @@ export default function TrackerScreen({route, navigation}) {
   
   //  Resetoi kaiken, kun screeni aukaistaan
   useEffect(() => {
+    console.log(route.params.homeScreenDate)
+
     dropdownRef.current.reset()
     setActivity("")
     setHours(null)
@@ -80,6 +82,9 @@ export default function TrackerScreen({route, navigation}) {
         dropdownRef.current.selectIndex(2)
         break;
     }
+
+    setDate(route.params.homeScreenDate)
+
   }, [route.params, category])
 
   useEffect(() => {
