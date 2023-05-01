@@ -34,7 +34,7 @@ export default function HomeScreen({navigation}) {
 	}, [])
 
 	useEffect(() => {
-		console.log("focused")
+		getDailyData()
 	}, [isFocused])
 	
 
@@ -43,66 +43,65 @@ export default function HomeScreen({navigation}) {
 		setExerciseValue(0)
 		setRelaxValue(0)
 		calculateOverallProgress(0,0,0)
-
-		async function getDailyData() {
-			try {
-				const dbDateFormat = todayDate.toISOString().split("T")[0]
-				let { data: daily_track, error } = await supabase
-				.from('daily_track')
-				.select('id, mood, date, category_track(category_id, minutes, note)')
-				.eq("date", dbDateFormat)
-				
-				if (error) {
-					Alert.alert("Feth daily_track error", JSON.stringify(error))
-					console.log("Feth daily_track error", error)
-					setDailyData(null)
-				}
-
-				if (daily_track.length < 1) {
-					setSleepValue(0)
-					setExerciseValue(0)
-					setRelaxValue(0)
-					calculateOverallProgress(0,0,0)
-				} else {
-
-					let sleepMin = 0
-					let exerciseMin = 0
-					let relaxMin = 0
-
-					setSleepValue(0)
-					setExerciseValue(0)
-					setRelaxValue(0)
-					calculateOverallProgress(0,0,0)
-
-					daily_track[0].category_track.forEach(element => {
-						switch(element.category_id) {
-							case 1:
-								setSleepValue(element)
-								sleepMin = element.minutes
-								break;
-							case 2:
-								setExerciseValue(element)
-								exerciseMin = element.minutes
-								break;
-							case 3:
-								setRelaxValue(element)
-								relaxMin = element.minutes
-								break;
-						}
-					});
-
-					calculateOverallProgress(sleepMin, exerciseMin, relaxMin)
-
-				}
-
-			} catch(error) {
-				console.log("getDailyData() catch error", error)
-			}
-		}
-
 		getDailyData()
 		
 	}, [todayDate])
+
+	async function getDailyData() {
+		try {
+			const dbDateFormat = todayDate.toISOString().split("T")[0]
+			let { data: daily_track, error } = await supabase
+			.from('daily_track')
+			.select('id, mood, date, category_track(category_id, minutes, note)')
+			.eq("date", dbDateFormat)
+			
+			if (error) {
+				Alert.alert("Feth daily_track error", JSON.stringify(error))
+				console.log("Feth daily_track error", error)
+				setDailyData(null)
+			}
+
+			if (daily_track.length < 1) {
+				setSleepValue(0)
+				setExerciseValue(0)
+				setRelaxValue(0)
+				calculateOverallProgress(0,0,0)
+			} else {
+
+				let sleepMin = 0
+				let exerciseMin = 0
+				let relaxMin = 0
+
+				setSleepValue(0)
+				setExerciseValue(0)
+				setRelaxValue(0)
+				calculateOverallProgress(0,0,0)
+
+				daily_track[0].category_track.forEach(element => {
+					switch(element.category_id) {
+						case 1:
+							setSleepValue(element)
+							sleepMin = element.minutes
+							break;
+						case 2:
+							setExerciseValue(element)
+							exerciseMin = element.minutes
+							break;
+						case 3:
+							setRelaxValue(element)
+							relaxMin = element.minutes
+							break;
+					}
+				});
+
+				calculateOverallProgress(sleepMin, exerciseMin, relaxMin)
+
+			}
+
+		} catch(error) {
+			console.log("getDailyData() catch error", error)
+		}
+	}
 	
 	function calculateOverallProgress(sleepMin, exerciseMin, relaxMin) {
 		if (sleepMin + exerciseMin + relaxMin === 0 ) {
