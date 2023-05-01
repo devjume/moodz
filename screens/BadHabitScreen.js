@@ -237,7 +237,6 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
 
     dateClean = date.setHours(3, 0, 0, 0)
     dateClean = new Date(dateClean)
-    console.log(dateClean)
 
     return (
      
