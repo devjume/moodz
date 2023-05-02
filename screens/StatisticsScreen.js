@@ -164,8 +164,8 @@ export default function StatisticsScreen() {
     backgroundGradientFrom: "#1E2923",
     backgroundGradientFromOpacity: 0,
     backgroundGradientTo: "#08130D",
-    backgroundGradientToOpacity: 0.5,
-    color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+    backgroundGradientToOpacity: 0,
+    color: (opacity = 1) => `rgba(10, 10, 10, ${opacity})`,
     strokeWidth: 2,
     barPercentage: 0.5,
     useShadowColorFromDataset: false 
@@ -185,7 +185,7 @@ export default function StatisticsScreen() {
         strokeWidth: 2, 
       }
     ],
-    legend: ["Sleep(hours)"] 
+    legend: ["Sleep (hours)"] 
   };
 
   let exercise = {
@@ -199,7 +199,7 @@ export default function StatisticsScreen() {
         strokeWidth: 2 
       }
     ],
-    legend: ["Exercise(hours)"] 
+    legend: ["Exercise (hours)"] 
   };
 
   let relax = {
@@ -213,7 +213,7 @@ export default function StatisticsScreen() {
         strokeWidth: 2 
       }
     ],
-    legend: ["Relax(hours)"] 
+    legend: ["Relax (hours)"] 
   };
 
 
