@@ -35,16 +35,26 @@ export default StyleSheet.create({
   button: {
     margin: 30,
     flexDirection: "row",
-    padding: 10,
-    backgroundColor: "#75d9af",
-    width: 150,
-    borderRadius: 15,
+    padding: 7,
+    backgroundColor: "#498467",
+    width: 250,
     justifyContent: 'center',
-    alignItems: 'center'
-  },
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    }
+
+  },  
   buttonText: {
     color: "#152d33",
     fontSize: 20
+  },
+
+  buttonText2: {
+    color: "#ffffff",
+    fontWeight: "bold"
   },
   // VEETIN CSS
   selectionHeader: {

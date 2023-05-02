@@ -5,6 +5,21 @@ import InfoCards from '../../components/InfoCards';
 export default function InfoScreen({route, navigation}) {
   
   const { session } = route.params
+  let hasUnsavedChanges = true;
+
+  useEffect(() => {
+    navigation.addListener('beforeRemove', (e) => {
+
+      if(!hasUnsavedChanges) {
+        return
+      }
+
+      e.preventDefault();
+      Alert.alert("Set goals","Please finish the info cards before setting goals.");
+    })
+
+
+  }, [navigation])
 
   return (
     <ImageBackground source={require('../../assets/forest.png')} style={component.container}> 

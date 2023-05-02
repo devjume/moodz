@@ -99,7 +99,8 @@ export default function DatePicker({ date, setDate, activity, kissa, setMinutes,
             <View style={{justifyContent:"center", flex:1, alignItems:"center"}}>
     
                 {datePicker && (
-                    <DateTimePicker maximumDate={new Date(today)} 
+                    <DateTimePicker 
+                        maximumDate={new Date(today)}  
                         value={date}
                         mode={'date'}
                         display={'default'}
