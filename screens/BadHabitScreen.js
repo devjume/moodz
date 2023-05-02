@@ -35,6 +35,7 @@ async function addHabit(title, newDate, userID, dataArray, setData){
     }
 
     dataArray.push(habitObject)
+    dataArray.sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
     setData([...dataArray])
     Alert.alert('Habit "'+ title + '" added')
 
@@ -90,6 +91,7 @@ async function editHabit(title, date, habitID, oldName, oldDate, dataArray, setD
         if (dataArray[i].id == habitID) {
           let habit = dataArray[i]
           habit.start_date = date
+          dataArray.sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
           setData([...dataArray])
         }
       }
@@ -129,11 +131,16 @@ async function editHabit(title, date, habitID, oldName, oldDate, dataArray, setD
           let habit = dataArray[i]
           habit.title = title 
           habit.start_date = date
+          dataArray.sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
           setData([...dataArray])
         }
       }
     }
   }
+}
+
+async function setFavourite() {
+  console.log("favourite")
 }
 
 export default function BadHabitScreen() {
@@ -145,7 +152,7 @@ export default function BadHabitScreen() {
   const [data, setData] = useState([])
   
   const { setIsLoggedIn, setSession, username, userID } = useContext(UserContext)
-  
+
   useEffect(() => {
     //function to fetch all bad habits from database
     async function getData() {
@@ -164,7 +171,7 @@ export default function BadHabitScreen() {
     //run said function
     getData()
 
-    console.log("infit")
+    console.log("useEffect")
 
   }, [])
 
@@ -184,7 +191,7 @@ export default function BadHabitScreen() {
       {
 				data.map((item) => {
 					return (
-						<Card key={item.id} id={item.id} name={item.title} date={item.start_date} favorite={item.favorite} editMode={editMode} setEditMode={setEditMode} modalVisible={modalVisible} setModalVisible={setModalVisible} setModalDate={setModalDate} setModalName={setModalName} setHabitID={setHabitID}/>
+						<Card key={item.id} id={item.id} name={item.title} date={item.start_date} setFavourite={setFavourite} favorite={item.favorite} editMode={editMode} setEditMode={setEditMode} modalVisible={modalVisible} setModalVisible={setModalVisible} setModalDate={setModalDate} setModalName={setModalName} setHabitID={setHabitID}/>
 					)
 				})
 			}
@@ -197,12 +204,13 @@ export default function BadHabitScreen() {
 
 
 const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName, editMode, setEditMode, addHabit, userID, dataArray, setData, habitID, setHabitID, editHabit}) => {
-
   oldDate = new Date(oldDate)
 
   const [newName, setNewName] = useState(oldName)
   const [date, setDate] = useState(oldDate);
   const [newDate, setNewDate] = useState(new Date());
+
+  tz = Number( (new Date().getTimezoneOffset() * -1) / 60 )
 
   function closeForm() {
     setModalName("");
@@ -235,9 +243,9 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
 
   if (editMode==true) {
 
-    dateClean = date.setHours(3, 0, 0, 0)
+    dateClean = date.setHours(tz, 0, 0, 0)
     dateClean = new Date(dateClean)
-
+   
     return (
      
         <Modal
@@ -278,12 +286,12 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                   style={[styles.button, styles.buttonSave]}
                   //save form data, send edited info
                   onPress={() => {
-                    if (date> new Date()) {
+                    if (dateClean> new Date()) {
                       Alert.alert("You can't select a date from the future")
                     } else if (newName=="") {
                       Alert.alert("Please input a name for your habit")
                     } else {
-                      setDate(new Date(date.setHours(3,0,0,0)))
+                      setDate(new Date(date.setHours(tz,0,0,0)))
                       editHabit(newName, date, habitID, oldName, oldDate, dataArray, setData)
                       closeForm()
                     }
@@ -330,7 +338,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                   style={[styles.button, styles.buttonSave]}
                   //save form data, send edited info
                   onPress={() => {
-                    if (dateClean> new Date() || newDate> new Date()) {
+                    if (date> new Date() || newDate> new Date()) {
                       Alert.alert("You can't select a date from the future")
                     } else if (newName=="") {
                       Alert.alert("Please input a name for your habit")
@@ -350,7 +358,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
   }
 }
 //card component (one habit)
-const Card = ({id,name, date, favorite, modalVisible, setModalVisible, setModalName, setModalDate, setHabitID, editMode={editMode}, setEditMode={setEditMode}}) => {
+const Card = ({id,name, date, favorite, setFavourite, setModalVisible, setModalName, setModalDate, setHabitID, editMode={editMode}, setEditMode={setEditMode}}) => {
 
   function countUp(countFrom) {
 
@@ -375,7 +383,7 @@ const Card = ({id,name, date, favorite, modalVisible, setModalVisible, setModalN
       
     var secondsInADay = 60 * 60 * 1000 * 24,
         secondsInAHour = 60 * 60 * 1000;
-      
+    
     days = Math.floor(timeDifference / (secondsInADay) * 1);
     hours = Math.floor((timeDifference % (secondsInADay)) / (secondsInAHour) * 1);
     minutes = Math.floor(((timeDifference % (secondsInADay)) % (secondsInAHour)) / (60 * 1000) * 1);
@@ -399,7 +407,11 @@ return (
   >
     <View>
       <Text style={{textAlign: "left", fontWeight:"bold", fontSize: 16}}>{name}</Text>
-      <Text style={{textAlign: "center", fontSize: 16}}>{countUp(date)}</Text>
+      <Text style={{textAlign: "center", fontSize: 16}}>{countUp(date)}</Text> 
+      <Pressable onPress={setFavourite} >
+        <Text style={{textAlign: "right", backgroundColor:"red", padding:20}}><AntDesign name="staro" size={16} color="black" fill="green" /> {String(favorite)}
+        </Text>
+      </Pressable>
     </View>
   </Pressable>
 )

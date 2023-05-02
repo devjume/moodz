@@ -5,7 +5,7 @@ import { Text, View, ScrollView, StyleSheet, FlatList, Alert, Pressable } from "
 import { Ionicons } from '@expo/vector-icons';
 import { CircularProgress } from 'react-native-circular-progress';
 import { ProgressBar } from 'react-native-paper';
-import { addDays, formatDistance, isEqual } from 'date-fns'
+import { addDays, formatDistance, differenceInDays, differenceInHours, differenceInMinutes } from 'date-fns'
 import { useIsFocused } from '@react-navigation/native';
 
 import styles, {BACKGROUND_COLOR} from '../style/style';
@@ -27,6 +27,8 @@ export default function HomeScreen({navigation}) {
 	const [overallProgress, setOverallProgress] = useState(0)
 	const [dataReceived, setDataReceived] = useState(false)
 
+	const [badHabits, setBadHabits] = useState([])
+
 	const isFocused = useIsFocused();
 
 	useEffect(() => {
@@ -35,7 +37,6 @@ export default function HomeScreen({navigation}) {
 
 	useEffect(() => {
 		getDailyData()
-
 	}, [isFocused])
 	
 
@@ -45,6 +46,7 @@ export default function HomeScreen({navigation}) {
 		setRelaxValue(0)
 		calculateOverallProgress(0,0,0)
 		getDailyData()
+		getBadHabits()
 	}, [todayDate])
 
 	async function getDailyData() {
@@ -125,6 +127,22 @@ export default function HomeScreen({navigation}) {
 		const progress = sleepSection + exerciseSection + relaxSection;
 
 		setOverallProgress(isNaN(progress) ? 0 : Math.round(progress))
+	}
+
+	async function getBadHabits() {
+		let { data: bad_habits, error } = await supabase
+		.from('bad_habits')
+		.select('title,start_date, id')
+		.eq("favorite", "true")
+
+
+		if (error) {
+			console.error("Fetching badHabits error", error)
+			return;
+		}
+
+		console.log(bad_habits)
+		setBadHabits(bad_habits)
 	}
 
 	function calculateProgress(activity) {
@@ -248,16 +266,30 @@ export default function HomeScreen({navigation}) {
 		)
 	}
 
-	function badHabitContainer() {
+	function BadHabitContainer() {
+		const today = new Date()
+		const items = badHabits.map((item) => {
+			const itemDate = new Date(item.start_date);
+			const originalHours = differenceInHours(today,  itemDate)
+			const days = originalHours / 24
+			const hours = (days % 1) * 24
+			return( 
+				<Pressable onPress={() => navigation.navigate('Bad Habit')} key={item.id} style={screen.card}>
+						<Text style={{fontWeight:"bold", fontSize: 18}}>{item.title}</Text>
+						<Text style={{fontWeight:"bold", fontSize: 18}}>{Math.round(days)}d {Math.round(hours)}h</Text>
+				</Pressable>
+			
+		)})
+
 		return (
-			<View>
-				<Text></Text>
+			<View style={{display: "flex", flexDirection: "row", width: "100%", justifyContent: "center", gap: 18}}>
+				{items}
 			</View>
 		)
 	}
 
   return (
-		<ScrollView contentContainerStyle={screen.container}>
+		<ScrollView contentContainerStyle={screen.container} showsVerticalScrollIndicator={false}>
 			<View style={screen.section}>
 				<View style={{display: "flex", flexDirection: "row", gap: 90, alignItems: "center"}}>
 					<Pressable onPress={moveBackwards} style={({pressed}) => [{backgroundColor: pressed ? 'rgba(103, 65, 80, 0.2)': 'rgba(103, 65, 80, 0.0)', borderRadius: 100, padding: 14}]} >
@@ -289,6 +321,11 @@ export default function HomeScreen({navigation}) {
 				<CustomBar title={"Exercise"} progress={calculateProgress("exercise")} color={"#C44536"} categoryId={2}/>
 				<CustomBar title={"Relax"} progress={calculateProgress("relax")} color={"#498467"} categoryId={3}/>
 			</View>
+			<View style={screen.badHabitContainer}>
+				<Text style={{fontSize: 18, fontWeight: "bold"}}>Time since:</Text>
+				<BadHabitContainer />
+			</View>
+			
 		</ScrollView>
 	);
 }
@@ -296,9 +333,10 @@ export default function HomeScreen({navigation}) {
 const screen = StyleSheet.create({
   container: {
 		display: "flex",
-    flex: 1,
+    flexGrow: 1,
+		flexShrink: 0,
     alignItems: "center",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     gap: 0,
 		backgroundColor: BACKGROUND_COLOR,
 		paddingVertical: 10,
@@ -320,12 +358,31 @@ const screen = StyleSheet.create({
 	},
 	today: {
 		fontSize: 12,
+	},
+	badHabitContainer: {
+		marginTop: 24,
+		display: "flex",
+		flexGrow: 0,
+		flexDirection: "column",
+		width: "90%",
+		gap: 10,
+		justifyContent: "flex-start",
+		alignItems: "flex-start",
+		alignContent: "flex-start",
+	},
+	card: {
+		display: "flex",
+		flexDirection: "row",
+		justifyContent: "space-between",
+		backgroundColor: "#FFEDD7",
+		paddingVertical: 24,
+		paddingHorizontal: 16,
+		width: "100%",
+		borderRadius: 5,
 	}
 });
 
 // TODO:
-// * lisää bad habit laatikot home screeniin
-// * poista today homescreeniltä
 // * korjaa authsessionrefresh error
 // 24.4 3h home screen
 // 25.4 3h home screen
