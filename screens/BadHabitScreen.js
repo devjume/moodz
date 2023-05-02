@@ -145,7 +145,7 @@ export default function BadHabitScreen() {
   const [data, setData] = useState([])
   
   const { setIsLoggedIn, setSession, username, userID } = useContext(UserContext)
-  
+
   useEffect(() => {
     //function to fetch all bad habits from database
     async function getData() {
@@ -164,7 +164,7 @@ export default function BadHabitScreen() {
     //run said function
     getData()
 
-    console.log("infit")
+    console.log("useEffect")
 
   }, [])
 
@@ -197,12 +197,13 @@ export default function BadHabitScreen() {
 
 
 const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName, editMode, setEditMode, addHabit, userID, dataArray, setData, habitID, setHabitID, editHabit}) => {
-
   oldDate = new Date(oldDate)
 
   const [newName, setNewName] = useState(oldName)
   const [date, setDate] = useState(oldDate);
   const [newDate, setNewDate] = useState(new Date());
+
+  tz = Number( (new Date().getTimezoneOffset() * -1) / 60 )
 
   function closeForm() {
     setModalName("");
@@ -235,9 +236,9 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
 
   if (editMode==true) {
 
-    dateClean = date.setHours(3, 0, 0, 0)
+    dateClean = date.setHours(tz, 0, 0, 0)
     dateClean = new Date(dateClean)
-
+   
     return (
      
         <Modal
@@ -278,12 +279,12 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                   style={[styles.button, styles.buttonSave]}
                   //save form data, send edited info
                   onPress={() => {
-                    if (date> new Date()) {
+                    if (dateClean> new Date()) {
                       Alert.alert("You can't select a date from the future")
                     } else if (newName=="") {
                       Alert.alert("Please input a name for your habit")
                     } else {
-                      setDate(new Date(date.setHours(3,0,0,0)))
+                      setDate(new Date(date.setHours(tz,0,0,0)))
                       editHabit(newName, date, habitID, oldName, oldDate, dataArray, setData)
                       closeForm()
                     }
@@ -330,7 +331,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                   style={[styles.button, styles.buttonSave]}
                   //save form data, send edited info
                   onPress={() => {
-                    if (dateClean> new Date() || newDate> new Date()) {
+                    if (date> new Date() || newDate> new Date()) {
                       Alert.alert("You can't select a date from the future")
                     } else if (newName=="") {
                       Alert.alert("Please input a name for your habit")
