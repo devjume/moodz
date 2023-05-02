@@ -85,6 +85,9 @@ export default function TrackerScreen({route, navigation}) {
   useEffect(() => {
     async function fetchData() {
       try {
+        if(activity == ""){
+          return;
+        }
         let dailyID = await fetchDailyId()
         console.log("dailyID Tässä", dailyID)
 
