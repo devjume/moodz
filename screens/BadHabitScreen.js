@@ -139,6 +139,10 @@ async function editHabit(title, date, habitID, oldName, oldDate, dataArray, setD
   }
 }
 
+async function setFavourite() {
+  console.log("favourite")
+}
+
 export default function BadHabitScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -187,7 +191,7 @@ export default function BadHabitScreen() {
       {
 				data.map((item) => {
 					return (
-						<Card key={item.id} id={item.id} name={item.title} date={item.start_date} favorite={item.favorite} editMode={editMode} setEditMode={setEditMode} modalVisible={modalVisible} setModalVisible={setModalVisible} setModalDate={setModalDate} setModalName={setModalName} setHabitID={setHabitID}/>
+						<Card key={item.id} id={item.id} name={item.title} date={item.start_date} setFavourite={setFavourite} favorite={item.favorite} editMode={editMode} setEditMode={setEditMode} modalVisible={modalVisible} setModalVisible={setModalVisible} setModalDate={setModalDate} setModalName={setModalName} setHabitID={setHabitID}/>
 					)
 				})
 			}
@@ -354,7 +358,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
   }
 }
 //card component (one habit)
-const Card = ({id,name, date, favorite, modalVisible, setModalVisible, setModalName, setModalDate, setHabitID, editMode={editMode}, setEditMode={setEditMode}}) => {
+const Card = ({id,name, date, favorite, setFavourite, setModalVisible, setModalName, setModalDate, setHabitID, editMode={editMode}, setEditMode={setEditMode}}) => {
 
   function countUp(countFrom) {
 
@@ -403,7 +407,11 @@ return (
   >
     <View>
       <Text style={{textAlign: "left", fontWeight:"bold", fontSize: 16}}>{name}</Text>
-      <Text style={{textAlign: "center", fontSize: 16}}>{countUp(date)}</Text>
+      <Text style={{textAlign: "center", fontSize: 16}}>{countUp(date)}</Text> 
+      <Pressable onPress={setFavourite} >
+        <Text style={{textAlign: "right", backgroundColor:"red", padding:20}}><AntDesign name="staro" size={16} color="black" fill="green" /> {String(favorite)}
+        </Text>
+      </Pressable>
     </View>
   </Pressable>
 )
