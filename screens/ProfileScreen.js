@@ -41,9 +41,9 @@ export default function ProfileScreen() {
       let exerciseGoal = (profiles[0].exercise_goal)/60;
       let sleepGoal = (profiles[0].sleep_goal)/60;
 
-      setRelax(relaxGoal)
-      setExercise(exerciseGoal)
-      setSleep(sleepGoal)
+      setRelax(parseFloat(relaxGoal))
+      setExercise(parseFloat(exerciseGoal))
+      setSleep(parseFloat(sleepGoal))
     } catch(error) {
       console.log("try catch error, getGoals", error)
     }
@@ -90,22 +90,22 @@ export default function ProfileScreen() {
 
         <CustomButton title={"Log out"} onClick={logOut} />
 
-        <Text style={style.update}>Update your goals</Text>
+        <Text style={style.update}>Update your goals (hours)</Text>
     <View style={style.goalInputs}>
       <View style={style.rivi}>
           <Text style={style.goal}>Relax</Text>
           <NumericInput initValue={relax} value={relax} minValue={0} rightButtonBackgroundColor='#498467' 
-            leftButtonBackgroundColor='#C44536' borderColor={"black"} style={style.numericInput} onChange={v => setRelax(v)}/>
+          valueType='real' step={0.25} leftButtonBackgroundColor='#C44536' borderColor={"black"} style={style.numericInput} onChange={v => setRelax(v)}/>
       </View>
       <View style={style.rivi}>
           <Text style={style.goal}>Exercise</Text>
           <NumericInput initValue={exercise} minValue={0} rightButtonBackgroundColor='#498467' 
-            leftButtonBackgroundColor='#C44536' borderColor={"black"} style={style.numericInput} onChange={v => setExercise(v)}/>
+          valueType='real' step={0.25} leftButtonBackgroundColor='#C44536' borderColor={"black"} style={style.numericInput} onChange={v => setExercise(v)}/>
       </View>
       <View style={style.rivi}>
           <Text style={style.goal}>Sleep</Text>
           <NumericInput initValue={sleep} minValue={0} rightButtonBackgroundColor='#498467' 
-            leftButtonBackgroundColor='#C44536' borderColor={"black"} style={style.numericInput} onChange={v => setSleep(v)}/>
+          valueType='real' step={0.25} leftButtonBackgroundColor='#C44536' borderColor={"black"} style={style.numericInput} onChange={v => setSleep(v)}/>
       </View>
       
       <Button onPress={updateGoals}
