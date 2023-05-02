@@ -150,7 +150,6 @@ async function editHabit(title, date, habitID, oldName, oldDate, dataArray, setD
 
 async function setFavourite(id, favorite, dataArray) {
 
-  console.log(id)
   //change true to false
 
     for (let i = 0; i < dataArray.length; i++) {
@@ -214,8 +213,6 @@ async function setFavourite(id, favorite, dataArray) {
     } 
     //run said function
     getData()
-
-    console.log("useEffect")
 
   }, [])
 
@@ -453,17 +450,17 @@ return (
       <Text style={{textAlign: "left", fontWeight:"bold", fontSize: 16}}>{name}</Text>
       <Text style={{textAlign: "center", fontSize: 16}}>{countUp(date)}</Text> 
       { favorite &&
-      <Pressable onPress={()=> 
-        setFavourite(id,favorite, dataArray, habitID, setData)} >
-        <Text style={{textAlign: "right", backgroundColor:"red", padding:20}}><AntDesign name="star" size={16} color="black"/> 
+      
+        <Text style={{textAlign: "right"}}>
+          <Pressable hitSlop={25} onPress={()=> 
+      setFavourite(id,favorite, dataArray, habitID, setData)} ><FontAwesome name="star" size={24} color="black"  /></Pressable>
         </Text>
-      </Pressable> }
+       }
       { favorite==false &&
-      <Pressable onPress={()=> 
-        setFavourite(id,favorite, dataArray, habitID, setData)} >
-        <Text style={{textAlign: "right", backgroundColor:"red", padding:20}}><AntDesign name="staro" size={16} color="black"/> 
-        </Text>
-      </Pressable> }
+       <Text style={{textAlign: "right"}}>
+       <Pressable hitSlop={25} onPress={()=> 
+     setFavourite(id,favorite, dataArray, habitID, setData)} ><FontAwesome name="star-o" size={24} color="black" /></Pressable>
+     </Text>}
     </View>
   </Pressable>
 )
