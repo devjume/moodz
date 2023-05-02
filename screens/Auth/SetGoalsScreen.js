@@ -6,6 +6,8 @@ import styles from '../../style/style';
 import AuthInputField from '../../components/AuthInputField';
 import CustomButton from "../../components/CustomButton"
 import AuthButton from '../../components/AuthButton';
+import GoalInputField from '../../components/GoalInputField';
+
 
 
 
@@ -28,12 +30,12 @@ export default function SetGoalsScreen({route, navigation}) {
 
   useEffect(() => {
     if (TEST_MODE === true) {
-      setSleepGoalHours("7")
-      setExerciseGoalHours("1")
-      setRelaxGoalHours("1")
-      setSleepGoalMins("45")
-      setExerciseGoalMins("30")
-      setRelaxGoalMins("15")
+      setSleepGoalHours("")
+      setExerciseGoalHours("")
+      setRelaxGoalHours("")
+      setSleepGoalMins("")
+      setExerciseGoalMins("")
+      setRelaxGoalMins("")
     }
   }, [])
 
@@ -126,7 +128,7 @@ export default function SetGoalsScreen({route, navigation}) {
 
     // Limit the input to 23
       // Ensure sanitizedValue is not greater than 59
-      const sanitizedValue = parseInt(hrs, 10);
+      const sanitizedValue = parseInt(hrs);
       if (sanitizedValue > 23) {
       alert("Maximum time for a task is 23 hours and 59 minutes")
         switch (value, category) {
@@ -171,14 +173,20 @@ export default function SetGoalsScreen({route, navigation}) {
   return (
     <ImageBackground source={require('../../assets/forest.png')} style={component.container}>
       <Text style={component.header}>Set your daily goals</Text>
-      <AuthInputField placeholder={"Sleep Goal (hours)"} inputMode={"numeric"} value={sleepGoalHours} onChangeText={(value) =>setSleepGoalHours(value, "sleep")}/>
-      <AuthInputField placeholder={"Sleep Goal (minutes)"} inputMode={"numeric"} value={sleepGoalMins} onChangeText={(value) => sanitazedMinutes(value, "sleep")}/>
-
-      <AuthInputField placeholder={"Exercise Goal (hours)"} inputMode={"numeric"} value={exerciseGoalHours} onChangeText={(value) =>setExerciseGoalHours(value, "exercise")}/>
-      <AuthInputField placeholder={"Exercise Goal (minutes)"} inputMode={"numeric"} value={exerciseGoalMins} onChangeText={(value) => sanitazedMinutes(value, "exercise")}/>
-
-      <AuthInputField placeholder={"Relax Goal (hours)"} inputMode={"numeric"} value={relaxGoalHours} onChangeText={(value) =>setRelaxGoalHours(value, "relax")}/>
-      <AuthInputField placeholder={"Relax Goal (minutes)"} inputMode={"numeric"} value={relaxGoalMins} onChangeText={(value) => sanitazedMinutes(value, "relax")}/>
+      <View style={component.row}>
+      <View style={component.inputView}>
+      <Text style={component.header2}>Hours:</Text>
+      <GoalInputField placeholder={"Sleep "} inputMode={"numeric"} value={sleepGoalHours} onChangeText={(value) =>sanitazedHours(value, "sleep")}/>
+      <GoalInputField placeholder={"Exercise "} inputMode={"numeric"} value={exerciseGoalHours} onChangeText={(value) =>sanitazedHours(value, "exercise")}/>
+      <GoalInputField placeholder={"Relax "} inputMode={"numeric"} value={relaxGoalHours} onChangeText={(value) =>sanitazedHours(value, "relax")}/>
+      </View>
+      <View style={component.inputView}>
+      <Text style={component.header2}>Minutes:</Text>
+      <GoalInputField placeholder={"Sleep "} inputMode={"numeric"} value={sleepGoalMins} onChangeText={(value) => sanitazedMinutes(value, "sleep")}/>
+      <GoalInputField placeholder={"Exercise "} inputMode={"numeric"} value={exerciseGoalMins} onChangeText={(value) => sanitazedMinutes(value, "exercise")}/>
+      <GoalInputField placeholder={"Relax "} inputMode={"numeric"} value={relaxGoalMins} onChangeText={(value) => sanitazedMinutes(value, "relax")}/>
+      </View>
+      </View>
       <AuthButton title={"Continue"} onClick={saveGoals} />
     </ImageBackground>
   )
@@ -197,7 +205,37 @@ const component = StyleSheet.create({
 	header: {
 		color: "#7C3140",
 		fontWeight: "bold",
-		fontSize: 36,
+		fontSize: 32,
 		textAlign: "center",
+    borderWidth: 3,
+		borderColor: "rgba(129, 44, 44, 0.7)",
+		paddingHorizontal: 10,
+		paddingVertical: 14,
+		backgroundColor: "#F9E0B6",
+		minWidth: "80%",
+		maxWidth: "80%",
+		borderRadius: 6,
+	},
+  inputView: {
+		flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    flexDirection: "column",
+    gap: 10
+	},
+  row: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: "center",
+    padding: 10,
+  },
+  header2: {
+		color: "#7C3140",
+		fontWeight: "bold",
+		fontSize: 28,
+		textAlign: "left",
+    paddingHorizontal: 20,
+    
 	},
 });
