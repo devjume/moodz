@@ -27,7 +27,6 @@ export default function SetGoalsScreen({route, navigation}) {
   let totalRelaxGoal = parseInt(relaxGoalHours || 0)*60 + parseInt(relaxGoalMins || 0)
 
 
-
   useEffect(() => {
     if (TEST_MODE === true) {
       setSleepGoalHours("")
