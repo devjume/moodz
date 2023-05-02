@@ -18,7 +18,6 @@ export default function SetGoalsScreen({route, navigation}) {
   const { session } = route.params
   let hasUnsavedChanges = true;
 
-
   useEffect(() => {
     if (TEST_MODE === true) {
       setSleepGoal("480")

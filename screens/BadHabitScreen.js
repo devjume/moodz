@@ -375,7 +375,7 @@ const Card = ({id,name, date, favorite, modalVisible, setModalVisible, setModalN
       
     var secondsInADay = 60 * 60 * 1000 * 24,
         secondsInAHour = 60 * 60 * 1000;
-      
+    
     days = Math.floor(timeDifference / (secondsInADay) * 1);
     hours = Math.floor((timeDifference % (secondsInADay)) / (secondsInAHour) * 1);
     minutes = Math.floor(((timeDifference % (secondsInADay)) % (secondsInAHour)) / (60 * 1000) * 1);
