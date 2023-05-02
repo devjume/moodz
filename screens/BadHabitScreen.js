@@ -35,6 +35,7 @@ async function addHabit(title, newDate, userID, dataArray, setData){
     }
 
     dataArray.push(habitObject)
+    dataArray.sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
     setData([...dataArray])
     Alert.alert('Habit "'+ title + '" added')
 
@@ -90,6 +91,7 @@ async function editHabit(title, date, habitID, oldName, oldDate, dataArray, setD
         if (dataArray[i].id == habitID) {
           let habit = dataArray[i]
           habit.start_date = date
+          dataArray.sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
           setData([...dataArray])
         }
       }
@@ -129,6 +131,7 @@ async function editHabit(title, date, habitID, oldName, oldDate, dataArray, setD
           let habit = dataArray[i]
           habit.title = title 
           habit.start_date = date
+          dataArray.sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
           setData([...dataArray])
         }
       }
