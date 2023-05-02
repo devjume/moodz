@@ -5,7 +5,8 @@ import { Text, View, ScrollView, StyleSheet, FlatList, Alert, Pressable } from "
 import { Ionicons } from '@expo/vector-icons';
 import { CircularProgress } from 'react-native-circular-progress';
 import { ProgressBar } from 'react-native-paper';
-import { addDays, min } from 'date-fns'
+import { addDays, formatDistance, isEqual } from 'date-fns'
+import { useIsFocused } from '@react-navigation/native';
 
 import styles, {BACKGROUND_COLOR} from '../style/style';
 import CustomButton from "../components/CustomButton"
@@ -26,75 +27,81 @@ export default function HomeScreen({navigation}) {
 	const [overallProgress, setOverallProgress] = useState(0)
 	const [dataReceived, setDataReceived] = useState(false)
 
+	const isFocused = useIsFocused();
+
 	useEffect(() => {
 		getUserGoals()
 	}, [])
+
+	useEffect(() => {
+		getDailyData()
+
+	}, [isFocused])
+	
 
 	useEffect(() => {
 		setSleepValue(0)
 		setExerciseValue(0)
 		setRelaxValue(0)
 		calculateOverallProgress(0,0,0)
-
-		async function getDailyData() {
-			try {
-				const dbDateFormat = todayDate.toISOString().split("T")[0]
-				let { data: daily_track, error } = await supabase
-				.from('daily_track')
-				.select('id, mood, date, category_track(category_id, minutes, note)')
-				.eq("date", dbDateFormat)
-				
-				if (error) {
-					Alert.alert("Feth daily_track error", JSON.stringify(error))
-					console.log("Feth daily_track error", error)
-					setDailyData(null)
-				}
-
-				if (daily_track.length < 1) {
-					setSleepValue(0)
-					setExerciseValue(0)
-					setRelaxValue(0)
-					calculateOverallProgress(0,0,0)
-				} else {
-
-					let sleepMin = 0
-					let exerciseMin = 0
-					let relaxMin = 0
-
-					setSleepValue(0)
-					setExerciseValue(0)
-					setRelaxValue(0)
-					calculateOverallProgress(0,0,0)
-
-					daily_track[0].category_track.forEach(element => {
-						switch(element.category_id) {
-							case 1:
-								setSleepValue(element)
-								sleepMin = element.minutes
-								break;
-							case 2:
-								setExerciseValue(element)
-								exerciseMin = element.minutes
-								break;
-							case 3:
-								setRelaxValue(element)
-								relaxMin = element.minutes
-								break;
-						}
-					});
-
-					calculateOverallProgress(sleepMin, exerciseMin, relaxMin)
-
-				}
-
-			} catch(error) {
-				console.log("getDailyData() catch error", error)
-			}
-		}
-
 		getDailyData()
-		
 	}, [todayDate])
+
+	async function getDailyData() {
+		try {
+			const dbDateFormat = todayDate.toISOString().split("T")[0]
+			let { data: daily_track, error } = await supabase
+			.from('daily_track')
+			.select('id, mood, date, category_track(category_id, minutes, note)')
+			.eq("date", dbDateFormat)
+			
+			if (error) {
+				Alert.alert("Feth daily_track error", JSON.stringify(error))
+				console.log("Feth daily_track error", error)
+				setDailyData(null)
+			}
+
+			if (daily_track.length < 1) {
+				setSleepValue(0)
+				setExerciseValue(0)
+				setRelaxValue(0)
+				calculateOverallProgress(0,0,0)
+			} else {
+
+				let sleepMin = 0
+				let exerciseMin = 0
+				let relaxMin = 0
+
+				setSleepValue(0)
+				setExerciseValue(0)
+				setRelaxValue(0)
+				calculateOverallProgress(0,0,0)
+
+				daily_track[0].category_track.forEach(element => {
+					switch(element.category_id) {
+						case 1:
+							setSleepValue(element)
+							sleepMin = element.minutes
+							break;
+						case 2:
+							setExerciseValue(element)
+							exerciseMin = element.minutes
+							break;
+						case 3:
+							setRelaxValue(element)
+							relaxMin = element.minutes
+							break;
+					}
+				});
+
+				calculateOverallProgress(sleepMin, exerciseMin, relaxMin)
+
+			}
+
+		} catch(error) {
+			console.log("getDailyData() catch error", error)
+		}
+	}
 	
 	function calculateOverallProgress(sleepMin, exerciseMin, relaxMin) {
 		if (sleepMin + exerciseMin + relaxMin === 0 ) {
@@ -229,7 +236,7 @@ export default function HomeScreen({navigation}) {
 				<Text style={{fontWeight: "bold", fontSize: 18, paddingBottom: 4}}>{title}</Text>
 				<View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 8, justifyContent: "space-between"}}>
 				<ProgressBar progress={progress} color={color} style={{minWidth: 300, height: 30, backgroundColor: "#D9D9D9", borderRadius: 25}}/>
-				<Pressable onPress={() => navigation.navigate('Tracker', { homeScreenActivityId: categoryId })}>
+				<Pressable onPress={() => navigation.navigate('Tracker', { homeScreenActivityId: categoryId, homeScreenDate: todayDate.toISOString() })}>
 					
 					{({pressed}) => (
 						<Ionicons name="add-circle-outline" size={38} color={"#292D32"}  />
@@ -252,12 +259,14 @@ export default function HomeScreen({navigation}) {
   return (
 		<ScrollView contentContainerStyle={screen.container}>
 			<View style={screen.section}>
-				<Text style={screen.title}>Today</Text>
 				<View style={{display: "flex", flexDirection: "row", gap: 90, alignItems: "center"}}>
 					<Pressable onPress={moveBackwards} style={({pressed}) => [{backgroundColor: pressed ? 'rgba(103, 65, 80, 0.2)': 'rgba(103, 65, 80, 0.0)', borderRadius: 100, padding: 14}]} >
 						<Ionicons name="arrow-back" size={30} color={"black"}  />
 					</Pressable>
-					<Text style={screen.title}>{todayDate.getDate()}.{todayDate.getMonth()+1}</Text>
+					<View style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+						<Text style={screen.title}>{todayDate.getDate()}.{todayDate.getMonth()+1}</Text>
+						<Text style={screen.today}>{todayDate.toDateString() === new Date().toDateString() ? "Today" : formatDistance(todayDate, Date.now(), {addSuffix: true})}</Text>
+					</View>
 					<Pressable onPress={moveForward} style={({pressed}) => [{backgroundColor: pressed ? 'rgba(103, 65, 80, 0.2)': 'rgba(103, 65, 80, 0.0)', borderRadius: 100, padding: 14}]} >
 						<Ionicons name="arrow-forward" size={30} color={"black"} />	
 					</Pressable>
@@ -308,9 +317,16 @@ const screen = StyleSheet.create({
 	barContainer: {
 		display: "flex",
 		gap: 16,
+	},
+	today: {
+		fontSize: 12,
 	}
 });
 
 // TODO:
 // * lisää bad habit laatikot home screeniin
-// 
+// * poista today homescreeniltä
+// * korjaa authsessionrefresh error
+// 24.4 3h home screen
+// 25.4 3h home screen
+// home screen valmis = 8h

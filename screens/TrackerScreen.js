@@ -80,6 +80,9 @@ export default function TrackerScreen({route, navigation}) {
         dropdownRef.current.selectIndex(2)
         break;
     }
+
+    setDate(new Date(route.params.homeScreenDate))
+
   }, [route.params, category])
 
   useEffect(() => {

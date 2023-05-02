@@ -12,7 +12,9 @@ export default function StatisticsScreen() {
   const [sleepData, setSleepData] = useState([]);
   const [exerciseData, setExerciseData] = useState([]);
   const [relaxData, setRelaxData] = useState([]);
-  const [scale, setScale] = useState('day');
+  const [exerciseDate, setExerciseDate] = useState([]);
+  const [relaxDate, setRelaxDate] = useState([]);
+  const [sleepDate, setSleepDate] = useState([]);
 
 
   const { setIsLoggedIn, setSession, username, userID, session } = useContext(UserContext)
@@ -31,25 +33,41 @@ export default function StatisticsScreen() {
     
     let { data, error } = await supabase
     .from('category_track')
-    .select('minutes')
+    .select('minutes, daily_track(date)')
+    .order('date', {foreignTable:'daily_track', ascending: true})
     .eq('category_id', 1)
+    
 
     if(error) {
       Alert.alert("Error", error.message);
       return 
     }
+    
+    data.sort(function(a,b){
+      return new Date(a.daily_track.date) - new Date(b.daily_track.date);
+    });
 
 
     let dataSleep = [];
+    let dateSleep = [];
 
     for(i = 0; i < data.length; i++) {
-
       minutes = Math.floor(data[i].minutes / 60);
       dataSleep.push(minutes)
+
+      console.log(data[i].daily_track.date)
+
+      const newDate = new Date(data[i].daily_track.date)
+      const dd = newDate.getDate()
+      const mm = newDate.getMonth()
+      const dd_mm = (`${dd}` + "." + `${mm}`)
+      dateSleep.push(dd_mm)
+
     }
     
 
     setSleepData(dataSleep.slice(-7))
+    setSleepDate(dateSleep.slice(-7))
     
   }
 
@@ -57,24 +75,41 @@ export default function StatisticsScreen() {
     
     let { data, error } = await supabase
     .from('category_track')
-    .select('minutes')
+    .select('minutes, daily_track(date)')
+    .order('date', {foreignTable:'daily_track', ascending: true})
     .eq('category_id', 2)
+    
 
     if(error) {
       Alert.alert("Error", error.message);
       return 
     }
+    
+    data.sort(function(a,b){
+      return new Date(a.daily_track.date) - new Date(b.daily_track.date);
+    });
+
 
     let dataExercise = [];
+    let dateExercise = [];
 
     for(i = 0; i < data.length; i++) {
-
       minutes = Math.floor(data[i].minutes / 60);
       dataExercise.push(minutes)
+
+      console.log(data[i].daily_track.date)
+
+      const newDate = new Date(data[i].daily_track.date)
+      const dd = newDate.getDate()
+      const mm = newDate.getMonth()
+      const dd_mm = (`${dd}` + "." + `${mm}`)
+      dateExercise.push(dd_mm)
+
     }
     
 
     setExerciseData(dataExercise.slice(-7))
+    setExerciseDate(dateExercise.slice(-7))
     
   }
 
@@ -82,24 +117,42 @@ export default function StatisticsScreen() {
     
     let { data, error } = await supabase
     .from('category_track')
-    .select('minutes')
+    .select('minutes, daily_track(date)')
+    .order('date', {foreignTable:'daily_track', ascending: true})
     .eq('category_id', 3)
+    
 
     if(error) {
       Alert.alert("Error", error.message);
       return 
     }
+    
+    data.sort(function(a,b){
+      return new Date(a.daily_track.date) - new Date(b.daily_track.date);
+    });
+
 
     let dataRelax = [];
+    let dateRelax = [];
 
     for(i = 0; i < data.length; i++) {
-
       minutes = Math.floor(data[i].minutes / 60);
       dataRelax.push(minutes)
+
+      console.log(data[i].daily_track.date)
+
+      const newDate = new Date(data[i].daily_track.date)
+      const dd = newDate.getDate()
+      const mm = newDate.getMonth()
+      const dd_mm = (`${dd}` + "." + `${mm}`)
+      dateRelax.push(dd_mm)
+
     }
     
 
     setRelaxData(dataRelax.slice(-7))
+    setRelaxDate(dateRelax.slice(-7))
+    
   }
 
 
@@ -122,7 +175,7 @@ export default function StatisticsScreen() {
 
 
   let sleep = {
-    labels: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+    labels: sleepDate,
     datasets: [
       {
 
@@ -136,7 +189,7 @@ export default function StatisticsScreen() {
   };
 
   let exercise = {
-    labels: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+    labels: relaxDate,
     datasets: [
       {
 
@@ -150,7 +203,7 @@ export default function StatisticsScreen() {
   };
 
   let relax = {
-    labels: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+    labels: exerciseDate,
     datasets: [
       {
 
@@ -161,31 +214,6 @@ export default function StatisticsScreen() {
       }
     ],
     legend: ["Relax(hours)"] 
-  };
-
-
-  async function toggleScale() {
-    if (scale === 'day') {
-      setScale('month');
-      
-      sleep.labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      sleep.datasets[0].data = relaxData;
-      exercise.labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      exercise.datasets[0].data = exerciseData;
-      relax.labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      relax.datasets[0].data = relaxData;
-      
-    } else {
-      setScale('day');;
-      
-      sleep.labels = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-      sleep.datasets[0].data = relaxData;
-      exercise.labels = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-      exercise.datasets[0].data = exerciseData;
-      relax.labels = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-      relax.datasets[0].data = relaxData;
-      
-    }
   };
 
 
@@ -228,7 +256,7 @@ export default function StatisticsScreen() {
       }
 
 
-        <Button style={styles.subHeader} title={`Toggle to ${scale}-scale`} onPress={toggleScale} />
+       
 
     </ScrollView>
 

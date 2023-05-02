@@ -91,11 +91,16 @@ export default function DatePicker({ date, setDate, activity, kissa, setMinutes,
     };
 
     if (badHabit==true) {
+
+        today = new Date().setHours(3,0,0,0)
+
+
         return (
             <View style={{justifyContent:"center", flex:1, alignItems:"center"}}>
     
                 {datePicker && (
-                    <DateTimePicker
+                    <DateTimePicker 
+                        maximumDate={new Date(today)}  
                         value={date}
                         mode={'date'}
                         display={'default'}

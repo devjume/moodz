@@ -35,6 +35,7 @@ async function addHabit(title, newDate, userID, dataArray, setData){
     }
 
     dataArray.push(habitObject)
+    dataArray.sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
     setData([...dataArray])
     Alert.alert('Habit "'+ title + '" added')
 
@@ -68,7 +69,7 @@ async function delHabit(habitID, title, dataArray, setData){
 }
 
 async function editHabit(title, date, habitID, oldName, oldDate, dataArray, setData){
-  
+
   let oldDateString = String(oldDate)
   let dateString = String(date)
 
@@ -90,6 +91,7 @@ async function editHabit(title, date, habitID, oldName, oldDate, dataArray, setD
         if (dataArray[i].id == habitID) {
           let habit = dataArray[i]
           habit.start_date = date
+          dataArray.sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
           setData([...dataArray])
         }
       }
@@ -129,6 +131,7 @@ async function editHabit(title, date, habitID, oldName, oldDate, dataArray, setD
           let habit = dataArray[i]
           habit.title = title 
           habit.start_date = date
+          dataArray.sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
           setData([...dataArray])
         }
       }
@@ -145,7 +148,7 @@ export default function BadHabitScreen() {
   const [data, setData] = useState([])
   
   const { setIsLoggedIn, setSession, username, userID } = useContext(UserContext)
-  
+
   useEffect(() => {
     //function to fetch all bad habits from database
     async function getData() {
@@ -164,7 +167,7 @@ export default function BadHabitScreen() {
     //run said function
     getData()
 
-    console.log("infit")
+    console.log("useEffect")
 
   }, [])
 
@@ -197,13 +200,13 @@ export default function BadHabitScreen() {
 
 
 const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName, editMode, setEditMode, addHabit, userID, dataArray, setData, habitID, setHabitID, editHabit}) => {
-
   oldDate = new Date(oldDate)
 
   const [newName, setNewName] = useState(oldName)
   const [date, setDate] = useState(oldDate);
   const [newDate, setNewDate] = useState(new Date());
-  
+
+  tz = Number( (new Date().getTimezoneOffset() * -1) / 60 )
 
   function closeForm() {
     setModalName("");
@@ -236,6 +239,9 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
 
   if (editMode==true) {
 
+    dateClean = date.setHours(tz, 0, 0, 0)
+    dateClean = new Date(dateClean)
+   
     return (
      
         <Modal
@@ -253,11 +259,11 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                   <Text style={styles.modalHeading}>Edit: "{oldName}"</Text> 
                   <Pressable
                  //delete habit
-                  style={{backgroundColor:"red", flex:0.1, justifyContent:"center"}}
+                  style={{flex:0.1, justifyContent:"center"}}
                   onPress={() => {
                     alertConfirmation();
                   }}>
-                  <Text style={styles.textStyle}><FontAwesome name="trash-o" size={24} color="black" /></Text>
+                  <Text style={{textAlign:"center"}}><FontAwesome name="trash-o" size={20} color="#C44536"/></Text>
                 </Pressable>
               </View>
               <TextInput style={styles.textInput} value={newName} onChangeText={t=>setNewName(t)}></TextInput>
@@ -269,23 +275,24 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                   onPress={() => {
                     closeForm()
                   }}>
-                  <Text style={styles.textStyle}>Cancel</Text>
+                  <Text style={styles.buttonText}>Cancel</Text>
                   </Pressable>
 
                   <Pressable
                   style={[styles.button, styles.buttonSave]}
                   //save form data, send edited info
                   onPress={() => {
-                    if (date> new Date()) {
+                    if (dateClean> new Date()) {
                       Alert.alert("You can't select a date from the future")
                     } else if (newName=="") {
                       Alert.alert("Please input a name for your habit")
                     } else {
+                      setDate(new Date(date.setHours(tz,0,0,0)))
                       editHabit(newName, date, habitID, oldName, oldDate, dataArray, setData)
                       closeForm()
                     }
                   }}>
-                  <Text style={styles.textStyle}>Update</Text>
+                  <Text style={styles.buttonText}>Update</Text>
                   </Pressable>
                 </View>
             </View>
@@ -321,7 +328,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                   onPress={() => {
                     closeForm()
                   }}>
-                  <Text style={styles.textStyle}>Cancel</Text>
+                  <Text style={styles.buttonText}>Cancel</Text>
                   </Pressable>
                   <Pressable
                   style={[styles.button, styles.buttonSave]}
@@ -329,12 +336,14 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
                   onPress={() => {
                     if (date> new Date() || newDate> new Date()) {
                       Alert.alert("You can't select a date from the future")
+                    } else if (newName=="") {
+                      Alert.alert("Please input a name for your habit")
                     } else {
                     addHabit(newName, newDate, userID, dataArray, setData)
                     closeForm()
                     }
                   }}>
-                  <Text style={styles.textStyle}>Save</Text>
+                  <Text style={styles.buttonText}>Save</Text>
                   </Pressable>
                 </View>
             </View>
@@ -424,7 +433,7 @@ const styles = StyleSheet.create({
   modalHeading: {
     textAlign: "left",
     margin: 10,
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "bold",
     flex:0.9,
   },
@@ -434,14 +443,17 @@ const styles = StyleSheet.create({
   },
   buttonClose:{
    flex:1,
-   backgroundColor:"red"
+   backgroundColor:"#C44536"
   },
   buttonSave:{
     flex:1,
-    backgroundColor:"aquamarine"
+    backgroundColor:"#498467"
   },
-  textStyle: {
+  buttonText: {
     textAlign: 'center',
+    color: "#fff",
+    fontWeight:"bold"
+
   },
   modalText: {
     marginBottom: 15,
