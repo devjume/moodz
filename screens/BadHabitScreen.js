@@ -223,7 +223,7 @@ async function setFavourite(id, favorite, dataArray) {
         onPress={()=>setModalVisible(true)}>
         <Text style={styles.heading}>Add new habit                  <AntDesign name="pluscircle" size={24} color="black" style={{justifyContent:"flex-end"}}/></Text>
       </Pressable>
-      <View style={[styles.row, {marginBottom:12}]}>
+      <View style={styles.row}>
         <View>
           <Text style={styles.heading}>Time since bad habits: </Text>
         </View>
