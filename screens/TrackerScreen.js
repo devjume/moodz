@@ -166,7 +166,6 @@ export default function TrackerScreen({route, navigation}) {
   }
 
 
-
   async function insertCategoryTrack(idAndCategory = undefined, dailyId) {
     try {
 
@@ -199,16 +198,16 @@ export default function TrackerScreen({route, navigation}) {
         .select("*")
         .eq('date', wholeDate)
       console.log("fetchDailyId data: ", data)
-      console.log("fetchDailyId error: ", error)
-      if (data[0].mood !== undefined) {
-        setMood(data[0].mood)
+
+      if (error) {
+        console.log("fetchDailyId error: ", error)
       }
-      else {
-        setMood("")
-      }
+
       if (data.length === 0) {
+        setMood(null)
         return undefined
       } else {
+        setMood(data[0].mood)
         return data[0].id
       }
     } catch (error) {
@@ -260,6 +259,7 @@ export default function TrackerScreen({route, navigation}) {
       else {
         setShowModal(true);
         setTimeout(() => setShowModal(false), 2000)
+        console.log(data[0].mood)
       }
 
     } catch (error) {
@@ -306,7 +306,7 @@ export default function TrackerScreen({route, navigation}) {
     if (mins.length > 2) {
       setValue(mins.slice(0, 2));
     } else {
-      // Ensure numericValue is not greater than 59
+      // Ensure sanitizedValue is not greater than 59
       const sanitizedValue = parseInt(mins);
       if (sanitizedValue > 59) {
         setMinutes('59');
@@ -325,7 +325,7 @@ export default function TrackerScreen({route, navigation}) {
     if (hrs.length > 2) {
       setValue(hrs.slice(0, 2));
     } else {
-      // Ensure numericValue is not greater than 59
+      // Ensure sanitizedValue is not greater than 59
       const sanitizedValue = parseInt(hrs, 10);
       if (sanitizedValue > 23) {
         setHours('23');
