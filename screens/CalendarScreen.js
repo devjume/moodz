@@ -14,8 +14,8 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 export default function CalendarScreen() {
 
-  const [selectedDate, setSelectedDate] = useState('');
-  const [data, setData] = useState({});
+  const [selectedDate, setSelectedDate] = useState(null);
+  // const [data, setData] = useState({});
 /*   const [sleepData, setSleepData] = useState({});
   const [exerciseData, setExerciseData] = useState({});
   const [relaxData, setRelaxData] = useState({}); */
@@ -33,94 +33,100 @@ export default function CalendarScreen() {
 	const [exerciseGoal, setExerciseGoal] = useState(0) 
 	const [sleepGoal, setSleepGoal] = useState(0)
 
+  const [relaxNotes, setRelaxNotes] = useState("")
+	const [exerciseNotes, setExerciseNotes] = useState("") 
+	const [sleepNotes, setSleepNotes] = useState("")
+
   const [notes, setNotes] = useState('');
   const [dailyMood, setDailyMood] = useState(0)
   const [moodText, setMoodText] = useState('')
 
   const [modalVisible, setModalVisible] = useState(false);
   const [overallProgress, setOverallProgress] = useState(0);
+  const [juliuksenData, setJuliuksenData] = useState(null);
 
 
 
   useEffect(() => {
 
-		getUserGoals()
-    getUserNotes()
-    getDateFromDailyTrack()
-    getDailyMood()
+		// getUserGoals()
+    // getUserNotes()
+    // getDateFromDailyTrack()
+    // getDailyMood()
+    // getData()
 
 	}, [])
 
+ 
 
 
-
-  useEffect(() => {
-		async function getDailyData() {
+  // useEffect(() => {
+	// 	async function getDailyData() {
 			
-      try {
+  //     try {
 				
-        const dbDateFormat = todayDate.toISOString().split("T")[0]
-				let { data: daily_track, error } = await supabase
-				.from('daily_track')
-				.select('id, mood, date, category_track(category_id, minutes, note)')
-				.eq("date", dbDateFormat)
+  //       const dbDateFormat = todayDate.toISOString().split("T")[0]
+	// 			let { data: daily_track, error } = await supabase
+	// 			.from('daily_track')
+	// 			.select('id, mood, date, category_track(category_id, minutes, note)')
+	// 			.eq("date", dbDateFormat)
 
         
 				
-				if (error) {
+	// 			if (error) {
 
-					Alert.alert("Feth daily_track error", JSON.stringify(error))
-					console.log("Feth daily_track error", error)
+	// 				Alert.alert("Feth daily_track error", JSON.stringify(error))
+	// 				console.log("Feth daily_track error", error)
 
 
-					setDailyData(null)
-				}
+	// 				setDailyData(null)
+	// 			}
 
-				if (daily_track.length < 1) {
-					setSleepValue(0)
-					setExerciseValue(0)
-					setRelaxValue(0)
-					calculateOverallProgress(0,0,0)
+	// 			if (daily_track.length < 1) {
+	// 				setSleepValue(0)
+	// 				setExerciseValue(0)
+	// 				setRelaxValue(0)
+	// 				calculateOverallProgress(0,0,0)
           
-				} else {
+	// 			} else {
 
 
-					let sleepMin = 0
-					let exerciseMin = 0
-					let relaxMin = 0
+	// 				let sleepMin = 0
+	// 				let exerciseMin = 0
+	// 				let relaxMin = 0
 
-					daily_track[0].category_track.forEach(element => {
+	// 				daily_track[0].category_track.forEach(element => {
 
 						
-            switch(element.category_id) {
-							case 1:
-								  setSleepValue(element)
-								  sleepMin = element.minutes
-								  break;
-							case 2:
-								  setExerciseValue(element)
-								  exerciseMin = element.minutes
-								  break;
-							case 3:
-								  setRelaxValue(element)
-								  relaxMin = element.minutes
-								  break;
-						}
-					});
+  //           switch(element.category_id) {
+	// 						case 1:
+	// 							  setSleepValue(element)
+	// 							  sleepMin = element.minutes
+	// 							  break;
+	// 						case 2:
+	// 							  setExerciseValue(element)
+	// 							  exerciseMin = element.minutes
+	// 							  break;
+	// 						case 3:
+	// 							  setRelaxValue(element)
+	// 							  relaxMin = element.minutes
+	// 							  break;
+	// 					}
+	// 				});
 
-					calculateOverallProgress(sleepMin, exerciseMin, relaxMin)
+	// 				calculateOverallProgress(sleepMin, exerciseMin, relaxMin)
 
-				}
+	// 			}
 
 				
-			} catch(error) {
-				console.log("getDailyData() catch error", error)
-			}
-		}
+	// 		} catch(error) {
+	// 			console.log("getDailyData() catch error", error)
+	// 		}
+	// 	}
 
-		getDailyData()
+	// 	getDailyData()
 		
-	}, [])
+	// }, [])
 	
   function calculateOverallProgress(sleepMin, exerciseMin, relaxMin) {
 		if (sleepMin + exerciseMin + relaxMin === 0 ) {
@@ -195,13 +201,13 @@ export default function CalendarScreen() {
 
       console.log("fetchDailyId data: ", data) 
       console.log("fetchDailyId error: ", error)
-      if (data[0].mood !== undefined) {
-        setNotes(data[0].mood)
-      }
-      else {
+      // if (data[0].notes !== undefined) {
+      //   setNotes(data[0].notes)
+      // }
+      // else {
 
-        setNotes("")
-      }
+      //   setNotes("")
+      // }
       if (data.length === 0) {
         return undefined
       } else {
@@ -278,9 +284,9 @@ export default function CalendarScreen() {
 
 
   async function getDateFromDailyTrack() {
-    let { data: daily_track, error } = await supabase
+    let { data, error } = await supabase
      .from('daily_track')
-     .select('date, category_track(categorty_id, daily_id, user_id)')
+     .select('date, category_track(category_id, daily_id, user_id, notes)')
       
 
       if (error) {
@@ -288,22 +294,92 @@ export default function CalendarScreen() {
       }
       else if (data.length > 0) {
      
-        setNotes(daily_track[0].note);
+        setNotes(data[0].category_track.note);
+        console.log("paska", data[0].category_track.notes)
       }
 
   }
 
+  async function getData() {
+   
+    let { data, error } = await supabase
+     .from('daily_track')
+     .select('date, mood, category_track(category_id, note, minutes)')
+     .eq("date", selectedDate.toISOString())
+      
+
+      if (error) {
+        console.log("get data", error)
+        return
+      }
+      if (data.length == 0) {
+       console.log("tyhjää")
+        return
+      }
+    console.log("supabasen data", data)
+    setJuliuksenData(data[0])
+
+  }
+
+  useEffect(() => {
+    if(juliuksenData === null) {
+      return
+    }
+   console.log("sss", juliuksenData)
+   setDailyMood(juliuksenData.mood)
+
+   if(juliuksenData.category_track === undefined) {
+    setSleepValue(0)
+    setExerciseValue(0)
+    setRelaxValue(0)
+    calculateOverallProgress(0,0,0)
+   } else {
+    console.log("dailytrack dataa", juliuksenData.category_track)
+    let sleepX = 0
+    let exerciseX = 0
+    let relaxX = 0
+
+    for(i = 0; i < juliuksenData.category_track.length; i++) {
+      const item = juliuksenData.category_track[i]
+      switch(item.category_id) {
+        case 1:
+          console.log("Unilla")
+          setSleepValue(item.minutes)
+          setSleepNotes(item.note)
+          sleepX = item.minutes
+          break;
+        case 2:
+          console.log("Exercose")
+          setExerciseValue(item.minutes)
+          setExerciseNotes(item.note)
+          exerciseX = item.minutes
+          break;
+        case 3:
+        console.log("Relax")
+        setRelaxValue(item.minutes)
+        setRelaxNotes(item.note)
+        relaxX = item.minutes
+        break;
+      }
+    }
+
+    calculateOverallProgress(sleepX,exerciseX,relaxX)
+   }
+  
+
+  }, [juliuksenData])
+  
 
   async function getUserNotes() {
     let { data: category_track, error } = await supabase
       .from('category_track')
       .select('note')
-      .eq('daily_id'); 
+      .eq('daily_id', selectedDate); 
 
       
 
       if (error) {
-        console.log("Couldn't fetch profile notes")
+        console.log("Couldn't fetch profile no")
       }
       else if (data.length > 0) {
 
@@ -315,11 +391,6 @@ export default function CalendarScreen() {
 
   }
 
-
-
-
-
-  // get mood
 
   async function getDailyMood() {
       let { data: daily_track, error } = await supabase
@@ -335,23 +406,22 @@ export default function CalendarScreen() {
   }
 
   function MoodIcon({dailyMood}) {
-    let moodText
+    let moodText = ""
     // const moodText = this.state.moodText;
     switch (dailyMood){
-    
-      case (dailyMood === 1):
+      case  1:
         moodText = "dizzy";
         break;
-      case (dailyMood === 2):
+      case  2:
         moodText = "frown";
         break;
-      case (dailyMood === 3):
+      case 3:
         moodText = "meh";
         break;
-      case (dailyMood === 4):
+      case 4:
         moodText = "smile";
         break;
-      case (dailyMood === 5):
+      case 5:
         moodText = "smile-beam";
         break;
 
@@ -365,17 +435,18 @@ export default function CalendarScreen() {
 
 	function calculateProgress(activity) {
 		let progress = 0;
-    
+    console.log("JeesusKristus")
 		switch(activity) {
 
 			case "sleep":
-				  progress = ( sleepValue.minutes / sleepGoal)
+          console.log("Pääseekö")
+				  progress = ( sleepValue / sleepGoal)
 				  break;
 			case "exercise":
-				  progress = ( exerciseValue.minutes / exerciseGoal)
+				  progress = ( exerciseValue / exerciseGoal)
 				  break;
 			case "relax":
-				  progress = ( relaxValue.minutes / relaxGoal)
+				  progress = ( relaxValue / relaxGoal)
 				  break;
 
       
@@ -395,13 +466,14 @@ export default function CalendarScreen() {
 	}
 
 
-
+  
 
   const handleDayPress = (day) => {
 
-    setSelectedDate(day.dateString);
+    console.log("röökiä",day)
+    setSelectedDate(new Date(day.timestamp));
     setModalVisible(true);
-
+   
    
     
   };
@@ -423,21 +495,29 @@ export default function CalendarScreen() {
 	} 
 
   useEffect(() => {
+    if(selectedDate == null) {
+      return
+    }
+    console.log("päivä vaihtuu")
+    getUserGoals()
+    getData()
 
-    console.log("Modal avattu")
+    
 
   }, [selectedDate])
 
-function RenderModal({selectedDate}) {
-  
 
+function RenderModal({selectedDate}) {
+    
+    let paiva = selectedDate == null ? "" : selectedDate
+    
     return (
       <Modal  visible={modalVisible} animationType="slide">
       <ScrollView>
       <View style={styles.container}>
         <Text style={styles.dayStatHeader}>Day Statistics</Text>
 				<View style={{display: "flex", flexDirection: "row", gap: 90, alignItems: "center"}}>
-					<Text style={styles.title}>{selectedDate}</Text>
+					<Text style={styles.title}>{paiva.getDate()}.{paiva.getMonth()+1}</Text>
           
 				</View>
         
@@ -477,12 +557,10 @@ function RenderModal({selectedDate}) {
 
         <Text style={styles.dayStatHeader}>Sleep Notes</Text>
           <TextInput
-              progress={insertDailyAndCategory()}
               style={{ height: 200, width: '80%', borderColor: 'gray', borderWidth: 1, marginTop: 20, marginBottom: 25 }}
               multiline={true}
               editable = {false}
-              value={notes}
-               
+              value={sleepNotes}
         />
 
 
@@ -495,7 +573,7 @@ function RenderModal({selectedDate}) {
               style={{ height: 200, width: '80%', borderColor: 'gray', borderWidth: 1, marginTop: 20, marginBottom: 25 }}
               multiline={true}
               editable = {false}
-              value={notes}
+              value={exerciseNotes}
                
         />
 
@@ -509,7 +587,7 @@ function RenderModal({selectedDate}) {
               style={{ height: 200, width: '80%', borderColor: 'gray', borderWidth: 1, marginTop: 20, marginBottom: 25 }}
               multiline={true}
               editable = {false}
-              value={notes}
+              value={relaxNotes}
             
           />
 
@@ -527,7 +605,7 @@ function RenderModal({selectedDate}) {
     <View style={{ backgroundColor: '#e2b486'}}>
       <CalendarList 
             style ={{backgroundColor: '#221f1c'}}
-            onDayPress={handleDayPress} 
+            onDayPress={(x)=>handleDayPress(x)} 
             markedDates={{ [selectedDate]: { selected: true } }} 
             pastScrollRange={6}
             futureScrollRange={1}

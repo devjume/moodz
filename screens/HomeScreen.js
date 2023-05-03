@@ -225,7 +225,7 @@ export default function HomeScreen({navigation}) {
 		}
 
 		const items = badHabits.map((item) => {
-			console.log("bad habit", item)
+			
 			const itemDate = new Date(item.start_date);
 			const originalHours = differenceInHours(today,  itemDate)
 			const days = originalHours / 24
