@@ -52,7 +52,7 @@ export default function StatisticsScreen() {
     let dateSleep = [];
 
     for(i = 0; i < data.length; i++) {
-      minutes = Math.floor(data[i].minutes / 60);
+      minutes = data[i].minutes / 60;
       dataSleep.push(minutes)
 
       console.log(data[i].daily_track.date)
@@ -94,7 +94,7 @@ export default function StatisticsScreen() {
     let dateExercise = [];
 
     for(i = 0; i < data.length; i++) {
-      minutes = Math.floor(data[i].minutes / 60);
+      minutes = data[i].minutes / 60;
       dataExercise.push(minutes)
 
       console.log(data[i].daily_track.date)
@@ -137,7 +137,7 @@ export default function StatisticsScreen() {
     let dateRelax = [];
 
     for(i = 0; i < data.length; i++) {
-      minutes = Math.floor(data[i].minutes / 60);
+      minutes = data[i].minutes / 60;
       dataRelax.push(minutes)
 
       console.log(data[i].daily_track.date)
