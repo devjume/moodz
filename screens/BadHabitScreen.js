@@ -248,7 +248,7 @@ async function setFavourite(id, favorite, dataArray) {
       <Pressable
         style={({ pressed }) => [styles.row, { backgroundColor: pressed ? "#DCC9B6" : "#FFEDD7" }]}
         onPress={()=>setModalVisible(true)}>
-        <Text style={styles.heading}>Add new habit                        <AntDesign name="pluscircle" size={24} color="black" style={{justifyContent:"flex-end"}}/></Text>
+        <Text style={styles.heading}>Add new habit                       <AntDesign name="pluscircle" size={24} color="black" style={{justifyContent:"flex-end"}}/></Text>
       </Pressable>
       <View style={styles.row}>
         <View>
