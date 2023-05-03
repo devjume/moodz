@@ -274,7 +274,7 @@ export default function HomeScreen({navigation}) {
 			const days = originalHours / 24
 			const hours = (days % 1) * 24
 			return( 
-				<Pressable onPress={() => navigation.navigate('Bad Habit')} key={item.id} style={screen.card}>
+				<Pressable onPress={() => navigation.navigate('Bad Habit Breaker')} key={item.id} style={screen.card}>
 						<Text style={{fontWeight:"bold", fontSize: 18}}>{item.title}</Text>
 						<Text style={{fontWeight:"bold", fontSize: 18}}>{Math.round(days)}d {Math.round(hours)}h</Text>
 				</Pressable>

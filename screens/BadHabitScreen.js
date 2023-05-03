@@ -6,7 +6,14 @@ import { useEffect, useState, useContext } from 'react'
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
 import DatePicker from '../components/DatePicker';
+
 import { UserContext } from '../lib/UserContext';
+
+
+
+
+
+
 
 export default function BadHabitScreen() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -15,8 +22,15 @@ export default function BadHabitScreen() {
   const [modalDate, setModalDate] = useState("");
   const [habitID, setHabitID] = useState(null);
   const [data, setData] = useState([])
+  const [showNotif, setShowNotif] = useState(false)
+  const [notifText, setNotifText] = useState("Data saved")
   
   const { setIsLoggedIn, setSession, username, userID } = useContext(UserContext)
+
+function showNotification() {
+  setShowNotif(true);
+  setTimeout(() => setShowNotif(false), 2000)
+}
 
 async function addHabit(title, newDate, userID, dataArray, setData){
 
@@ -46,10 +60,12 @@ async function addHabit(title, newDate, userID, dataArray, setData){
     dataArray.push(habitObject)
     dataArray.sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
     setData([...dataArray])
-    Alert.alert('Habit "'+ title + '" added')
+    setNotifText('Habit "'+ title + '" added')
+    showNotification()
 
   } catch (error) {
-    Alert.alert('Error adding habit')
+    setNotifText("Error adding habit")
+    showNotification()
   }
 
 }
@@ -62,7 +78,8 @@ async function delHabit(habitID, title, dataArray, setData){
     .delete()
     .eq('id', habitID)
 
-    Alert.alert('Habit "'+ title + '" deleted') 
+    setNotifText('Habit "' + title + '" deleted')
+      showNotification() 
 
     for (let i = 0; i < dataArray.length; i++) {
 
@@ -73,7 +90,8 @@ async function delHabit(habitID, title, dataArray, setData){
       }
     }
   } catch (error) {
-    Alert.alert("Error deleting Habit", error)
+    setNotifText("Error deleting habit")
+      showNotification()
   }
 }
 
@@ -84,7 +102,8 @@ async function editHabit(title, date, habitID, oldName, oldDate, dataArray, setD
 
   //name and date are same as old data. So nothing changed
    if (title == oldName && dateString == oldDateString) {
-    Alert.alert('Nothing was changed')
+    setNotifText("Nothing was changed")
+    showNotification()
   } 
   //name is same as old, date is different so update date
   else if (title == oldName && dateString !== oldDateString) {
@@ -93,9 +112,11 @@ async function editHabit(title, date, habitID, oldName, oldDate, dataArray, setD
     .update({ start_date: date })
     .eq("id", habitID)
     if (error) {
-      Alert.alert("Error updating date", error)
+      setNotifText("Error updating date")
+      showNotification()
     } else {
-      Alert.alert('Date updated')
+      setNotifText("Date updated")
+      showNotification()
       for (let i = 0; i < dataArray.length; i++) {
         if (dataArray[i].id == habitID) {
           let habit = dataArray[i]
@@ -113,9 +134,11 @@ async function editHabit(title, date, habitID, oldName, oldDate, dataArray, setD
     .update({ title: title})
     .eq("id", habitID)
     if (error) {
-      Alert.alert("Error updating name", error)
+      setNotifText("Error updating name")
+      showNotification()
     } else {
-      Alert.alert('Name updated')
+      setNotifText("Name updated")
+      showNotification()
       for (let i = 0; i < dataArray.length; i++) {
         if (dataArray[i].id == habitID) {
           let habit = dataArray[i]
@@ -132,9 +155,11 @@ async function editHabit(title, date, habitID, oldName, oldDate, dataArray, setD
     .update({ start_date: date, title: title})
     .eq("id", habitID)
     if (error) {
-      Alert.alert("Error updating data", error)
+      setNotifText("Error updating data")
+      showNotification()
     } else {
-      Alert.alert('Date and name updated')
+      setNotifText("Date and name updated")
+      showNotification()
       for (let i = 0; i < dataArray.length; i++) {
         if (dataArray[i].id == habitID) {
           let habit = dataArray[i]
@@ -162,7 +187,8 @@ async function setFavourite(id, favorite, dataArray) {
             .eq('id', id)
 
           if (error2) {
-            Alert.alert("Error removing from favorites")
+            setNotifText("Error removing from favorites")
+            showNotification()
           } else {
             for (let i = 0; i < dataArray.length; i++) {
               if (dataArray[i].id == id) {
@@ -179,7 +205,8 @@ async function setFavourite(id, favorite, dataArray) {
             .eq('id', id)
 
           if (error) {
-            Alert.alert("Error removing from favorites")
+            setNotifText("Error adding to favorites")
+            showNotification()
           } else {
             for (let i = 0; i < dataArray.length; i++) {
               if (dataArray[i].id == id) {
@@ -221,7 +248,7 @@ async function setFavourite(id, favorite, dataArray) {
       <Pressable
         style={({ pressed }) => [styles.row, { backgroundColor: pressed ? "#DCC9B6" : "#FFEDD7" }]}
         onPress={()=>setModalVisible(true)}>
-        <Text style={styles.heading}>Add new habit                  <AntDesign name="pluscircle" size={24} color="black" style={{justifyContent:"flex-end"}}/></Text>
+        <Text style={styles.heading}>Add new habit                       <AntDesign name="pluscircle" size={24} color="black" style={{justifyContent:"flex-end"}}/></Text>
       </Pressable>
       <View style={styles.row}>
         <View>
@@ -238,11 +265,14 @@ async function setFavourite(id, favorite, dataArray) {
 			}
       </ScrollView>
       {modalVisible && <Form dataArray={data} delHabit={delHabit}editHabit={editHabit} setHabitID={setHabitID} habitID={habitID} setData={setData} userID={userID} addHabit={addHabit} editMode={editMode} setEditMode={setEditMode} setModalVisible={setModalVisible} modalVisible={modalVisible} oldName={modalName} oldDate={modalDate} setModalDate={setModalDate} setModalName={setModalName}/>}
+      <Modal transparent={true} visible={showNotif} animationType="fade">
+          <View>
+            <Text style={styles.notifText}>{notifText}</Text>
+          </View>
+        </Modal>
     </SafeAreaView>
   )
 }
-
-
 
 const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setModalDate, setModalName, editMode, setEditMode, addHabit, userID, dataArray, setData, habitID, setHabitID, editHabit}) => {
   oldDate = new Date(oldDate)
@@ -554,5 +584,12 @@ const styles = StyleSheet.create({
     backgroundColor:"white",
     padding: 10,
     textAlign:"center"
+  },
+  notifText: {
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: 'bold',
+    backgroundColor: "#ffffff",
+    padding: 17,
   }
 });
