@@ -65,7 +65,7 @@ export default function App() {
 							iconName = "calendar";
 						} else if (route.name === "Statistics") {
 							iconName = "md-stats-chart-outline";
-						} else if (route.name === "Bad Habit") {
+						} else if (route.name === "Bad Habit Breaker") {
 							return <Ionicons name={"md-logo-no-smoking"} size={32} color={focused == true ? "#fff" : "#DCC9B6"} />
 						} else if (route.name === "Daily Log") {
               return (
@@ -83,7 +83,7 @@ export default function App() {
 				<Tab.Screen name="Calendar" component={CalendarScreen} />
 				<Tab.Screen name="Daily Log" component={TrackerScreen} />
 				<Tab.Screen name="Statistics" component={StatisticsScreen} />
-				<Tab.Screen name="Bad Habit" component={BadHabitScreen} />
+				<Tab.Screen name="Bad Habit Breaker" component={BadHabitScreen} />
 			</Tab.Navigator>
     )
   }
