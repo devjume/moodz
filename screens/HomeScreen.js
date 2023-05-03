@@ -141,7 +141,6 @@ export default function HomeScreen({navigation}) {
 			return;
 		}
 
-		console.log(bad_habits)
 		setBadHabits(bad_habits)
 	}
 
@@ -189,55 +188,6 @@ export default function HomeScreen({navigation}) {
 
 		
 		setDataReceived(true)
-	}
-
-	async function logOut() {
-		const { error } = await supabase.auth.signOut()
-		if (error) {
-			Alert.alert("Sign Out Error:", error.message)
-			console.log("Sign Out Error:", error.message)
-		}
-
-		setSession(null)
-		setIsLoggedIn(false)
-	}
-	
-	async function selectDailyTrack() {
-		let { data: daily_track, error } = await supabase
-  		.from('daily_track')
-  		.select('*')
-
-		if (error) {
-			Alert.alert("Feth daily_track error", JSON.stringify(error))
-			console.log("Feth daily_track error", error)
-			return
-		}
-
-		console.log("daily_track rows:")
-		daily_track.forEach(row => {
-			const category_track_rows = selectDailyTrack(row.id)
-			console.log(row)
-			console.log("\tCategory entries:")
-			category_track_rows.forEach(row => {
-				console.log(`\t\t${row}`)
-			})
-			console.log("---")
-		});
-		console.log("------")
-	}
-
-	async function selectCategoryTrack(id) {
-		let { data: category_track, error } = await supabase
-  		.from('category_track')
-  		.select('*')
-			.eq('daily_id', id)
-
-		if (error) {
-			Alert.alert("Feth category_track error", JSON.stringify(error) )
-			console.log("Feth category_track error", error)
-			return
-		}
-		return category_track;
 	}
 
 	function moveBackwards() {
