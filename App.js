@@ -67,7 +67,7 @@ export default function App() {
 							iconName = "md-stats-chart-outline";
 						} else if (route.name === "Bad Habit") {
 							return <Ionicons name={"md-logo-no-smoking"} size={32} color={focused == true ? "#fff" : "#DCC9B6"} />
-						} else if (route.name === "Tracker") {
+						} else if (route.name === "Daily Log") {
               return (
                 <View style={{backgroundColor: "#498467", width: 75, height: 75, borderRadius: 500, bottom: -10, position: "absolute", display: "flex", justifyContent:"center", alignContent:"center", alignItems:"center", "shadowColor": "#000", shadowOffset: {width: 0, height: 2,}, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5}}>
                   <MaterialIcons name="add" size={64} style={{}} color={focused == true ? "#fff" : "#DCC9B6"} />
@@ -81,7 +81,7 @@ export default function App() {
 			>
 				<Tab.Screen name="Home" component={HomeScreen} />
 				<Tab.Screen name="Calendar" component={CalendarScreen} />
-				<Tab.Screen name="Tracker" component={TrackerScreen} />
+				<Tab.Screen name="Daily Log" component={TrackerScreen} />
 				<Tab.Screen name="Statistics" component={StatisticsScreen} />
 				<Tab.Screen name="Bad Habit" component={BadHabitScreen} />
 			</Tab.Navigator>

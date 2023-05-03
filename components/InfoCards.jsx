@@ -8,27 +8,27 @@ const infoCards = [
     description: 'Please note that this life management app is not intended to provide medical advice or replace the advice of a healthcare professional. We, the creators of the app, are not experts in the medical or health fields. This app is designed to assist you in tracking your daily activities, such as sleep, exercise, and relaxation, to help you achieve your personal goals.',
   },
   {
-    title: 'Profile page',
+    title: 'Profile',
     description: 'In the profile page you can update your activity goals. Also log out button is found in this page',
   },
   {
-    title: 'Home page',
+    title: 'Home',
     description: 'In the home page you can see a progress bar for each activity and also a total progress\'o\'meter of all activities combined. You can also add or update the activities by pressing the "+" icon that is next each activity.',
   },
   {
-    title: 'Calendar page',
+    title: 'Calendar',
     description: 'In the calendar you can see your days progress in different colors: red if you haven\t reached anywhere close to your goals, yellow if you achieved some of your goals, green if you reached most of your goals. You also can view an individual day by selecting it from the calendar',
   },
   {
-    title: 'Tracker page',
-    description: 'In the tracker screen you are able to add or update any activity\'s data. Pick the date and activity that you want to add or update to and press save',
+    title: 'Daily Log',
+    description: 'In the Daily Log screen you are able to add or update any activity\'s data. Pick the date and activity that you want to add or update to and press save',
   },
   {
-    title: 'Statistics page',
-    description: 'In statistics page you can view your progress weekly or monthly. From these graphs you can see how well have you achieved your goals in the long run.',
+    title: 'Statistics',
+    description: 'In statistics page you can view your progress of the last week. From these graphs you can see how well have you achieved your goals in the long run.',
   },
   {
-    title: 'Bad habits page',
+    title: 'Bad Habit Breaker ',
     description: 'In the bad habit page you are able to add new bad habits that you have stopped. Once you\'ve added a bad habit a counter will tell you how long have you gone without doing this particular habit. You can also update or delete existing bad habits if you want to.',
   },
   {
