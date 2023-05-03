@@ -11,20 +11,25 @@ export default function HomeScreen({route, navigation}) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
-  const { setSession, setIsLoggedIn, TEST_MODE, LOGIN_AUTOMATICALLY } = useContext(UserContext)
+  const { setSession, setIsLoggedIn, firstLogin, setFirstLogin, TEST_MODE, LOGIN_AUTOMATICALLY } = useContext(UserContext)
 
   useEffect(() => {
+
+    const testEmail = "john@example.com"
+    const testPasswd = "password"
+    
     if (TEST_MODE === true) {
-      setEmail("john@example.com");
-      setPassword("password")
+      setEmail(testEmail);
+      setPassword(testPasswd)
     }
 
-    if(LOGIN_AUTOMATICALLY === true) {
-      login();
+    if(LOGIN_AUTOMATICALLY === true && firstLogin === true) {
+      setFirstLogin(false)
+      login(testEmail, testPasswd);
     }
   }, [])
 
-  async function login() {
+  async function login(email = email, password = password) {
     if ( email === "" || password === "") {
       Alert.alert("Login error", "Empty email or password")
       return
@@ -50,7 +55,7 @@ export default function HomeScreen({route, navigation}) {
       <Text style={component.header}>Login</Text>
       <AuthInputField placeholder={"Email"} inputMode={"email"} value={email} onChangeText={setEmail}/>
       <AuthInputField placeholder={"Password"} inputMode={"text"} value={password} onChangeText={setPassword} secureTextEntry={true}/>
-      <AuthButton title="Login" onClick={login} />
+      <AuthButton title="Login" onClick={() => login(email, password)} />
       <Pressable onPress={() => navigation.navigate("Register")}>
         <Text style={{fontWeight: "bold", color: "#fff"}}>Don't have an account? Register</Text>
       </Pressable>
