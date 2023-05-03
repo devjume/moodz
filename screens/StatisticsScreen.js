@@ -59,7 +59,7 @@ export default function StatisticsScreen() {
 
       const newDate = new Date(data[i].daily_track.date)
       const dd = newDate.getDate()
-      const mm = newDate.getMonth()
+      const mm = newDate.getMonth() + 1;
       const dd_mm = (`${dd}` + "." + `${mm}`)
       dateSleep.push(dd_mm)
 
@@ -101,9 +101,10 @@ export default function StatisticsScreen() {
 
       const newDate = new Date(data[i].daily_track.date)
       const dd = newDate.getDate()
-      const mm = newDate.getMonth()
+      const mm = newDate.getMonth() + 1;
       const dd_mm = (`${dd}` + "." + `${mm}`)
       dateExercise.push(dd_mm)
+      console.log(dd_mm)
 
     }
     
@@ -143,7 +144,7 @@ export default function StatisticsScreen() {
 
       const newDate = new Date(data[i].daily_track.date)
       const dd = newDate.getDate()
-      const mm = newDate.getMonth()
+      const mm = newDate.getMonth() + 1;
       const dd_mm = (`${dd}` + "." + `${mm}`)
       dateRelax.push(dd_mm)
 
