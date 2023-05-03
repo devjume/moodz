@@ -8,7 +8,15 @@ import { supabase } from '../lib/supabase';
 import DatePicker from '../components/DatePicker';
 import { UserContext } from '../lib/UserContext';
 
-
+export default function BadHabitScreen() {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [modalName, setModalName] = useState("");
+  const [modalDate, setModalDate] = useState("");
+  const [habitID, setHabitID] = useState(null);
+  const [data, setData] = useState([])
+  
+  const { setIsLoggedIn, setSession, username, userID } = useContext(UserContext)
 
 async function addHabit(title, newDate, userID, dataArray, setData){
 
@@ -31,7 +39,8 @@ async function addHabit(title, newDate, userID, dataArray, setData){
     const habitObject = {
       title: title,
       start_date: date1,
-      id: id1
+      id: id1,
+      favorite: false
     }
 
     dataArray.push(habitObject)
@@ -139,19 +148,53 @@ async function editHabit(title, date, habitID, oldName, oldDate, dataArray, setD
   }
 }
 
-async function setFavourite() {
-  console.log("favourite")
+async function setFavourite(id, favorite, dataArray) {
+
+  //change true to false
+
+    for (let i = 0; i < dataArray.length; i++) {
+      if (dataArray[i].id == id) {
+        habit = dataArray[i]
+        if (habit.favorite == true) {
+          const { data2, error2 } = await supabase
+            .from('bad_habits')
+            .update({ favorite: false })
+            .eq('id', id)
+
+          if (error2) {
+            Alert.alert("Error removing from favorites")
+          } else {
+            for (let i = 0; i < dataArray.length; i++) {
+              if (dataArray[i].id == id) {
+                let habit = dataArray[i]
+                habit.favorite = false 
+                setData([...dataArray])
+              }
+            }
+          }
+        } else if (habit.favorite == false) {
+          const { data, error } = await supabase
+            .from('bad_habits')
+            .update({ favorite: true })
+            .eq('id', id)
+
+          if (error) {
+            Alert.alert("Error removing from favorites")
+          } else {
+            for (let i = 0; i < dataArray.length; i++) {
+              if (dataArray[i].id == id) {
+                let habit = dataArray[i]
+                habit.favorite = true 
+                setData([...dataArray])
+              }
+            }
+          }
+        }
+    }
+  }
 }
 
-export default function BadHabitScreen() {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const [modalName, setModalName] = useState("");
-  const [modalDate, setModalDate] = useState("");
-  const [habitID, setHabitID] = useState(null);
-  const [data, setData] = useState([])
-  
-  const { setIsLoggedIn, setSession, username, userID } = useContext(UserContext)
+
 
   useEffect(() => {
     //function to fetch all bad habits from database
@@ -171,8 +214,6 @@ export default function BadHabitScreen() {
     //run said function
     getData()
 
-    console.log("useEffect")
-
   }, [])
 
   return (
@@ -182,7 +223,7 @@ export default function BadHabitScreen() {
         onPress={()=>setModalVisible(true)}>
         <Text style={styles.heading}>Add new habit                  <AntDesign name="pluscircle" size={24} color="black" style={{justifyContent:"flex-end"}}/></Text>
       </Pressable>
-      <View style={[styles.row, {marginBottom:12}]}>
+      <View style={styles.row}>
         <View>
           <Text style={styles.heading}>Time since bad habits: </Text>
         </View>
@@ -191,7 +232,7 @@ export default function BadHabitScreen() {
       {
 				data.map((item) => {
 					return (
-						<Card key={item.id} id={item.id} name={item.title} date={item.start_date} setFavourite={setFavourite} favorite={item.favorite} editMode={editMode} setEditMode={setEditMode} modalVisible={modalVisible} setModalVisible={setModalVisible} setModalDate={setModalDate} setModalName={setModalName} setHabitID={setHabitID}/>
+						<Card key={item.id} id={item.id} name={item.title} date={item.start_date} setData={setData} setFavourite={setFavourite} dataArray={data} favorite={item.favorite} editMode={editMode} setEditMode={setEditMode} modalVisible={modalVisible} setModalVisible={setModalVisible} setModalDate={setModalDate} setModalName={setModalName} setHabitID={setHabitID} habitID={habitID}/>
 					)
 				})
 			}
@@ -358,7 +399,7 @@ const Form = ({delHabit, setModalVisible, modalVisible, oldName, oldDate, setMod
   }
 }
 //card component (one habit)
-const Card = ({id,name, date, favorite, setFavourite, setModalVisible, setModalName, setModalDate, setHabitID, editMode={editMode}, setEditMode={setEditMode}}) => {
+const Card = ({id,name, date, favorite, setFavourite, setModalVisible, setModalName, setModalDate, setHabitID, habitID, dataArray, editMode={editMode}, setEditMode={setEditMode}, setData}) => {
 
   function countUp(countFrom) {
 
@@ -383,7 +424,7 @@ const Card = ({id,name, date, favorite, setFavourite, setModalVisible, setModalN
       
     var secondsInADay = 60 * 60 * 1000 * 24,
         secondsInAHour = 60 * 60 * 1000;
-    
+      
     days = Math.floor(timeDifference / (secondsInADay) * 1);
     hours = Math.floor((timeDifference % (secondsInADay)) / (secondsInAHour) * 1);
     minutes = Math.floor(((timeDifference % (secondsInADay)) % (secondsInAHour)) / (60 * 1000) * 1);
@@ -405,13 +446,21 @@ return (
       setHabitID(id)
     }}
   >
-    <View>
+    <View style={{flex:1, flexDirection:"column"}}>
       <Text style={{textAlign: "left", fontWeight:"bold", fontSize: 16}}>{name}</Text>
       <Text style={{textAlign: "center", fontSize: 16}}>{countUp(date)}</Text> 
-      <Pressable onPress={setFavourite} >
-        <Text style={{textAlign: "right", backgroundColor:"red", padding:20}}><AntDesign name="staro" size={16} color="black" fill="green" /> {String(favorite)}
+      { favorite &&
+      
+        <Text style={{textAlign: "right"}}>
+          <Pressable hitSlop={25} onPress={()=> 
+      setFavourite(id,favorite, dataArray, habitID, setData)} ><FontAwesome name="star" size={24} color="black"  /></Pressable>
         </Text>
-      </Pressable>
+       }
+      { favorite==false &&
+       <Text style={{textAlign: "right"}}>
+       <Pressable hitSlop={25} onPress={()=> 
+     setFavourite(id,favorite, dataArray, habitID, setData)} ><FontAwesome name="star-o" size={24} color="black" /></Pressable>
+     </Text>}
     </View>
   </Pressable>
 )

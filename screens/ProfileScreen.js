@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from 'react'
 import styles from '../style/style';
-import { Text, View, StyleSheet, Button } from "react-native";
+import { Text, View, StyleSheet, Button, Modal } from "react-native";
 import NumericInput from 'react-native-numeric-input';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { UserContext } from '../lib/UserContext';
@@ -17,6 +17,8 @@ export default function ProfileScreen() {
     const [relax, setRelax] = useState(0);
     const [exercise, setExercise] = useState(0);
     const [sleep, setSleep] = useState(0);
+    const [showModal, setShowModal] = useState(false);
+
 
 
     useEffect(() => {
@@ -74,6 +76,8 @@ export default function ProfileScreen() {
       .eq('id', session.user.id)
 
       console.log(data)
+      setShowModal(true);
+      setTimeout(() => setShowModal(false), 2000)
 
       if(error) {
         Alert.alert("Error", error.message);
@@ -112,7 +116,11 @@ export default function ProfileScreen() {
       title='SAVE' style={style.save} color= "#498467"
       />
     </View> 
-      
+    <Modal transparent={true} visible={showModal} animationType="fade">
+                  <View>
+                    <Text style={style.modalText}>Data saved</Text>
+                  </View>
+                </Modal>
     </View>
   )
 }
@@ -167,5 +175,12 @@ const style = StyleSheet.create({
     numericInput: {
       borderColor: "#00000",
       backgroundColor: "#0000"
-    }
+    },
+    modalText: {
+      textAlign: "center",
+      fontSize: 18,
+      fontWeight: 'bold',
+      backgroundColor: "#ffffff",
+      padding: 17,
+    },
 });
