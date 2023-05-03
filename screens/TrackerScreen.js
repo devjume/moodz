@@ -265,6 +265,7 @@ export default function TrackerScreen({route, navigation}) {
       else {
         setShowModal(true);
         setTimeout(() => setShowModal(false), 2000)
+        setMood(data[0].mood)
         console.log(data[0].mood)
       }
 
