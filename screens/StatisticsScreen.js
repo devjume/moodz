@@ -4,6 +4,7 @@ import { View, Dimensions, ScrollView, Alert, StyleSheet, Button } from "react-n
 import { LineChart } from 'react-native-chart-kit';
 import { supabase } from '../lib/supabase';
 import { UserContext } from '../lib/UserContext';
+import { useIsFocused } from '@react-navigation/native';
 
 
 
@@ -15,19 +16,17 @@ export default function StatisticsScreen() {
   const [exerciseDate, setExerciseDate] = useState([]);
   const [relaxDate, setRelaxDate] = useState([]);
   const [sleepDate, setSleepDate] = useState([]);
+	const isFocused = useIsFocused();
 
 
   const { setIsLoggedIn, setSession, username, userID, session } = useContext(UserContext)
 
   useEffect(() => {
-    
-    getExerciseData()
+		getExerciseData()
     getSleepData()
     getRelaxData()
-   
-  }, [])
+	}, [isFocused])
 
-  
 
   async function getSleepData() {
     
