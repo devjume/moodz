@@ -52,14 +52,14 @@ export default function StatisticsScreen() {
     let dateSleep = [];
 
     for(i = 0; i < data.length; i++) {
-      minutes = Math.floor(data[i].minutes / 60);
+      minutes = data[i].minutes / 60;
       dataSleep.push(minutes)
 
       console.log(data[i].daily_track.date)
 
       const newDate = new Date(data[i].daily_track.date)
       const dd = newDate.getDate()
-      const mm = newDate.getMonth()
+      const mm = newDate.getMonth() + 1;
       const dd_mm = (`${dd}` + "." + `${mm}`)
       dateSleep.push(dd_mm)
 
@@ -94,16 +94,17 @@ export default function StatisticsScreen() {
     let dateExercise = [];
 
     for(i = 0; i < data.length; i++) {
-      minutes = Math.floor(data[i].minutes / 60);
+      minutes = data[i].minutes / 60;
       dataExercise.push(minutes)
 
       console.log(data[i].daily_track.date)
 
       const newDate = new Date(data[i].daily_track.date)
       const dd = newDate.getDate()
-      const mm = newDate.getMonth()
+      const mm = newDate.getMonth() + 1;
       const dd_mm = (`${dd}` + "." + `${mm}`)
       dateExercise.push(dd_mm)
+      console.log(dd_mm)
 
     }
     
@@ -136,14 +137,14 @@ export default function StatisticsScreen() {
     let dateRelax = [];
 
     for(i = 0; i < data.length; i++) {
-      minutes = Math.floor(data[i].minutes / 60);
+      minutes = data[i].minutes / 60;
       dataRelax.push(minutes)
 
       console.log(data[i].daily_track.date)
 
       const newDate = new Date(data[i].daily_track.date)
       const dd = newDate.getDate()
-      const mm = newDate.getMonth()
+      const mm = newDate.getMonth() + 1;
       const dd_mm = (`${dd}` + "." + `${mm}`)
       dateRelax.push(dd_mm)
 
