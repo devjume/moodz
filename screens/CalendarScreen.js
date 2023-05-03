@@ -1,10 +1,11 @@
 import React, { useEffect, useState} from 'react';
-import styles from '../style/style';
+import styles, {BACKGROUND_COLOR} from '../style/style';
 import { View, Text, Modal, TextInput, ScrollView, TouchableOpacity, Pressable } from 'react-native';
 import { CalendarList } from 'react-native-calendars';
 import { supabase } from '../lib/supabase';
 import { CircularProgress } from 'react-native-circular-progress';
 import { ProgressBar } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 
@@ -249,7 +250,7 @@ export default function CalendarScreen() {
       catch (error) {
         console.log("fetchIdAndCategory error", error) 
 
-        
+
       }
     } else {
       return undefined
@@ -523,17 +524,34 @@ function RenderModal({selectedDate}) {
 
 
   return (
-    <View>
+    <View style={{ backgroundColor: '#e2b486'}}>
       <CalendarList 
+            style ={{backgroundColor: '#221f1c'}}
             onDayPress={handleDayPress} 
             markedDates={{ [selectedDate]: { selected: true } }} 
             pastScrollRange={6}
             futureScrollRange={1}
-            scrollEnabled={true}/>
+            scrollEnabled={true}
+            theme={{
+              calendarBackground: '#DCC9B6',
+              textSectionTitleColor: '#221f1c'}}
+            />
       {selectedDate && <RenderModal selectedDate={selectedDate} />}
+   
     </View>
-  );
-}
+  )
+
+ } 
+
+
+  const styles2 = StyleSheet.create({
+    calendarList: {
+      backgroundColor: '#e2b486',
+    },
+  
+  
+  });
+
 
 
 

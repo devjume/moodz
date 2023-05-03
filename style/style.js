@@ -144,7 +144,14 @@ export default StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 15
     
+  },
+
+  calendarBack: {
+     backgroundColor: '#DCC9B6'
+
   }
+
+
 
   
       
