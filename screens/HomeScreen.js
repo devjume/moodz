@@ -37,6 +37,7 @@ export default function HomeScreen({navigation}) {
 
 	useEffect(() => {
 		getDailyData()
+		getBadHabits()
 	}, [isFocused])
 	
 
@@ -218,7 +219,13 @@ export default function HomeScreen({navigation}) {
 
 	function BadHabitContainer() {
 		const today = new Date()
+
+		if(badHabits.length === 0) {
+			return
+		}
+
 		const items = badHabits.map((item) => {
+			console.log("bad habit", item)
 			const itemDate = new Date(item.start_date);
 			const originalHours = differenceInHours(today,  itemDate)
 			const days = originalHours / 24
@@ -232,9 +239,12 @@ export default function HomeScreen({navigation}) {
 		)})
 
 		return (
-			<View style={{display: "flex", flexDirection: "row", width: "100%", justifyContent: "center", gap: 18}}>
-				{items}
-			</View>
+			<>
+				<Text style={{fontSize: 18, fontWeight: "bold"}}>Time since:</Text>
+				<View style={{display: "flex", flexDirection: "column", width: "100%", justifyContent: "center", gap: 18}}>
+					{items}
+				</View>
+			</>
 		)
 	}
 
@@ -272,7 +282,6 @@ export default function HomeScreen({navigation}) {
 				<CustomBar title={"Relax"} progress={calculateProgress("relax")} color={"#498467"} categoryId={3}/>
 			</View>
 			<View style={screen.badHabitContainer}>
-				<Text style={{fontSize: 18, fontWeight: "bold"}}>Time since:</Text>
 				<BadHabitContainer />
 			</View>
 			
