@@ -148,7 +148,27 @@ export default StyleSheet.create({
 
   calendarBack: {
      backgroundColor: '#DCC9B6'
-
+  },
+  calendarNotes:{
+    fontSize: 20,
+    color: "#000000",
+    textAlign: "center",
+    minHeight: 100, 
+    width: '80%',
+    marginTop: 20, 
+    marginBottom: 25,
+    padding: 10,
+    backgroundColor:"#fafafa",
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    borderColor: "#dedede",
+    borderWidth: 2,
   }
 
 

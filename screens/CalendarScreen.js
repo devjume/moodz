@@ -57,7 +57,6 @@ export default function CalendarScreen() {
 
 	}, [])
 
- 
 
 
   // useEffect(() => {
@@ -155,8 +154,6 @@ export default function CalendarScreen() {
 	}
 
   
-
-  
 	async function getUserGoals() {
 
 		let { data: profiles, error } = await supabase
@@ -172,13 +169,7 @@ export default function CalendarScreen() {
 		setExerciseGoal(profiles[0].exercise_goal)
 		setRelaxGoal(profiles[0].relax_goal)
     
-
-    
-    
 	}
-
-
-
 
  ///fetch notes
 
@@ -295,7 +286,6 @@ export default function CalendarScreen() {
       else if (data.length > 0) {
      
         setNotes(data[0].category_track.note);
-        console.log("paska", data[0].category_track.notes)
       }
 
   }
@@ -325,7 +315,6 @@ export default function CalendarScreen() {
     if(juliuksenData === null) {
       return
     }
-   console.log("sss", juliuksenData)
    setDailyMood(juliuksenData.mood)
 
    if(juliuksenData.category_track === undefined) {
@@ -343,19 +332,16 @@ export default function CalendarScreen() {
       const item = juliuksenData.category_track[i]
       switch(item.category_id) {
         case 1:
-          console.log("Unilla")
           setSleepValue(item.minutes)
           setSleepNotes(item.note)
           sleepX = item.minutes
           break;
         case 2:
-          console.log("Exercose")
           setExerciseValue(item.minutes)
           setExerciseNotes(item.note)
           exerciseX = item.minutes
           break;
         case 3:
-        console.log("Relax")
         setRelaxValue(item.minutes)
         setRelaxNotes(item.note)
         relaxX = item.minutes
@@ -426,7 +412,7 @@ export default function CalendarScreen() {
         break;
 
       } 
-      return <Text><FontAwesome5 name={moodText}  size={60} color="#ffe62a"/></Text>
+      return <Text><FontAwesome5 name={moodText}  size={100} color="#ffe62a"/></Text>
 
   } 
 
@@ -435,11 +421,9 @@ export default function CalendarScreen() {
 
 	function calculateProgress(activity) {
 		let progress = 0;
-    console.log("JeesusKristus")
 		switch(activity) {
 
 			case "sleep":
-          console.log("Pääseekö")
 				  progress = ( sleepValue / sleepGoal)
 				  break;
 			case "exercise":
@@ -470,7 +454,6 @@ export default function CalendarScreen() {
 
   const handleDayPress = (day) => {
 
-    console.log("röökiä",day)
     setSelectedDate(new Date(day.timestamp));
     setModalVisible(true);
    
@@ -557,7 +540,7 @@ function RenderModal({selectedDate}) {
 
         <Text style={styles.dayStatHeader}>Sleep Notes</Text>
           <TextInput
-              style={{ height: 200, width: '80%', borderColor: 'gray', borderWidth: 1, marginTop: 20, marginBottom: 25 }}
+              style={styles.calendarNotes}
               multiline={true}
               editable = {false}
               value={sleepNotes}
@@ -570,7 +553,7 @@ function RenderModal({selectedDate}) {
         <Text style={styles.dayStatHeader}>Exercise Notes</Text>
           <TextInput 
               progress={insertDailyAndCategory()}
-              style={{ height: 200, width: '80%', borderColor: 'gray', borderWidth: 1, marginTop: 20, marginBottom: 25 }}
+              style={styles.calendarNotes}
               multiline={true}
               editable = {false}
               value={exerciseNotes}
@@ -584,7 +567,7 @@ function RenderModal({selectedDate}) {
         <Text style={styles.dayStatHeader}>Relax Notes</Text>
           <TextInput
               progress={insertDailyAndCategory()}
-              style={{ height: 200, width: '80%', borderColor: 'gray', borderWidth: 1, marginTop: 20, marginBottom: 25 }}
+              style={styles.calendarNotes}
               multiline={true}
               editable = {false}
               value={relaxNotes}
